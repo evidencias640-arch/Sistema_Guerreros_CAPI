@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Sistema de gestión de activos y salidas para inventario de mobiliario, tecnología y electrodomésticos. Controla entradas y salidas de forma eficiente.">
+    <meta name="keywords"
+        content="gestión de activos, control de inventario, mobiliario, tecnología, electrodomésticos, sistema de inventario, activos empresariales, registro de salidas">
+    <meta name="author" content="AuraSys Team">
+    <meta name="robots" content="index, follow">
+    <title>Sistema AuraSys</title>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@">
+    <meta name="twitter:creator" content="@tu_usuario_twitter">
+    <meta name="twitter:url" content="https://asegurador.github.io/Gestion_Activos/index.html">
+    <meta name="twitter:title" content="Gestión de Activos | Control de Inventario Simplificado">
+    <link rel="icon" type="image/png"
+        href="https://w7.pngwing.com/pngs/712/289/png-transparent-no-service-payment-fixed-asset-others-miscellaneous-cdr-angle.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+        /* Variables existentes - Mantienen su propósito para el resto de tu aplicación */
+        :root {
+            --primary-color: #1e293b;
+            --secondary-color: #334155;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        /* Reseteo global */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Estilos base del body - Mejorado para responsividad general */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--primary-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            /* Asegura que el body ocupe al menos el 100% de la altura */
+            display: flex;
+            /* Para controlar el layout con Flexbox/Grid si es necesario */
+            flex-direction: column;
+        }
+
+        /* --- Estilos del Nuevo Login "AuraSys" --- */
+
+        /* Contenedor principal del login */
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            background: url('https://codingstella.com/wp-content/uploads/2024/01/download-5.jpeg') no-repeat center center / cover;
+            /* Centrado y cubriendo */
+            animation: animateBg 5s linear infinite;
+            position: fixed;
+            /* Ocupa toda la pantalla y no permite scroll del contenido detrás */
+            top: 0;
+            left: 0;
+            z-index: 9999;
+            /* Asegura que esté por encima de todo */
+        }
+
+        @keyframes animateBg {
+            100% {
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        /* Caja del formulario de login */
+        .login-box {
+            position: relative;
+            width: clamp(300px, 90vw, 450px);
+            /* Responsive width: min 300px, max 90vw, capped at 450px */
+            height: auto;
+            /* Altura automática */
+            background: transparent;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, .5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            /* Sombra más pronunciada */
+            flex-direction: column;
+            /* Apila elementos verticalmente */
+        }
+
+        .login-box h2 {
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            /* Responsive font size */
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        /* Caja de entrada de texto */
+        .input-box {
+            position: relative;
+            width: 100%;
+            height: 50px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #fff;
+        }
+
+        .input-box label {
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            transform: translateY(-50%);
+            font-size: 1.1em;
+            color: #fff;
+            pointer-events: none;
+            transition: .5s;
+        }
+
+        .input-box input:focus~label,
+        .input-box input:valid~label {
+            top: -5px;
+            font-size: 0.9em;
+            color: #fff;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.1em;
+            color: #fff;
+            padding: 0 35px 0 5px;
+        }
+
+        .input-box .icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            color: #fff;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+        }
+
+        /* Botón de login */
+        .wrapper button {
+            width: 100%;
+            height: 45px;
+            background-color: #fff;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1.1em;
+            color: #000;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .wrapper button:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        /* Enlace de registro/olvidaste contraseña */
+        .register-link {
+            font-size: .9em;
+            color: #fff;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .register-link p a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link p a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Tus estilos originales que no deben ser afectados --- */
+
+        /* OCULTA EL CONTENEDOR DE LOGIN ANTIGUO */
+        #loginScreen.login-container {
+            display: none;
+        }
+
+        /* Clases de utilidad y componentes (glass-card, nav-item, buttons, etc.) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-out;
+            /* Animación para cards */
+        }
+
+        .nav-item {
+            margin: 0 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-modern {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-modern:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover:before {
+            left: 100%;
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--accent-color), #2563eb);
+            color: white;
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-danger-modern {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            /* Asegurar tamaño de fuente consistente */
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+            background: white;
+        }
+
+        .table-container {
+            border-radius: 12px;
+            overflow-x: auto;
+            /* Makes table horizontally scrollable on small screens */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-modern {
+            margin: 0;
+            background: white;
+            min-width: 700px;
+            /* Ensures table doesn't shrink too much on smaller screens */
+            width: 100%;
+            /* Important for horizontal scrolling */
+        }
+
+        .table-modern thead th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            padding: 16px;
+            border: none;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table-modern tbody td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            font-size: 0.9rem;
+            /* Slightly smaller for compactness */
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+            /* No border for the last row */
+        }
+
+        .table-modern tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        /* Animation for table rows loading */
+        .table-row-fade-in {
+            opacity: 0;
+            animation: fadeInRow 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInRow {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge-custom {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .badge-primary {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Sidebar y Main Content */
+        .sidebar {
+            background: var(--primary-color);
+            color: white;
+            height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            width: 250px;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            /* Scrollable sidebar if content overflows */
+        }
+
+        .sidebar-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-item i {
+            margin-right: 10px;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--accent-color);
+        }
+
+        .sidebar-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-left-color: var(--accent-color);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            flex-grow: 1;
+            /* Allows main content to take available space */
+        }
+
+        .header-bar {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            /* Allows items to wrap on smaller screens */
+        }
+
+        .header-bar h4 {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            /* Responsive font size */
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            /* Animación para secciones */
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid var(--accent-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--accent-color);
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        /* full-screen-loading-overlay.css (o en tu archivo CSS principal) */
+        .full-screen-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Negro con 60% de opacidad */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            /* Asegura que esté por encima de todos los demás elementos */
+            visibility: hidden;
+            /* Oculto por defecto */
+            opacity: 0;
+            /* Oculto por defecto */
+            transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
+            /* Retraso para visibilidad en fade-out */
+        }
+
+        .full-screen-loading-overlay.show {
+            visibility: visible;
+            opacity: 1;
+            transition-delay: 0s;
+            /* No delay on fade-in */
+        }
+
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            /* Color del icono y texto */
+        }
+
+        .spinner-container i {
+            margin-bottom: 15px;
+            /* Espacio entre spinner y texto */
+        }
+
+        .loading-text {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* Animation for form submission */
+        .form-submission-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #fff;
+            /* White spinner for dark buttons */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 0.8s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        /* Estilos específicos para la sección de Información */
+        .info-content-wrapper {
+            max-width: 800px;
+            /* Limitar ancho para legibilidad */
+            margin: 0 auto;
+            /* Centrar el contenido */
+            padding: 15px;
+            background: linear-gradient(145deg, rgba(240, 248, 255, 0.7), rgba(255, 255, 255, 0.9));
+            /* Fondo sutil degradado */
+            border-radius: 12px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+            /* Sombra interna sutil */
+            border: 1px solid rgba(220, 220, 220, 0.5);
+        }
+
+        .info-content-wrapper ul {
+            list-style: none;
+            /* Quitar viñetas predeterminadas */
+            padding-left: 0;
+        }
+
+        .info-content-wrapper ul li {
+            text-align: left;
+            /* Alinear texto de la lista a la izquierda */
+            color: var(--primary-color);
+        }
+
+        .btn-modern.loading .form-submission-spinner {
+            display: inline-block;
+        }
+
+        .btn-modern.loading span {
+            visibility: hidden;
+            /* Hide text while loading */
+        }
+
+
+        /* Estilos de fuente adicionales que tenías */
+        .form-label,
+        .mb-0,
+        .sidebar,
+        .mb-4 {
+            font-weight: bold;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Media Queries para Sidebar y Mobile Button */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 220px;
+                /* Slightly narrower sidebar on mobile */
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+                /* Shadow when open */
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-bar {
+                padding: 10px 15px;
+                flex-direction: row;
+                /* Keep elements in a row */
+                justify-content: space-between;
+                /* Space them out */
+                align-items: center;
+                /* Center vertically */
+            }
+
+            .header-bar>div:first-child {
+                width: auto;
+                /* Adjust width */
+                margin-bottom: 0;
+                /* Remove bottom margin */
+            }
+
+            .header-bar>div:last-child {
+                width: auto;
+                /* Adjust width */
+                text-align: right;
+            }
+
+            /* NEW: Styles for the mobile section dropdown */
+            .mobile-section-dropdown {
+                display: block !important;
+                /* Force display on small screens */
+                flex-grow: 1;
+                /* Allow it to take available space */
+                margin-left: 10px;
+                /* Space from menu button */
+            }
+
+            .mobile-section-dropdown .btn {
+                width: 100%;
+                text-align: left;
+                background-color: transparent;
+                border: 1px solid var(--border-color);
+                color: var(--primary-color);
+            }
+
+            .mobile-section-dropdown .dropdown-menu {
+                width: 100%;
+            }
+
+            .header-bar h4 {
+                display: none;
+                /* Hide original title when dropdown is active */
+            }
+
+
+            .stats-card {
+                padding: 20px;
+            }
+
+            .stats-card h6 {
+                font-size: 0.9rem;
+            }
+
+            .stats-card h3 {
+                font-size: 1.5rem;
+            }
+
+            /* Adjust chart container on small screens */
+            #categoryChart,
+            #areaChart,
+            #stockMovementChart {
+                height: 280px;
+                /* Fixed height for charts on small screens, slightly larger */
+            }
+        }
+
+        /* Sobrescribe las reglas responsivas para la tabla de activos */
+        @media (max-width: 480px) {
+
+            /* Asegura que la cabecera de la tabla siempre sea visible */
+            #assetsTable thead {
+                display: table-header-group !important;
+                /* Fuerza la visualización como cabecera de tabla */
+            }
+
+            /* Restaura el comportamiento normal de la tabla, cuerpo, filas y celdas */
+            #assetsTable,
+            #assetsTable tbody,
+            #assetsTable tr,
+            #assetsTable td {
+                display: table !important;
+                /* O table-row, table-cell según el elemento */
+                width: auto !important;
+                /* Restaura el ancho automático */
+            }
+
+            #assetsTable tr {
+                margin-bottom: 0 !important;
+                /* Elimina el margen inferior */
+                border: none !important;
+                /* Elimina el borde de la tarjeta */
+                border-radius: 0 !important;
+                /* Elimina el radio del borde */
+                overflow: visible !important;
+                /* Restaura el overflow */
+                box-shadow: none !important;
+                /* Elimina la sombra de la tarjeta */
+            }
+
+            #assetsTable td {
+                text-align: left !important;
+                /* Restaura la alineación de texto a la izquierda */
+                padding-left: 10px !important;
+                /* Ajusta el padding a un valor normal (ejemplo) */
+                position: static !important;
+                /* Elimina el posicionamiento relativo */
+                border-bottom: 1px solid #dee2e6 !important;
+                /* Reestablece el borde inferior de celda (ajusta el color si es necesario) */
+            }
+
+            /* Oculta completamente las etiquetas data-label que se muestran en móvil */
+            #assetsTable td:before {
+                content: none !important;
+            }
+        }
+
+        /* Si tu tabla #assetsTable tiene la clase .table-modern, también puedes ser más específico */
+        @media (max-width: 480px) {
+            #assetsTable.table-modern thead {
+                display: table-header-group !important;
+            }
+
+            #assetsTable.table-modern,
+            #assetsTable.table-modern tbody,
+            #assetsTable.table-modern tr,
+            #assetsTable.table-modern td {
+                display: table !important;
+                width: auto !important;
+            }
+
+            #assetsTable.table-modern tr {
+                margin-bottom: 0 !important;
+                border: none !important;
+                border-radius: 0 !important;
+                overflow: visible !important;
+                box-shadow: none !important;
+            }
+
+            #assetsTable.table-modern td {
+                text-align: left !important;
+                padding-left: 10px !important;
+                position: static !important;
+                border-bottom: 1px solid #dee2e6 !important;
+            }
+
+            #assetsTable.table-modern td:before {
+                content: none !important;
+            }
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: #2563eb;
+        }
+
+        /* Modal styling */
+        .modal-content {
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding: 20px 25px 10px;
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .modal-body {
+            padding: 10px 25px 20px;
+            color: var(--secondary-color);
+        }
+
+        .modal-footer {
+            border-top: none;
+            padding: 10px 25px 20px;
+        }
+
+        .btn-close {
+            background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+            border: 0;
+            border-radius: 0.375rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loginScreen" class="wrapper">
+        <div class="login-box">
+            <form id="loginForm" action="">
+                <h2>AuraSys</h2>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fas fa-user"></i>
+                    </span>
+                    <input type="text" id="username" required>
+                    <label>Usuario</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Contraseña</label>
+                </div>
+
+                <button type="submit">Login</button>
+
+                <div class="register-link">
+                    <p>¿Olvidaste tu contraseña? <a
+                            href="https://wa.me/573133118664?text=JOEL%20SE%20ME%20OLVIDO%20LA%20CONTRASEÑA%20AYUDAME"
+                            target="_blank">Click Aquí</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;" class="d-flex flex-column flex-md-row min-vh-100">
+        <div class="sidebar" id="sidebar">
+            <div class="text-center p-3 border-bottom border-secondary mb-3">
+                <i class="fas fa-building fa-2x mb-2"></i>
+                <h5>Gestión de Activos</h5>
+                <small id="userDisplay" class="text-light"></small>
+            </div>
+            <div class="mt-3 flex-grow-1 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="sidebar-item active" data-section="informacion">
+                        <i class="fa fa-info-circle"> </i> Informacion
+                    </div>
+                    <div class="sidebar-item" data-section="dashboard">
+                        <i class="fa fa-tachometer"> </i> Dashboard
+                    </div>
+                    <div class="sidebar-item" data-section="register">
+                        <i class="fas fa-plus-circle"></i> Registrar Activos
+                    </div>
+                    <div class="sidebar-item" data-section="exit">
+                        <i class="fas fa-minus-circle"></i> Registrar Salidas
+                    </div>
+                    <div class="sidebar-item" data-section="view">
+                        <i class="fas fa-table"></i> Ver Activos
+                    </div>
+                    <div class="sidebar-item" data-section="reports">
+                        <i class="fas fa-chart-bar"></i> Reportes
+                    </div>
+                </div>
+                <div class="sidebar-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content flex-grow-1">
+            <div class="header-bar">
+                <div class="d-flex align-items-center">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h4 class="mb-0" id="sectionTitle">Informacion</h4>
+                    <div class="dropdown mobile-section-dropdown d-none d-md-none">
+                        <button class="btn dropdown-toggle" type="button" id="mobileSectionDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span id="currentMobileSectionTitle">Informacion</span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="mobileSectionDropdown"
+                            id="mobileSectionDropdownMenu">
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-2 mt-md-0">
+                    <span class="text-muted">Bienvenido, </span>
+                    <strong id="headerUser"></strong>
+                </div>
+            </div>
+
+            <div id="informacion" class="content-section active">
+                <div class="glass-card p-4 text-center">
+                    <h5 class="mb-4 text-primary fw-bold">Acerca de AuraSys</h5>
+                    <div class="info-content-wrapper mb-4">
+                        <p class="mb-3 text-secondary">
+                            <strong>Propósito del Sistema:</strong> AuraSys está diseñado para la gestión eficiente y el
+                            control de inventario de activos dentro de una organización. Permite registrar entradas,
+                            salidas y mantener un seguimiento detallado del stock de mobiliario, tecnología,
+                            electrodomésticos y otros activos.
+                        </p>
+                        <p class="mb-3 text-secondary">
+                            <strong>Objetivo Principal:</strong> Nuestro objetivo es simplificar la administración de
+                            activos, minimizar pérdidas, optimizar el uso de recursos y proporcionar reportes claros
+                            para una toma de decisiones informada. Con AuraSys, obtendrá una visión clara del estado de
+                            sus activos en tiempo real.
+                        </p>
+                        <p class="mb-4 text-secondary">
+                            <strong>Características Clave:</strong>
+                        </p>
+                        <ul class="text-start mx-auto" style="max-width: 600px;">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Registro intuitivo de
+                                nuevos activos con categorías y áreas definidas.</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Gestión de salidas con
+                                validación de stock disponible.</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Visualización
+                                detallada del inventario actual y su estado (disponible/agotado).</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>Reportes gráficos y
+                                filtrables por fechas, categorías y áreas para un análisis profundo.</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Interfaz responsiva para acceso
+                                desde cualquier dispositivo (móvil, tablet, PC).</li>
+                        </ul>
+                        <p class="mt-4 text-muted fst-italic">
+                            Este sistema fue desarrollado para proporcionar una herramienta robusta y fácil de usar para
+                            el control de sus activos, asegurando la trazabilidad y la eficiencia operativa.
+                        </p>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 flex-wrap mt-4 pt-3 border-top"> <button
+                            class="btn btn-danger-modern btn-modern" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                        </button>
+                        <button class="btn btn-primary-modern btn-modern" onclick="logout()">
+                            <i class="fas fa-home me-2"></i>Ir a Dashboard
+                        </button>
+                    </div>
+
+                    <p class="text-muted mt-4 mb-0 small">&copy; <span id="currentYear"></span> Joel Pineda. Todos los
+                        derechos reservados.</p>
+                </div>
+            </div>
+
+
+            <div id="dashboard" class="content-section">
+                <div class="row mb-4">
+                    <div class="col-xl-3 col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Total Activos</h6>
+                                    <h3 class="mb-0" id="totalAssets">0</h3>
+                                </div>
+                                <i class="fas fa-boxes fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Ingresos</h6>
+                                    <h3 class="mb-0 text-success" id="totalIncome">0</h3>
+                                </div>
+                                <i class="fas fa-arrow-up fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Salidas</h6>
+                                    <h3 class="mb-0 text-danger" id="totalExits">0</h3>
+                                </div>
+                                <i class="fas fa-arrow-down fa-2x text-danger"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6 mb-3">
+                        <div class="stats-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="text-muted mb-1">Stock Activos</h6>
+                                    <h3 class="mb-0 text-info" id="currentStock">0</h3>
+                                </div>
+                                <i class="fas fa-warehouse fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-4">
+                    <h5 class="mb-3">Resumen de Actividad</h5>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h6>Últimos Registros</h6>
+                            <div id="recentActivity" class="mt-3">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6>Categorías Principales</h6>
+                            <div id="topCategories" class="mt-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="register" class="content-section">
+                <div class="glass-card p-4">
+                    <h5 class="mb-4">Registrar Nuevo Activo</h5>
+                    <form id="assetForm">
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Categoría</label>
+                                <select class="form-control" id="category" required>
+                                    <option value="">Seleccionar categoría</option>
+                                    <option value="Electrodoméstico">Electrodoméstico</option>
+                                    <option value="Mobiliario">Mobiliario</option>
+                                    <option value="Equipo de Oficina">Equipo de Oficina</option>
+                                    <option value="Herramientas">Herramientas</option>
+                                    <option value="Tecnología">Tecnología</option>
+                                    <option value="Vehículos">Vehículos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Área</label>
+                                <select class="form-control" id="area" required>
+                                    <option value="">Seleccionar área</option>
+                                    <option value="Cocina">Cocina</option>
+                                    <option value="Administración">Administración</option>
+                                    <option value="Salones">Salones</option>
+                                    <option value="Iglesia">Iglesia</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tipo</label>
+                                <select class="form-control" id="type" required>
+                                    <option value="">Seleccionar tipo</option>
+                                    <option value="Metal">Metal</option>
+                                    <option value="Vidrio">Vidrio</option>
+                                    <option value="Madera">Madera</option>
+                                    <option value="Plástico">Plástico</option>
+                                    <option value="Electrónico">Electrónico</option>
+                                    <option value="Textil">Textil</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cantidad Total</label>
+                                <input type="number" class="form-control" id="quantity" min="1" required>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Descripción</label>
+                                <textarea class="form-control" id="description" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success-modern btn-modern" id="registerAssetBtn">
+                            <span><i class="fas fa-save me-2"></i>Registrar Activo</span>
+                            <div class="form-submission-spinner"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="exit" class="content-section">
+                <div class="glass-card p-4">
+                    <h5 class="mb-4">Registrar Salida de Activo</h5>
+                    <form id="exitForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control" id="exitDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Activo</label>
+                                <select class="form-control" id="assetSelect" required>
+                                    <option value="">Seleccionar activo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cantidad a Salir</label>
+                                <input type="number" class="form-control" id="exitQuantity" min="1" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Stock Disponible</label>
+                                <input type="text" class="form-control" id="availableStock" readonly>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Motivo de Salida</label>
+                                <textarea class="form-control" id="exitReason" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-danger-modern btn-modern" id="registerExitBtn">
+                            <span><i class="fas fa-minus-circle me-2"></i>Registrar Salida</span>
+                            <div class="form-submission-spinner"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view" class="content-section">
+                <div class="glass-card p-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+                        <h5 class="mb-2 mb-md-0">Lista de Activos</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-primary-modern btn-modern" onclick="refreshData()">
+                                <i class="fas fa-sync-alt me-2"></i>Actualizar
+                            </button>
+                            <button class="btn btn-success-modern btn-modern" onclick="exportToExcel()">
+                                <i class="fas fa-file-excel me-2"></i>Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="loading" id="tableLoading">
+                        <div class="spinner"></div>
+                        <p>Cargando datos...</p>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table table-modern">
+                            <thead>
+                                <tr>
+                                    <th>Categoría</th>
+                                    <th>Área</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Ingresado</th>
+                                    <th>Salidas</th>
+                                    <th>Stock Final</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assetsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reports" class="content-section">
+                <div class="glass-card p-4">
+                    <h5 class="mb-4">Reportes y Análisis</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="reportStartDate">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="reportEndDate">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Filtrar por Categoría</label>
+                            <select class="form-control" id="reportCategoryFilter">
+                                <option value="">Todas</option>
+                                <option value="Electrodoméstico">Electrodoméstico</option>
+                                <option value="Mobiliario">Mobiliario</option>
+                                <option value="Equipo de Oficina">Equipo de Oficina</option>
+                                <option value="Herramientas">Herramientas</option>
+                                <option value="Tecnología">Tecnología</option>
+                                <option value="Vehículos">Vehículos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Filtrar por Área</label>
+                            <select class="form-control" id="reportAreaFilter">
+                                <option value="">Todas</option>
+                                <option value="Cocina">Cocina</option>
+                                <option value="Administración">Administración</option>
+                                <option value="Salones">Salones</option>
+                                <option value="Iglesia">Iglesia</option>
+                            </select>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button class="btn btn-primary-modern btn-modern" onclick="generateReports()">
+                                <i class="fas fa-chart-line me-2"></i>Generar Reportes
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h6>Activos por Categoría</h6>
+                            <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <h6>Movimientos de Stock (Entradas vs Salidas)</h6>
+                            <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                <canvas id="stockMovementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6>Activos por Área</h6>
+                            <div class="chart-container" style="position: relative; height:300px; width:100%">
+                                <canvas id="areaChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="fullScreenLoadingOverlay" class="full-screen-loading-overlay">
+        <div class="spinner-container">
+            <i class="fas fa-spinner fa-spin fa-4x"></i>
+            <p class="loading-text">Cargando...</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="/modulos/animaciones.js"></script>
+    <script>
+        // Configuration
+        const CONFIG = {
+            APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzOqemfEhkA1RxniZJWZlb3nVjiF7SkqmzLq5wbC0wZulS4dlG7zLyjW0AzcgDeSRj5/exec',
+            USERS: {
+                'asegurador': { password: 'asegurador', role: 'administrator', name: 'Administrador' },
+                'Rosana': { password: 'rosana3312', role: 'administrator', name: 'Administrador' },
+                'Miguel': { password: 'miguel0106', role: 'readonly', name: 'Visualizacion' },
+                '0678': { password: '0678', role: 'readonly', name: 'Visualizacion' },
+                'operador': { password: 'operador', role: 'operator', name: 'Operador' }
+            }
+        };
+
+        // Global variables
+        let currentUser = null;
+        let assetsData = [];
+        let exitsData = [];
+        let categoryChartInstance = null;
+        let areaChartInstance = null;
+        let stockMovementChartInstance = null;
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeApp();
+            document.getElementById('currentYear').textContent = new Date().getFullYear(); // NEW: Establece el año actual
+
+        });
+
+        function initializeApp() {
+            // Set current date for exit form
+            document.getElementById('exitDate').value = new Date().toISOString().split('T')[0];
+
+            // Setup event listeners
+            setupEventListeners();
+
+            // Check if user is already logged in
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            }
+
+            // Populate mobile dropdown initially
+            populateMobileDropdown();
+        }
+
+        function setupEventListeners() {
+            // Login form
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+            // Asset registration form
+            document.getElementById('assetForm').addEventListener('submit', handleAssetRegistration);
+
+            // Exit registration form
+            document.getElementById('exitForm').addEventListener('submit', handleExitRegistration);
+
+            // Sidebar navigation
+            document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
+                item.addEventListener('click', function () {
+                    const section = this.getAttribute('data-section');
+                    showSection(section);
+                });
+            });
+
+            // Asset selection change
+            document.getElementById('assetSelect').addEventListener('change', updateAvailableStock);
+
+            // Report filters change
+            // Estas llamadas ya están en generateReports(), que ya llama a loadData() en el HTML,
+            // pero si deseas un spinner EN CADA CAMBIO de filtro, descomenta y ajusta el showFullScreenLoading
+            document.getElementById('reportStartDate').addEventListener('change', generateReports);
+            document.getElementById('reportEndDate').addEventListener('change', generateReports);
+            document.getElementById('reportCategoryFilter').addEventListener('change', generateReports);
+            document.getElementById('reportAreaFilter').addEventListener('change', generateReports);
+
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (CONFIG.USERS[username] && CONFIG.USERS[username].password === password) {
+                currentUser = {
+                    username: username,
+                    ...CONFIG.USERS[username]
+                };
+
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMainApp();
+            } else {
+                showMessageModal('Error de inicio de sesión', 'Usuario o contraseña incorrectos.');
+            }
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'flex'; // Use flex for main app layout
+
+            // Display user info
+            document.getElementById('userDisplay').textContent = currentUser.name;
+            document.getElementById('headerUser').textContent = currentUser.username;
+
+            // Setup user permissions
+            setupUserPermissions();
+
+            // Load initial data from Apps Script
+            // showFullScreenLoading(true); // Ya se hace en loadData
+            loadData();
+
+            // Set initial section title for mobile dropdown
+            const initialSection = document.querySelector('.sidebar-item.active').getAttribute('data-section');
+            const titles = {
+                'informacion': 'Informacion',
+                'dashboard': 'Dashboard',
+                'register': 'Registrar Activos',
+                'exit': 'Registrar Salidas',
+                'view': 'Ver Activos',
+                'reports': 'Reportes'
+            };
+            document.getElementById('currentMobileSectionTitle').textContent = titles[initialSection];
+        }
+
+        function setupUserPermissions() {
+            const registerSection = document.querySelector('.sidebar-item[data-section="register"]');
+            const exitSection = document.querySelector('.sidebar-item[data-section="exit"]');
+
+            if (currentUser.role === 'readonly') {
+                registerSection.style.display = 'none';
+                exitSection.style.display = 'none';
+            } else {
+                registerSection.style.display = 'flex'; // Ensure visibility if role changes
+                exitSection.style.display = 'flex';
+            }
+            populateMobileDropdown(); // Update dropdown items based on permissions
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionName).classList.add('active');
+
+            // Update sidebar active state
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+
+            // Update section title for desktop and mobile dropdown
+            const titles = {
+                'informacion': 'Informacion',
+                'dashboard': 'Dashboard',
+                'register': 'Registrar Activos',
+                'exit': 'Registrar Salidas',
+                'view': 'Ver Activos',
+                'reports': 'Reportes'
+            };
+            document.getElementById('sectionTitle').textContent = titles[sectionName];
+            document.getElementById('currentMobileSectionTitle').textContent = titles[sectionName];
+
+            // Load section-specific data
+            if (sectionName === 'view') {
+                loadAssetsTable(); // Esto ya usa showLoading(true/false) para la tabla
+            } else if (sectionName === 'exit') {
+                loadAssetOptions();
+            } else if (sectionName === 'dashboard') {
+                updateDashboard();
+            } else if (sectionName === 'reports') {
+                // generateReports() se llamará al cargar datos, que ya usa showFullScreenLoading
+                generateReports(); // Ensure reports are generated when navigating to section
+            }
+
+            // Close sidebar on mobile after selection
+            if (window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+        }
+
+        async function handleAssetRegistration(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('registerAssetBtn');
+            // Ya tienes estas líneas, que son para un spinner dentro del botón.
+            // Para el spinner de pantalla completa, usaremos la nueva función.
+            // submitBtn.classList.add('loading');
+            // submitBtn.disabled = true;
+
+            showFullScreenLoading(true); // Mostrar el spinner de pantalla completa
+
+            const assetData = {
+                action: 'addAsset',
+                category: document.getElementById('category').value,
+                area: document.getElementById('area').value,
+                type: document.getElementById('type').value,
+                description: document.getElementById('description').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                date: new Date().toISOString(),
+                user: currentUser.username
+            };
+
+            try {
+                const result = await sendToGoogleSheets(assetData);
+                if (result.success) {
+                    showMessageModal('Éxito', 'Activo registrado exitosamente!', 'success');
+                    document.getElementById('assetForm').reset();
+                    await loadData(); // Reload data after successful registration
+                    showSection('view'); // Navigate to view section to show new asset
+                } else {
+                    showMessageModal('Error', 'Error al registrar activo: ' + result.message, 'danger');
+                }
+            } catch (error) {
+                showMessageModal('Error de comunicación', 'Error de comunicación al registrar activo: ' + error.message, 'danger');
+                console.error('Error al registrar activo:', error);
+            } finally {
+                // submitBtn.classList.remove('loading'); // Quitar el spinner del botón
+                // submitBtn.disabled = false; // Habilitar el botón
+                showFullScreenLoading(false); // Ocultar el spinner de pantalla completa, siempre
+            }
+        }
+
+        async function handleExitRegistration(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('registerExitBtn');
+            showFullScreenLoading(true); // Mostrar el spinner de pantalla completa
+
+            const assetValue = document.getElementById('assetSelect').value;
+            const [category, description] = assetValue.split('|||');
+
+            const selectedAsset = assetsData.find(asset =>
+                normalizeString(asset.category) === normalizeString(category) &&
+                normalizeString(asset.description) === normalizeString(description)
+            );
+
+            if (!selectedAsset) {
+                showMessageModal('Error de validación', 'Activo no encontrado o no seleccionable.', 'warning');
+                showFullScreenLoading(false);
+                return;
+            }
+
+            const exitQuantity = parseInt(document.getElementById('exitQuantity').value);
+            const currentStock = calculateCurrentStock(selectedAsset);
+
+            if (exitQuantity > currentStock) {
+                showMessageModal('Stock Insuficiente', `Stock insuficiente. Stock disponible: ${currentStock}`, 'warning');
+                showFullScreenLoading(false);
+                return;
+            }
+
+            const exitData = {
+                action: 'addExit',
+                date: document.getElementById('exitDate').value,
+                asset: `${selectedAsset.category} - ${selectedAsset.description}`,
+                quantity: exitQuantity,
+                reason: document.getElementById('exitReason').value,
+                user: currentUser.username
+            };
+
+            try {
+                const result = await sendToGoogleSheets(exitData);
+                if (result.success) {
+                    showMessageModal('Éxito', 'Salida registrada exitosamente!', 'success');
+                    document.getElementById('exitForm').reset();
+                    document.getElementById('exitDate').value = new Date().toISOString().split('T')[0];
+                    await loadData(); // Recargar los datos
+                    showSection('view'); // Ir a la sección de visualización
+                } else {
+                    showMessageModal('Error', 'Error al registrar salida: ' + result.message, 'danger');
+                }
+            } catch (error) {
+                showMessageModal('Error de comunicación', 'Error de comunicación al registrar salida: ' + error.message, 'danger');
+                console.error('Error al registrar salida:', error);
+            } finally {
+                showFullScreenLoading(false);
+            }
+        }
+
+
+        function calculateCurrentStock(asset) {
+            if (!asset || !asset.category || !asset.description) {
+                console.warn("Activo inválido para calcular stock:", asset);
+                return 0;
+            }
+            const assetIdentifier = `${asset.category} - ${asset.description}`;
+            const exits = exitsData.filter(exit =>
+                exit.asset === assetIdentifier
+            );
+            const totalExits = exits.reduce((sum, exit) => sum + (exit.quantity || 0), 0);
+            return (asset.quantity || 0) - totalExits;
+        }
+
+        function loadAssetOptions() {
+            const select = document.getElementById('assetSelect');
+            select.innerHTML = '<option value="">Seleccionar activo</option>';
+
+            // Ordenar alfabéticamente
+            const sortedAssets = [...assetsData].sort((a, b) => {
+                const descA = `${a.category} - ${a.description}`.toLowerCase();
+                const descB = `${b.category} - ${b.description}`.toLowerCase();
+                return descA.localeCompare(descB);
+            });
+
+            sortedAssets.forEach(asset => {
+                const currentStock = calculateCurrentStock(asset);
+                if (currentStock > 0) {
+                    const option = document.createElement('option');
+                    option.value = `${asset.category}|||${asset.description}`;
+                    option.textContent = `${asset.category} - ${asset.description} (Stock: ${currentStock})`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+
+        function populateAssetSelect() {
+            const assetSelect = document.getElementById('assetSelect');
+            assetSelect.innerHTML = '<option value="">Seleccionar activo</option>'; // Limpiar opciones previas
+
+            assetsData.forEach(asset => {
+                const option = document.createElement('option');
+                // Normalizar la categoría y descripción aquí
+                const normalizedCategory = normalizeString(asset.category);
+                const normalizedDescription = normalizeString(asset.description);
+
+                // Asegúrate de que el valor coincida con el formato esperado por updateAvailableStock
+                option.value = `${normalizedCategory} - ${normalizedDescription} (Stock: ${calculateCurrentStock(asset)})`;
+                option.textContent = `${normalizedCategory} - ${normalizedDescription} (Stock: ${calculateCurrentStock(asset)})`;
+                assetSelect.appendChild(option);
+            });
+            // Añadir el event listener aquí después de poblar, o asegurarse de que se añade una vez
+            // Esto asume que el event listener no se está duplicando cada vez que se llama a populateAssetSelect
+            if (!assetSelect.hasAttribute('data-listener-added')) {
+                assetSelect.addEventListener('change', updateAvailableStock);
+                assetSelect.setAttribute('data-listener-added', 'true');
+            }
+        }
+
+        function updateAvailableStock() {
+            const selectedValue = document.getElementById('assetSelect').value;
+            const stockField = document.getElementById('availableStock');
+
+            if (selectedValue) {
+                const [category, description] = selectedValue.split('|||');
+                const asset = assetsData.find(a =>
+                    normalizeString(a.category) === normalizeString(category) &&
+                    normalizeString(a.description) === normalizeString(description)
+                );
+
+                if (asset) {
+                    const currentStock = calculateCurrentStock(asset);
+                    stockField.value = currentStock;
+                } else {
+                    stockField.value = 'N/A';
+                }
+            } else {
+                stockField.value = '';
+            }
+        }
+
+
+        // Función para normalizar cadenas: reemplaza múltiples espacios por uno solo y recorta
+        function normalizeString(str) {
+            if (typeof str !== 'string') return '';
+            return str
+                .toLowerCase()               // convierte a minúsculas
+                .replace(/["']/g, '')        // elimina comillas simples y dobles
+                .replace(/\s+/g, ' ')        // reduce espacios múltiples a uno
+                .trim();                     // elimina espacios al inicio y final
+        }
+
+
+        async function loadData() {
+            showFullScreenLoading(true); // Mostrar el spinner de pantalla completa al cargar datos
+            try {
+                const [assetsRes, exitsRes] = await Promise.all([
+                    fetch(CONFIG.APPS_SCRIPT_URL + '?action=getAssets'),
+                    fetch(CONFIG.APPS_SCRIPT_URL + '?action=getExits')
+                ]);
+
+                const assetsResult = await assetsRes.json();
+                const exitsResult = await exitsRes.json();
+
+                assetsData = assetsResult.data || [];
+                exitsData = exitsResult.data || [];
+
+                updateDashboard();
+                loadAssetsTable();
+                loadAssetOptions();
+                generateReports(); // Also update reports when data loads
+
+            } catch (error) {
+                console.error('Error de comunicación al cargar datos:', error);
+                showMessageModal('Error', 'No se pudo cargar la información: ' + error.message, 'danger');
+            } finally {
+                showFullScreenLoading(false); // Ocultar el spinner de pantalla completa, siempre
+            }
+        }
+
+        function updateDashboard() {
+            const totalAssetsCount = assetsData.length;
+            const totalIncomeQuantity = assetsData.reduce((sum, asset) => sum + (asset.quantity || 0), 0);
+            const totalExitsQuantity = exitsData.reduce((sum, exit) => sum + (exit.quantity || 0), 0);
+
+            let calculatedCurrentStock = 0;
+            assetsData.forEach(asset => {
+                calculatedCurrentStock += calculateCurrentStock(asset);
+            });
+
+            document.getElementById('totalAssets').textContent = totalAssetsCount;
+            document.getElementById('totalIncome').textContent = totalIncomeQuantity;
+            document.getElementById('totalExits').textContent = totalExitsQuantity;
+            document.getElementById('currentStock').textContent = calculatedCurrentStock;
+
+            updateRecentActivity();
+            updateTopCategories();
+        }
+
+        function updateRecentActivity() {
+            const container = document.getElementById('recentActivity');
+            // Combine assets and exits for recent activity, sort by date
+            const allActivities = [
+                ...assetsData.map(a => ({ ...a, type: 'asset', activityDate: new Date(a.date) })),
+                ...exitsData.map(e => ({ ...e, type: 'exit', activityDate: new Date(e.date) }))
+            ].sort((a, b) => b.activityDate - a.activityDate).slice(0, 5); // Show top 5 recent activities
+
+            container.innerHTML = '';
+            if (allActivities.length === 0) {
+                container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
+                return;
+            }
+            allActivities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = `border-start border-3 ps-3 mb-3 ${activity.type === 'asset' ? 'border-success' : 'border-danger'}`;
+
+                let descriptionText = '';
+                let quantityBadge = '';
+
+                if (activity.type === 'asset') {
+                    descriptionText = `${activity.description} (${activity.category})`;
+                    quantityBadge = `<span class="badge badge-success">+${activity.quantity}</span>`;
+                } else { // type === 'exit'
+                    descriptionText = `${activity.asset} (Salida)`;
+                    quantityBadge = `<span class="badge badge-danger">-${activity.quantity}</span>`;
+                }
+
+                item.innerHTML = `
+            <div class="fw-bold">${descriptionText}</div>
+            <small class="text-muted">${activity.activityDate.toLocaleDateString()}</small>
+            <div>${quantityBadge}</div>
+        `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateTopCategories() {
+            const container = document.getElementById('topCategories');
+            const categoryStats = {};
+
+            assetsData.forEach(asset => {
+                if (!categoryStats[asset.category]) {
+                    categoryStats[asset.category] = 0;
+                }
+                categoryStats[asset.category] += asset.quantity || 0;
+            });
+
+            const sortedCategories = Object.entries(categoryStats)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 5);
+
+            container.innerHTML = '';
+            if (sortedCategories.length === 0) {
+                container.innerHTML = '<p class="text-muted">No hay categorías para mostrar.</p>';
+                return;
+            }
+            sortedCategories.forEach(([category, count]) => {
+                const item = document.createElement('div');
+                item.className = 'd-flex justify-content-between align-items-center mb-2';
+                item.innerHTML = `
+            <span>${category}</span>
+            <span class="badge badge-primary">${count}</span>
+        `;
+                container.appendChild(item);
+            });
+        }
+
+        function loadAssetsTable() {
+            const tableBody = document.getElementById('assetsTableBody');
+            const loading = document.getElementById('tableLoading');
+
+            loading.style.display = 'flex'; // Use flex for loading spinner alignment
+            tableBody.innerHTML = '';
+
+            const assetSummary = {};
+
+            assetsData.forEach(asset => {
+                const category = asset.category || 'N/A';
+                const area = asset.area || 'N/A';
+                const type = asset.type || 'N/A';
+                const description = asset.description || 'N/A';
+
+                const key = `${category}-${area}-${type}-${description}`;
+                if (!assetSummary[key]) {
+                    assetSummary[key] = {
+                        category: category,
+                        area: area,
+                        type: type,
+                        description: description,
+                        totalIncome: 0,
+                        totalExits: 0
+                    };
+                }
+                assetSummary[key].totalIncome += (asset.quantity || 0);
+            });
+
+            exitsData.forEach(exit => {
+                const asset = assetsData.find(a =>
+                    `${a.category} - ${a.description}` === exit.asset
+                );
+                if (asset) {
+                    const key = `${asset.category}-${asset.area}-${asset.type}-${asset.description}`;
+                    if (assetSummary[key]) {
+                        assetSummary[key].totalExits += (exit.quantity || 0);
+                    }
+                }
+            });
+
+            const assetsToDisplay = Object.values(assetSummary);
+
+            // Sort assets for consistent display
+            assetsToDisplay.sort((a, b) => {
+                const descA = `${a.category}-${a.description}`.toLowerCase();
+                const descB = `${b.category}-${b.description}`.toLowerCase();
+                if (descA < descB) return -1;
+                if (descA > descB) return 1;
+                return 0;
+            });
+
+            if (assetsToDisplay.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">No hay activos registrados.</td></tr>`;
+            } else {
+                assetsToDisplay.forEach((asset, index) => {
+                    const finalStock = asset.totalIncome - asset.totalExits;
+                    const status = finalStock > 0 ? 'Disponible' : 'Agotado';
+                    const statusClass = finalStock > 0 ? 'success' : 'danger';
+
+                    const row = document.createElement('tr');
+                    row.classList.add('table-row-fade-in'); // Add fade-in animation class
+                    row.style.animationDelay = `${index * 0.05}s`; // Stagger animation
+
+                    // Add data-label for mobile view
+                    row.innerHTML = `
+                <td data-label="Categoría">${asset.category}</td>
+                <td data-label="Área">${asset.area}</td>
+                <td data-label="Tipo">${asset.type}</td>
+                <td data-label="Descripción">${asset.description}</td>
+                <td data-label="Ingresado"><span class="badge badge-success">${asset.totalIncome}</span></td>
+                <td data-label="Salidas"><span class="badge badge-danger">${asset.totalExits}</span></td>
+                <td data-label="Stock Final"><span class="badge badge-primary">${finalStock}</span></td>
+                <td data-label="Estado"><span class="badge badge-${statusClass}">${status}</span></td>
+            `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            loading.style.display = 'none';
+        }
+
+        async function sendToGoogleSheets(data) {
+            try {
+                const urlParams = new URLSearchParams(data).toString();
+                const response = await fetch(CONFIG.APPS_SCRIPT_URL + "?" + urlParams, {
+                    method: 'GET',
+                    mode: 'no-cors'  // No preflight
+                });
+
+                // no-cors no permite leer respuesta, asumimos éxito
+                // In a real application, you'd want a CORS-enabled endpoint
+                // to receive proper success/error messages from Apps Script.
+                return { success: true };
+
+            } catch (error) {
+                console.error('Error en sendToGoogleSheets:', error);
+                return {
+                    success: false,
+                    message: `Error al enviar datos: ${error.message || 'Error desconocido'}`
+                };
+            }
+        }
+
+        async function refreshData() {
+            await loadData();
+            showMessageModal('Información', 'Datos actualizados.', 'primary');
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            const assetsForExport = [];
+            const assetSummary = {};
+
+            assetsData.forEach(asset => {
+                const key = `${asset.category}-${asset.area}-${asset.type}-${asset.description}`;
+                if (!assetSummary[key]) {
+                    assetSummary[key] = {
+                        'Categoría': asset.category,
+                        'Área': asset.area,
+                        'Tipo': asset.type,
+                        'Descripción': asset.description,
+                        'Cantidad Ingresada': 0,
+                        'Cantidad Salida': 0,
+                        'Stock Final': 0
+                    };
+                }
+                assetSummary[key]['Cantidad Ingresada'] += (asset.quantity || 0);
+            });
+
+            exitsData.forEach(exit => {
+                const asset = assetsData.find(a =>
+                    `${a.category} - ${a.description}` === exit.asset
+                );
+                if (asset) {
+                    const key = `${asset.category}-${asset.area}-${asset.type}-${asset.description}`;
+                    if (assetSummary[key]) {
+                        assetSummary[key]['Cantidad Salida'] += (exit.quantity || 0);
+                    }
+                }
+            });
+
+            Object.values(assetSummary).forEach(asset => {
+                asset['Stock Final'] = asset['Cantidad Ingresada'] - asset['Cantidad Salida'];
+                assetsForExport.push(asset);
+            });
+
+            const ws = XLSX.utils.json_to_sheet(assetsForExport);
+            XLSX.utils.book_append_sheet(wb, ws, 'Activos');
+
+            const fileName = `Activos_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+        }
+
+        // Charting Functions
+        function generateReports() {
+            // No es necesario showFullScreenLoading(true) aquí
+            // ya que se llama después de loadData() que ya lo maneja
+            const startDateVal = document.getElementById('reportStartDate').value;
+            const endDateVal = document.getElementById('reportEndDate').value;
+            const categoryFilter = document.getElementById('reportCategoryFilter').value;
+            const areaFilter = document.getElementById('reportAreaFilter').value;
+
+            let startDate = startDateVal ? new Date(startDateVal + 'T00:00:00') : null;
+            let endDate = endDateVal ? new Date(endDateVal + 'T23:59:59') : null; // Include entire end day
+
+            const filteredAssets = assetsData.filter(asset => {
+                const assetDate = new Date(asset.date);
+                const matchesDate = (!startDate || assetDate >= startDate) && (!endDate || assetDate <= endDate);
+                const matchesCategory = !categoryFilter || asset.category === categoryFilter;
+                const matchesArea = !areaFilter || asset.area === areaFilter;
+                return matchesDate && matchesCategory && matchesArea;
+            });
+
+            const filteredExits = exitsData.filter(exit => {
+                const exitDate = new Date(exit.date);
+                const matchesDate = (!startDate || exitDate >= startDate) && (!endDate || exitDate <= endDate);
+                // For exits, we need to check the category/area of the asset being exited
+                const associatedAsset = assetsData.find(asset => `${asset.category} - ${asset.description}` === exit.asset);
+                const matchesCategory = !categoryFilter || (associatedAsset && associatedAsset.category === categoryFilter);
+                const matchesArea = !areaFilter || (associatedAsset && associatedAsset.area === areaFilter);
+                return matchesDate && matchesCategory && matchesArea;
+            });
+
+            renderCategoryChart(filteredAssets);
+            renderStockMovementChart(filteredAssets, filteredExits);
+            renderAreaChart(filteredAssets);
+        }
+
+        function renderCategoryChart(data) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+
+            if (categoryChartInstance) {
+                categoryChartInstance.destroy();
+            }
+
+            const categoryCounts = {};
+            data.forEach(asset => {
+                categoryCounts[asset.category] = (categoryCounts[asset.category] || 0) + (asset.quantity || 0);
+            });
+
+            const labels = Object.keys(categoryCounts);
+            const values = Object.values(categoryCounts);
+
+            categoryChartInstance = new Chart(ctx, {
+                type: 'pie', // Pie chart for categories
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#eab308', '#ec4899', '#84cc16'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Activos por Categoría'
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderAreaChart(data) {
+            const ctx = document.getElementById('areaChart').getContext('2d');
+
+            if (areaChartInstance) {
+                areaChartInstance.destroy();
+            }
+
+            const areaCounts = {};
+            data.forEach(asset => {
+                areaCounts[asset.area] = (areaCounts[asset.area] || 0) + (asset.quantity || 0);
+            });
+
+            const labels = Object.keys(areaCounts);
+            const values = Object.values(areaCounts);
+
+            areaChartInstance = new Chart(ctx, {
+                type: 'bar', // Bar chart for areas
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Cantidad de Activos',
+                        data: values,
+                        backgroundColor: '#3b82f6',
+                        borderColor: '#2563eb',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: 'Activos por Área'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderStockMovementChart(assets, exits) {
+            const ctx = document.getElementById('stockMovementChart').getContext('2d');
+
+            if (stockMovementChartInstance) {
+                stockMovementChartInstance.destroy();
+            }
+
+            const monthlyData = {};
+
+            assets.forEach(asset => {
+                const date = new Date(asset.date);
+                const year = date.getFullYear();
+                // Pad month to ensure consistent sorting (e.g., "2025-01" instead of "2025-1")
+                const month = `${year}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                if (!monthlyData[month]) {
+                    monthlyData[month] = { income: 0, exits: 0 };
+                }
+                monthlyData[month].income += asset.quantity || 0;
+            });
+
+            exits.forEach(exit => {
+                const date = new Date(exit.date);
+                const year = date.getFullYear();
+                const month = `${year}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+                if (!monthlyData[month]) {
+                    monthlyData[month] = { income: 0, exits: 0 };
+                }
+                monthlyData[month].exits += exit.quantity || 0;
+            });
+
+            const sortedMonths = Object.keys(monthlyData).sort();
+            const incomeData = sortedMonths.map(month => monthlyData[month].income);
+            const exitData = sortedMonths.map(month => monthlyData[month].exits);
+
+            stockMovementChartInstance = new Chart(ctx, {
+                type: 'line', // Line chart for movement over time
+                data: {
+                    labels: sortedMonths,
+                    datasets: [
+                        {
+                            label: 'Entradas',
+                            data: incomeData,
+                            borderColor: 'rgb(16, 185, 129)', // success-color
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Salidas',
+                            data: exitData,
+                            borderColor: 'rgb(239, 68, 68)', // danger-color
+                            backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Movimiento de Stock Mensual'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Mes'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Cantidad'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-open');
+        }
+
+        // Esta función ya existe, se usa para el loading de la tabla.
+        // No la modifiques, ya que se encarga del spinner local de la tabla.
+        function showLoading(show) {
+            const loadingElement = document.getElementById('tableLoading');
+            if (loadingElement) {
+                loadingElement.style.display = show ? 'flex' : 'none'; // Use flex for centering
+            }
+        }
+
+        // NUEVA FUNCIÓN: Para el spinner de pantalla completa
+        function showFullScreenLoading(show) {
+            const fullScreenLoadingOverlay = document.getElementById('fullScreenLoadingOverlay');
+            if (fullScreenLoadingOverlay) {
+                if (show) {
+                    fullScreenLoadingOverlay.classList.add('show');
+                } else {
+                    fullScreenLoadingOverlay.classList.remove('show');
+                }
+            }
+        }
+
+        function showMessageModal(title, message, type = 'primary') {
+            const modalElement = document.createElement('div');
+            modalElement.id = 'tempMessageModal';
+            modalElement.className = 'modal fade';
+            modalElement.setAttribute('tabindex', '-1');
+            modalElement.setAttribute('aria-labelledby', 'tempMessageModalLabel');
+            modalElement.setAttribute('aria-hidden', 'true');
+
+            // Determine the header color based on type
+            let headerClass = '';
+            if (type === 'success') {
+                headerClass = 'text-success';
+            } else if (type === 'danger') {
+                headerClass = 'text-danger';
+            } else if (type === 'warning') {
+                headerClass = 'text-warning';
+            }
+
+            modalElement.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title ${headerClass}" id="tempMessageModalLabel">${title}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="tempMessageModalBody">
+                    ${message}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary-modern btn-modern" data-bs-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    `;
+            document.body.appendChild(modalElement);
+
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                modalElement.remove();
+            });
+        }
+
+        function showConfirmModal(title, message, onConfirmCallback) {
+            const modalElement = document.createElement('div');
+            modalElement.id = 'tempConfirmModal';
+            modalElement.className = 'modal fade';
+            modalElement.setAttribute('tabindex', '-1');
+            modalElement.setAttribute('aria-labelledby', 'tempConfirmModalLabel');
+            modalElement.setAttribute('aria-hidden', 'true');
+            modalElement.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tempConfirmModalLabel">${title}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="tempConfirmModalBody">
+                    ${message}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary-modern btn-modern" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger-modern btn-modern" id="confirmActionButton">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    `;
+            document.body.appendChild(modalElement);
+
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+
+            document.getElementById('confirmActionButton').onclick = () => {
+                onConfirmCallback();
+                modal.hide();
+            };
+
+            modalElement.addEventListener('hidden.bs.modal', function () {
+                modalElement.remove();
+            });
+        }
+
+        function logout() {
+            showConfirmModal('Cerrar Sesión', '¿Está seguro que desea cerrar sesión?', () => {
+                sessionStorage.removeItem('currentUser');
+                currentUser = null;
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+
+                document.getElementById('loginForm').reset();
+                document.getElementById('assetForm').reset();
+                document.getElementById('exitForm').reset();
+            });
+        }
+
+        function populateMobileDropdown() {
+            const dropdownMenu = document.getElementById('mobileSectionDropdownMenu');
+            dropdownMenu.innerHTML = ''; // Clear existing items
+
+            const sidebarItems = document.querySelectorAll('.sidebar-item[data-section]');
+            const titles = {
+                'informacion': 'Informacion',
+                'dashboard': 'Dashboard',
+                'register': 'Registrar Activos',
+                'exit': 'Registrar Salidas',
+                'view': 'Ver Activos',
+                'reports': 'Reportes'
+            };
+
+            sidebarItems.forEach(item => {
+                // Only add if the item is visible (respecting permissions)
+                if (window.getComputedStyle(item).display !== 'none') {
+                    const section = item.getAttribute('data-section');
+                    const li = document.createElement('li');
+                    const a = document.createElement('a');
+                    a.className = 'dropdown-item';
+                    a.href = '#';
+                    a.textContent = titles[section];
+                    a.onclick = (e) => {
+                        e.preventDefault();
+                        showSection(section);
+                    };
+                    li.appendChild(a);
+                    dropdownMenu.appendChild(li);
+                }
+            });
+
+            // Add "Cerrar Sesión" as the last item
+            const logoutLi = document.createElement('li');
+            const logoutA = document.createElement('a');
+            logoutA.classList.add('dropdown-item');
+            logoutA.classList.add('text-danger'); // Añade esta línea para una clase de Bootstrap o crea una personalizada
+            logoutA.href = "Logout";
+            logoutA.textContent = "Cerrar Sesión";
+            logoutA.onclick = (e) => {
+                e.preventDefault();
+                logout();
+            };
+            logoutLi.appendChild(logoutA);
+            dropdownMenu.appendChild(logoutLi);
+        }
+
+
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+                document.getElementById('sidebar').classList.remove('mobile-open');
+            }
+            // Repopulate dropdown on resize to ensure permissions are respected if window resizes past breakpoint
+            populateMobileDropdown();
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function (e) {
+            const sidebar = document.getElementById('sidebar');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileDropdown = document.querySelector('.mobile-section-dropdown');
+
+            // Check if the click is outside the sidebar, the menu button, and the mobile dropdown, and if the sidebar is open
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(e.target) &&
+                !menuBtn.contains(e.target) &&
+                !mobileDropdown.contains(e.target) &&
+                sidebar.classList.contains('mobile-open')) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+    </script>
+</body>
+
+</html>

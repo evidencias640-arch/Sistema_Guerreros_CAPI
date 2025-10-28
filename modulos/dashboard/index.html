@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Participantes - Sistema Avanzado</title>
+    <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/512/5432/5432747.png" type="image/x-icon"> <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #59cca0 0%, #dd912c 50%, #d946ef 100%);
+            --glass-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            background: linear-gradient(135deg, #03d827 0%, #df3f23 20%, #e206e2 80%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-modern {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-soft);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .card-modern:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .card-modern:hover::before {
+            transform: scaleX(1);
+        }
+
+        .metric-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.5rem;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-circle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .metric-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ajustes para el número dentro del círculo */
+        .metric-content div[id] {
+            color: white;
+            line-height: 1;
+            margin-top: -5px;
+        }
+
+
+        .hero-number {
+            font-size: 5rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 32px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+        }
+
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+            }
+        }
+
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-gradient) var(--progress, 0%), rgba(255, 255, 255, 0.1) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .progress-ring::before {
+            content: '';
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .progress-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected {
+            background: #10b981;
+        }
+
+        .status-loading {
+            background: #f59e0b;
+        }
+
+        .status-error {
+            background: #ef4444;
+        }
+
+        .age-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .age-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .age-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tutor-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tutor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tutor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .tutor-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tutor-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .activities-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .activity-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-item:hover {
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .activity-date {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            background: var(--primary-gradient);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .floating-refresh {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .floating-refresh:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6);
+        }
+
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            color: white;
+            font-weight: 500;
+            z-index: 60;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideInUp 0.8s ease-out forwards;
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .header-glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="floating-shapes">
+        <div class="shape" style="width: 80px; height: 80px; left: 10%; animation-delay: -2s;"></div>
+        <div class="shape" style="width: 60px; height: 60px; left: 80%; animation-delay: -8s;"></div>
+        <div class="shape" style="width: 100px; height: 100px; left: 50%; animation-delay: -5s;"></div>
+        <div class="shape" style="width: 40px; height: 40px; left: 30%; animation-delay: -12s;"></div>
+        <div class="shape" style="width: 70px; height: 70px; left: 70%; animation-delay: -3s;"></div>
+    </div>
+
+    <div id="notifications"></div>
+
+    <header class="relative py-4 sm:py-8 mb-4 sm:mb-8">
+        <div class="container-fluid mx-auto px-4">
+            <div class="header-glass rounded-3xl p-4 sm:p-6 md:p-8">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-4 sm:gap-6">
+                    <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+                        <div
+                            class="w-12 h-12 sm:w-16 sm:h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-chart-bar text-2xl sm:text-3xl text-white"></i> </div>
+                        <div>
+                            <h1
+                                class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-tight">
+                                Dashboard Participantes</h1>
+                            <p class="text-xs sm:text-sm md:text-base text-blue-100 font-medium opacity-80 mt-1">Sistema
+                                de Gestión Avanzado</p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="flex flex-col sm:flex-row items-center justify-center sm:justify-end w-full sm:w-auto mt-4 sm:mt-0 gap-4 sm:gap-6">
+                        <div id="lastUpdate" class="text-blue-100 text-xs sm:text-sm opacity-80 whitespace-nowrap">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                            <div id="connectionStatus"
+                                class="flex items-center px-3 py-1 sm:px-4 sm:py-2 rounded-full bg-white bg-opacity-20 text-white font-medium text-xs sm:text-sm whitespace-nowrap">
+                                <div class="status-dot status-loading mr-1 sm:mr-2"></div>
+                                Inicializando...
+                            </div>
+                            <button id="refreshBtn"
+                                class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-2xl font-semibold text-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 text-xs sm:text-sm w-full sm:w-auto">
+                                <i id="refreshIcon" class="fas fa-sync-alt"></i>
+                                <span>Actualizar</span>
+                            </button>
+                           <a href="https://docs.google.com/spreadsheets/d/1-FnUbfTxkyvbp6XfZrquLG63lH0ht5u6jvx-CDPUmD0/export?format=xlsx"
+                             download="Reporte_Participantes.xlsx"
+                             class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-2xl font-semibold text-white transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 text-xs sm:text-sm w-full sm:w-auto"
+                             id="downloadExcelBtn"> <i class="fas fa-file-excel"></i> <span>Descargar Excel</span>
+                          </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container-fluid space-y-12 pb-20">
+
+        <section class="animate-slide-in" style="animation-delay: 0.1s;">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i>
+                Resumen General
+            </h2>
+
+            <div class="card-modern p-6 sm:p-8 md:p-10 text-center mb-8">
+                <div class="text-base sm:text-lg font-semibold text-gray-600 mb-2 sm:mb-4 uppercase tracking-wider">
+                    Total de Participantes
+                </div>
+                <div id="totalParticipants" class="text-6xl sm:text-7xl font-extrabold text-purple-700 mb-6 sm:mb-8">0</div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 md:gap-8 max-w-xl mx-auto">
+                    <div class="text-center">
+                        <div class="progress-ring mx-auto mb-2 sm:mb-4" style="--progress: 0%" id="boysRing">
+                            <div class="progress-content flex flex-col items-center justify-center">
+                                <i class="fas fa-male text-2xl sm:text-3xl text-blue-600 mb-1"></i>
+                                <div id="totalBoys" class="text-xl sm:text-2xl font-bold text-blue-600">0</div>
+                                <div class="text-xs sm:text-sm text-gray-500">Niños</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="progress-ring mx-auto mb-2 sm:mb-4" style="--progress: 0%" id="girlsRing">
+                            <div class="progress-content flex flex-col items-center justify-center">
+                                <i class="fas fa-female text-2xl sm:text-3xl text-pink-600 mb-1"></i>
+                                <div id="totalGirls" class="text-xl sm:text-2xl font-bold text-pink-600">0</div>
+                                <div class="text-xs sm:text-sm text-gray-500">Niñas</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <div class="progress-ring mx-auto mb-2 sm:mb-4" style="--progress: 0%" id="notBornRing">
+                            <div class="progress-content flex flex-col items-center justify-center">
+                                <i class="fas fa-baby text-2xl sm:text-3xl text-yellow-600 mb-1"></i>
+                                <div id="notBorn" class="text-xl sm:text-2xl font-bold text-yellow-600">0</div>
+                                <div class="text-xs sm:text-sm text-gray-500">Por Nacer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="animate-slide-in" style="animation-delay: 0.1s;">
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i>
+                    Educación
+                </h2>
+
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="card-modern p-6 text-center">
+                        <div class="metric-circle mx-auto mb-4"
+                            style="background: linear-gradient(135deg, #ef4444, #dc2626);">
+                            <div class="metric-content"> <i class="fas fa-times text-white text-3xl"></i>
+                                <div id="notStudying" class="text-white text-2xl font-bold hero-number-small">0</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium">Sin Estudios</div>
+                    </div>
+
+                    <div class="card-modern p-6 text-center">
+                        <div class="metric-circle mx-auto mb-4"
+                            style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                            <div class="metric-content">
+                                <i class="fas fa-book text-white text-3xl"></i>
+                                <div id="inPrimary" class="text-white text-2xl font-bold hero-number-small">0</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium">Primaria</div>
+                    </div>
+
+                    <div class="card-modern p-6 text-center">
+                        <div class="metric-circle mx-auto mb-4"
+                            style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <div class="metric-content">
+                                <i class="fas fa-user-graduate text-white text-3xl"></i>
+                                <div id="inHighSchool" class="text-white text-2xl font-bold hero-number-small">0</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium">Bachillerato</div>
+                    </div>
+
+                    <div class="card-modern p-6 text-center">
+                        <div class="metric-circle mx-auto mb-4"
+                            style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                            <div class="metric-content">
+                                <i class="fas fa-tools text-white text-3xl"></i>
+                                <div id="technical" class="text-white text-2xl font-bold hero-number-small">0</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium">Técnico</div>
+                    </div>
+
+                    <div class="card-modern p-6 text-center">
+                        <div class="metric-circle mx-auto mb-4">
+                            <div class="metric-content">
+                                <i class="fas fa-university text-white text-3xl"></i>
+                                <div id="university" class="text-white text-2xl font-bold hero-number-small">0</div>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-600 font-medium">Universidad</div>
+                    </div>
+                </div>
+            </section><br>
+
+            <section class="animate-slide-in" style="animation-delay: 0.3s;">
+                <h2 class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    Grupos por Edad
+                </h2>
+                <div id="ageGroupCards" class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4"></div>
+            </section><br>
+
+            <section class="animate-slide-in" style="animation-delay: 0.5s;">
+                <h2 class="section-title">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    Distribución por Tutoras
+                </h2>
+                <div id="tutorCards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"></div>
+            </section><br>
+
+            <section class="animate-slide-in" style="animation-delay: 0.7s;">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-week"></i>
+                    Actividades de la Semana
+                </h2>
+
+                <div class="activities-card">
+                    <div id="activitiesContent">
+                        <div id="activitiesContainer"></div>
+                        <div id="noActivitiesMessage" class="hidden text-center py-16">
+                            <div class="text-8xl mb-6 opacity-20">📅</div>
+                            <h3 class="text-2xl font-bold text-gray-600 mb-3">No hay actividades programadas</h3>
+                            <p class="text-gray-500 text-lg">¡Tiempo perfecto para planificar nuevas aventuras!</p>
+                        </div>
+                    </div>
+                </div>
+            </section><br>
+    </main>
+
+    <button id="floatingRefresh" class="floating-refresh">
+        <i class="fas fa-sync-alt text-xl"></i>
+    </button>
+
+    <script>
+        class ParticipantsDashboard {
+            constructor() {
+                this.GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz4weug7FGWiujFzaNMShwTg7Y-gNi9EEDL_ow2Vmw_lm8rAUdIIqWGbkQHLtPmsdMV/exec";
+                this.isLoading = false;
+                this.lastUpdate = null;
+                this.retryCount = 0;
+                this.maxRetries = 3;
+
+                this.initializeEventListeners();
+                this.loadData();
+                this.startAutoRefresh();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('refreshBtn').addEventListener('click', () => this.loadData(true));
+                document.getElementById('floatingRefresh').addEventListener('click', () => this.loadData(true));
+            }
+
+            startAutoRefresh() {
+                setInterval(() => {
+                    if (!this.isLoading) {
+                        this.loadData();
+                    }
+                }, 300000);
+            }
+
+            setConnectionStatus(status, message = '') {
+                const statusElement = document.getElementById('connectionStatus');
+                const statusMessages = {
+                    active: 'Conectado',
+                    inactive: 'Cargando...',
+                    error: 'Error de Conexión',
+                    server_error: 'Error del Servidor (404)'
+                };
+
+                const statusClasses = {
+                    active: 'status-connected',
+                    inactive: 'status-loading',
+                    error: 'status-error',
+                    server_error: 'status-error'
+                };
+
+                const statusDot = statusElement.querySelector('.status-dot');
+                statusDot.className = `status-dot ${statusClasses[status]}`;
+                statusElement.innerHTML = `
+                    <div class="status-dot ${statusClasses[status]}"></div>
+                    ${message || statusMessages[status]}
+                `;
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                        <span>${message}</span>
+                    </div>
+                `;
+
+                document.getElementById('notifications').appendChild(notification);
+
+                setTimeout(() => notification.classList.add('show'), 100);
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 4000);
+            }
+
+            updateLastUpdate() {
+                this.lastUpdate = new Date();
+                document.getElementById('lastUpdate').textContent =
+                    `Última actualización: ${this.lastUpdate.toLocaleTimeString()}`;
+            }
+
+            setLoadingState(loading) {
+                this.isLoading = loading;
+                const refreshBtn = document.getElementById('refreshBtn');
+                const refreshIcon = document.getElementById('refreshIcon');
+                const floatingBtn = document.getElementById('floatingRefresh');
+
+                if (loading) {
+                    refreshIcon.className = 'fas fa-spinner fa-spin';
+                    refreshBtn.disabled = true;
+                    floatingBtn.style.opacity = '0.6';
+                    this.setConnectionStatus('inactive');
+                } else {
+                    refreshIcon.className = 'fas fa-sync-alt';
+                    refreshBtn.disabled = false;
+                    floatingBtn.style.opacity = '1';
+                }
+            }
+
+            async loadData(manual = false) {
+                if (this.isLoading) return;
+
+                this.setLoadingState(true);
+
+                try {
+                    const [participantsResponse, activitiesResponse] = await Promise.all([
+                        fetch(`${this.GOOGLE_APPS_SCRIPT_URL}?sheet=Participantes`),
+                        fetch(`${this.GOOGLE_APPS_SCRIPT_URL}?sheet=Actividades`)
+                    ]);
+
+                    if (participantsResponse.status === 404 || activitiesResponse.status === 404) {
+                        throw new Error('SERVER_404');
+                    }
+
+                    if (!participantsResponse.ok || !activitiesResponse.ok) {
+                        throw new Error('FETCH_ERROR');
+                    }
+
+                    const participants = await participantsResponse.json();
+                    const activities = await activitiesResponse.json();
+
+                    if (participants.error || activities.error) {
+                        throw new Error('DATA_ERROR');
+                    }
+
+                    this.processData(participants, activities);
+                    this.setConnectionStatus('active');
+                    this.updateLastUpdate();
+                    this.retryCount = 0;
+
+                    if (manual) {
+                        this.showNotification('Datos actualizados correctamente', 'success');
+                    }
+
+                } catch (error) {
+                    this.handleError(error, manual);
+                } finally {
+                    this.setLoadingState(false);
+                }
+            }
+
+            handleError(error, manual) {
+                this.retryCount++;
+
+                if (error.message === 'SERVER_404') {
+                    this.setConnectionStatus('server_error');
+                    if (manual) {
+                        this.showNotification('Error 404: Servidor no encontrado', 'error');
+                    }
+                } else if (!navigator.onLine) {
+                    this.setConnectionStatus('error', 'Sin conexión a internet');
+                    if (manual) {
+                        this.showNotification('Sin conexión a internet', 'error');
+                    }
+                } else {
+                    this.setConnectionStatus('error');
+                    if (manual) {
+                        this.showNotification('Error al cargar los datos', 'error');
+                    }
+                }
+
+                if (this.retryCount < this.maxRetries && !manual) {
+                    setTimeout(() => this.loadData(), 5000 * this.retryCount);
+                }
+            }
+
+            processData(participants, activities) {
+                this.processParticipants(participants);
+                this.processActivities(activities);
+                this.animateCounters();
+            }
+
+            processParticipants(participants) {
+                const stats = this.calculateStats(participants);
+                this.updateGeneralStats(stats);
+                this.updateAgeGroups(stats.ageGroups);
+                this.updateTutorCards(stats.tutorCounts);
+            }
+
+            calculateStats(participants) {
+                const stats = {
+                    total: participants.length,
+                    boys: 0,
+                    girls: 0,
+                    notBorn: 0,
+                    notStudying: 0,
+                    inPrimary: 0,
+                    inHighSchool: 0,
+                    technical: 0,
+                    university: 0,
+                    ageGroups: {
+                        'SUPERVIVENCIA (0-1)': 0,
+                        'CAMINADORES (1-2)': 0,
+                        'EXPLORADORES (3-5)': 0,
+                        'SEMILLAS (6-8)': 0,
+                        'VENCEDORES (9-11)': 0,
+                        'VISIONARIOS (12-14)': 0,
+                        'GENERACIÓN EX. (15-18)': 0,
+                        'JÓVENES (19+)': 0,
+                        'SIN CDPR/EDAD': 0 // Nuevo grupo para no clasificados
+                    },
+                    tutorCounts: {}
+                };
+
+                participants.forEach(participant => {
+                    this.processSex(participant, stats);
+                    this.processEducation(participant, stats);
+                    this.processAge(participant, stats);
+                    this.processTutor(participant, stats);
+                });
+
+                return stats;
+            }
+
+            processSex(participant, stats) {
+                const sex = participant.SEXO ? participant.SEXO.toUpperCase().trim() : '';
+                // No se modifica la lógica de 'notBorn' aquí directamente por 'Financiamiento'
+                // para evitar doble conteo si ya se maneja en processAge o si hay otra lógica específica.
+                // Si 'Financiamiento' también indica 'por nacer', ajusta aquí.
+                if (sex === '-' || sex === '' || !participant['FECHA NACIMIENTO']) {
+                    stats.notBorn++;
+                } else if (sex === 'FEMENINO' || sex === 'F') {
+                    stats.girls++;
+                } else if (sex === 'MASCULINO' || sex === 'M') {
+                    stats.boys++;
+                }
+            }
+
+            processEducation(participant, stats) {
+                const grado = (participant['GRADO ESCOLAR'] || '').toUpperCase().trim();
+                const tecnico = (participant.TECNICO || '').toUpperCase().trim();
+
+                if (grado.includes('UNIVERSIDAD')) {
+                    stats.university++;
+                } else if (tecnico && tecnico !== '-' && tecnico !== '') {
+                    stats.technical++;
+                } else if (grado.includes('BACHILLERATO') || grado.includes('SECUNDARIA') ||
+                    grado.includes('10') || grado.includes('11') ||
+                    grado.includes('6') || grado.includes('7') ||
+                    grado.includes('8') || grado.includes('9')) {
+                    stats.inHighSchool++;
+                } else if (grado.includes('PRIMARIA') || grado.includes('PREESCOLAR') ||
+                    grado.includes('1') || grado.includes('2') ||
+                    grado.includes('3') || grado.includes('4') ||
+                    grado.includes('5') || grado.includes('KINDER') ||
+                    grado.includes('JARDIN')) {
+                    stats.inPrimary++;
+                } else if (grado === '-' || grado === '' || grado === 'NO ESTUDIA') {
+                    stats.notStudying++;
+                } else {
+                    // Clasificación por defecto basada en la edad si el grado no es claro
+                    const age = this.calculateAge(participant['FECHA NACIMIENTO']);
+                    if (age !== null) { // Asegurarse de que la edad se pueda calcular
+                        if (age >= 18) {
+                            stats.notStudying++;
+                        } else if (age >= 12) {
+                            stats.inHighSchool++;
+                        } else if (age >= 3) {
+                            stats.inPrimary++;
+                        } else {
+                            stats.notStudying++; // Si la edad es muy baja y no encaja en primaria
+                        }
+                    } else {
+                        stats.notStudying++; // Si no hay fecha de nacimiento, se asume sin estudio por defecto
+                    }
+                }
+            }
+
+            processAge(participant, stats) {
+                const financiamiento = (participant.FINANCIAMIENTO || '').toUpperCase().trim();
+                const cdpr = (participant.CDPR || '').toUpperCase().trim(); // Leer el valor del CDPR
+
+                // PRIORIDAD 1: Financiamiento "Supervivencia"
+                if (financiamiento === 'SUPERVIVENCIA') {
+                    stats.ageGroups['SUPERVIVENCIA (0-1)']++;
+                    return; // Clasificado, salir.
+                }
+
+                // PRIORIDAD 2: Leer directamente del campo CDPR para los grupos etarios
+                // Asegúrate que los valores en tu columna CDPR coincidan con los nombres de tus grupos etarios
+                switch (cdpr) {
+                    case '0-2': // Si CDPR es '0-2', clasificar como Caminadores
+                        stats.ageGroups['CAMINADORES (1-2)']++;
+                        break;
+                    case '3-5':
+                        stats.ageGroups['EXPLORADORES (3-5)']++;
+                        break;
+                    case '6-8':
+                        stats.ageGroups['SEMILLAS (6-8)']++;
+                        break;
+                    case '9-11':
+                        stats.ageGroups['VENCEDORES (9-11)']++;
+                        break;
+                    case '12-14':
+                        stats.ageGroups['VISIONARIOS (12-14)']++;
+                        break;
+                    case '15-18':
+                        stats.ageGroups['GENERACIÓN EX. (15-18)']++;
+                        break;
+                    case '19+': // Asumo que puedes tener "19+" en CDPR para jóvenes/adultos
+                        stats.ageGroups['JÓVENES (19+)']++;
+                        break;
+                    default:
+                        // FALLBACK: Si CDPR no es reconocido, usar la edad calculada como última opción
+                        // Esto manejará los casos donde CDPR esté vacío o contenga un valor no mapeado
+                        const age = this.calculateAge(participant['FECHA NACIMIENTO']);
+                        if (age === null) {
+                            stats.ageGroups['SIN CDPR/EDAD']++; // Para quienes no tienen ni CDPR ni fecha de nacimiento
+                        } else if (age === 0 || age === 1) { // 0 o 1 año por edad (si no fue Supervivencia por Financiamiento)
+                            stats.ageGroups['SUPERVIVENCIA (0-1)']++;
+                        } else if (age === 2) { // 2 años por edad (si no fue Caminadores por CDPR)
+                            stats.ageGroups['CAMINADORES (1-2)']++;
+                        } else if (age <= 5) {
+                            stats.ageGroups['EXPLORADORES (3-5)']++;
+                        } else if (age <= 8) {
+                            stats.ageGroups['SEMILLAS (6-8)']++;
+                        } else if (age <= 11) {
+                            stats.ageGroups['VENCEDORES (9-11)']++;
+                        } else if (age <= 14) {
+                            stats.ageGroups['VISIONARIOS (12-14)']++;
+                        } else if (age <= 18) {
+                            stats.ageGroups['GENERACIÓN EX. (15-18)']++;
+                        } else {
+                            stats.ageGroups['JÓVENES (19+)']++;
+                        }
+                        break;
+                }
+            }
+
+
+            processTutor(participant, stats) {
+                const tutor = participant.TUTORA || 'Sin Tutora';
+                stats.tutorCounts[tutor] = (stats.tutorCounts[tutor] || 0) + 1;
+            }
+
+            calculateAge(birthDate) {
+                if (!birthDate || birthDate === '-' || birthDate === '') {
+                    return null;
+                }
+
+                try {
+                    const today = new Date();
+                    const birth = new Date(birthDate);
+
+                    if (isNaN(birth.getTime())) {
+                        return null;
+                    }
+
+                    let age = today.getFullYear() - birth.getFullYear();
+                    const monthDiff = today.getMonth() - birth.getMonth();
+
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                        age--;
+                    }
+
+                    return Math.max(0, age);
+                } catch (error) {
+                    return null;
+                }
+            }
+
+            updateGeneralStats(stats) {
+                document.getElementById('totalParticipants').textContent = stats.total;
+                document.getElementById('totalBoys').textContent = stats.boys;
+                document.getElementById('totalGirls').textContent = stats.girls;
+                document.getElementById('notBorn').textContent = stats.notBorn;
+                document.getElementById('notStudying').textContent = stats.notStudying;
+                document.getElementById('inPrimary').textContent = stats.inPrimary;
+                document.getElementById('inHighSchool').textContent = stats.inHighSchool;
+                document.getElementById('technical').textContent = stats.technical;
+                document.getElementById('university').textContent = stats.university;
+
+                // Actualizar anillos de progreso
+                this.updateProgressRings(stats);
+            }
+
+            updateProgressRings(stats) {
+                const total = stats.total || 1; // Evitar división por cero
+
+                const boysPercent = Math.round((stats.boys / total) * 100);
+                const girlsPercent = Math.round((stats.girls / total) * 100);
+                const notBornPercent = Math.round((stats.notBorn / total) * 100);
+
+                document.getElementById('boysRing').style.setProperty('--progress', `${boysPercent}%`);
+                document.getElementById('girlsRing').style.setProperty('--progress', `${girlsPercent}%`);
+                document.getElementById('notBornRing').style.setProperty('--progress', `${notBornPercent}%`);
+            }
+
+            updateAgeGroups(ageGroups) {
+                const container = document.getElementById('ageGroupCards');
+                container.innerHTML = '';
+
+                // Define colores e iconos de forma que se puedan mapear o rotar
+                const groupDefinitions = {
+                    'SUPERVIVENCIA (0-1)': { color: 'linear-gradient(135deg, #ff6b6b, #ee5a52)', icon: 'fa-baby' },
+                    'CAMINADORES (1-2)': { color: 'linear-gradient(135deg, #4ecdc4, #44a08d)', icon: 'fa-child' },
+                    'EXPLORADORES (3-5)': { color: 'linear-gradient(135deg, #45b7d1, #96c93d)', icon: 'fa-puzzle-piece' },
+                    'SEMILLAS (6-8)': { color: 'linear-gradient(135deg, #f9ca24, #f0932b)', icon: 'fa-seedling' },
+                    'VENCEDORES (9-11)': { color: 'linear-gradient(135deg, #eb4d4b, #c44569)', icon: 'fa-trophy' },
+                    'VISIONARIOS (12-14)': { color: 'linear-gradient(135deg, #6c5ce7, #a29bfe)', icon: 'fa-eye' },
+                    'GENERACIÓN EX. (15-18)': { color: 'linear-gradient(135deg, #fd79a8, #fdcb6e)', icon: 'fa-rocket' },
+                    'JÓVENES (19+)': { color: 'linear-gradient(135deg, #00b894, #00cec9)', icon: 'fa-star' },
+                    'SIN CDPR/EDAD': { color: 'linear-gradient(135deg, #a0aec0, #718096)', icon: 'fa-question-circle' } // Color/icono para no clasificados
+                };
+
+                // Asegurar el orden de los grupos al mostrar
+                const orderedGroups = [
+                    'SUPERVIVENCIA (0-1)',
+                    'CAMINADORES (1-2)',
+                    'EXPLORADORES (3-5)',
+                    'SEMILLAS (6-8)',
+                    'VENCEDORES (9-11)',
+                    'VISIONARIOS (12-14)',
+                    'GENERACIÓN EX. (15-18)',
+                    'JÓVENES (19+)',
+                    'SIN CDPR/EDAD' // Asegurarse de que aparezca al final
+                ];
+
+                orderedGroups.forEach(groupName => {
+                    const count = ageGroups[groupName] || 0; // Obtener el conteo o 0 si no existe
+                    const def = groupDefinitions[groupName];
+
+                    if (def) { // Solo si el grupo está definido
+                        const card = document.createElement('div');
+                        card.className = 'age-card';
+                        card.innerHTML = `
+                            <div class="age-icon" style="background: ${def.color}">
+                                <i class="fas ${def.icon}"></i>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-700 mb-1">${count}</div>
+                            <div class="text-xs text-gray-600 font-medium leading-tight">${groupName}</div>
+                        `;
+                        container.appendChild(card);
+                    }
+                });
+            }
+
+
+            updateTutorCards(tutorCounts) {
+                const container = document.getElementById('tutorCards');
+                container.innerHTML = '';
+
+                const colors = [
+                    'linear-gradient(135deg, #667eea, #764ba2)',
+                    'linear-gradient(135deg, #f093fb, #f5576c)',
+                    'linear-gradient(135deg, #4facfe, #00f2fe)',
+                    'linear-gradient(135deg, #43e97b, #38f9d7)',
+                    'linear-gradient(135deg, #fa709a, #fee140)',
+                    'linear-gradient(135deg, #a8edea, #fed6e3)',
+                    'linear-gradient(135deg, #ff9a9e, #fecfef)',
+                    'linear-gradient(135deg, #ffecd2, #fcb69f)',
+                    'linear-gradient(135deg, #ff8a80, #ea80fc)',
+                    'linear-gradient(135deg, #8fd3f4, #84fab0)'
+                ];
+
+                Object.entries(tutorCounts).forEach(([tutor, count], index) => {
+                    const card = document.createElement('div');
+                    card.className = 'tutor-card';
+
+                    const initials = tutor.split(' ').map(word => word[0]).join('').substring(0, 2).toUpperCase();
+
+                    card.innerHTML = `
+                        <div class="tutor-avatar" style="background: ${colors[index % colors.length]}">
+                            ${initials}
+                        </div>
+                        <div class="text-2xl font-bold text-gray-700 mb-1">${count}</div>
+                        <div class="text-sm text-gray-600 font-medium text-center leading-tight">${tutor}</div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            processActivities(activities) {
+                const container = document.getElementById('activitiesContainer');
+                const noActivitiesMessage = document.getElementById('noActivitiesMessage');
+
+                container.innerHTML = '';
+
+                if (!activities || activities.length === 0) {
+                    container.classList.add('hidden');
+                    noActivitiesMessage.classList.remove('hidden');
+                    return;
+                }
+
+                container.classList.remove('hidden');
+                noActivitiesMessage.classList.add('hidden');
+
+                // Filtrar y ordenar actividades de la semana
+                const today = new Date();
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - today.getDay()); // Domingo
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6); // Sábado
+
+                const weekActivities = activities.filter(activity => {
+                    const activityDate = new Date(activity.FECHA);
+                    return activityDate >= weekStart && activityDate <= weekEnd;
+                }).sort((a, b) => new Date(a.FECHA) - new Date(b.FECHA));
+
+                if (weekActivities.length === 0) {
+                    container.classList.add('hidden');
+                    noActivitiesMessage.classList.remove('hidden');
+                    return;
+                }
+
+                weekActivities.forEach(activity => {
+                    const activityDate = new Date(activity.FECHA);
+                    const day = activityDate.getDate().toString().padStart(2, '0');
+                    const month = activityDate.toLocaleDateString('es-ES', { month: 'short' }).toUpperCase();
+
+                    const activityItem = document.createElement('div');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `
+                        <div class="activity-date">
+                            <div>${day}</div>
+                            <div style="font-size: 0.7rem;">${month}</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-lg font-semibold text-gray-800 mb-1">${activity.ACTIVIDAD || 'Actividad sin nombre'}</div>
+                            <div class="text-sm text-gray-600 mb-2">${activity.DESCRIPCION || 'Sin descripción'}</div>
+                            <div class="flex items-center gap-4 text-sm text-gray-500">
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${activity.HORA || 'Hora por definir'}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${activity.LUGAR || 'Lugar por definir'}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <i class="fas fa-users"></i>
+                                    <span>${activity.RESPONSABLE || 'Sin responsable'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(activityItem);
+                });
+            }
+
+            animateCounters() {
+                const counters = document.querySelectorAll('.hero-number, .metric-circle, .progress-content > div, .age-card .text-2xl, .tutor-card .text-2xl');
+
+                counters.forEach(counter => {
+                    const target = parseInt(counter.textContent) || 0;
+                    let current = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            counter.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = Math.floor(current);
+                        }
+                    }, 20);
+                });
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => { 
+            new ParticipantsDashboard();
+        });
+
+        // Manejar cambios en el estado de conexión
+        window.addEventListener('online', () => {
+            if (window.dashboard) {
+                window.dashboard.loadData();
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            if (window.dashboard) {
+                window.dashboard.setConnectionStatus('error', 'Sin conexión a internet');
+            }
+        });
+    </script>
+</body>
+
+</html>

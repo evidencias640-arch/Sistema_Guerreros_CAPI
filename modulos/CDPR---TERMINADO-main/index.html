@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/685/685655.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Evaluación de Preguntas - CDPRS</title>
+</head>
+<style>
+:root {
+    /* Colores refinados y una paleta más cohesiva */
+    --primary-color: #1A73E8;        /* Azul principal (Google-esque) */
+    --primary-dark: #165CB3;         /* Variación oscura del primario */
+    --secondary-color: #F0F4C3;      /* Amarillo suave (secundario) */
+    --accent-color: #E64A19;         /* Naranja acento (energético) */
+    --text-primary: #263238;        /* Gris oscuro (texto principal) */
+    --text-secondary: #546E7A;      /* Gris medio (texto secundario) */
+    --bg-light: #ECEFF1;           /* Gris muy claro (fondos ligeros) */
+    --bg-dark: #37474F;            /* Gris oscuro (fondos oscuros) */
+    --ui-border: #CFD8DC;           /* Gris claro (bordes UI) */
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra media */
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra grande */
+    --transition-fast: all 0.2s ease-in-out;
+    --transition-medium: all 0.4s ease-in-out;
+    --font-family: 'Roboto', sans-serif; /* Fuente moderna y legible */
+    --border-radius: 8px;           /* Bordes redondeados sutiles */
+}
+
+/* Resets y estilos base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px; /* Base para rems */
+    scroll-behavior: smooth; /* Scroll suave */
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased; /* Mejor renderizado de fuente */
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header - Diseño Heroico */
+header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: url('hero-pattern.svg'); /* Patrón sutil de fondo */
+    background-size: cover;
+    opacity: 0.1;
+    mix-blend-mode: overlay;
+}
+
+header h1 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.05em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+header p {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 60ch;
+    margin: 0 auto;
+}
+
+/* Main - Contenido Principal */
+main {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--border-radius);
+}
+
+/* Controles - Sección Interactiva */
+.controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+    border: 1px solid var(--ui-border);
+}
+
+.controls label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-right: 1rem;
+}
+
+.controls select {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--ui-border);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: white;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    outline: none;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.controls select:hover,
+.controls select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+/* Placeholder */
+.placeholder-text {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 3rem;
+    opacity: 0.7;
+}
+
+/* Tabla - Presentación de Datos */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+th, td {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+}
+
+tr:nth-child(even) {
+    background-color: var(--bg-light);
+}
+
+tr:hover {
+    background-color: #f0f6ff; /* Ligero azul al pasar el ratón */
+    transition: var(--transition-fast);
+}
+
+/* Footer - Información Adicional */
+footer {
+    background-color: var(--bg-dark);
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    padding: 2rem;
+    margin-top: 3rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+}
+
+footer p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+footer a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Media Queries - Responsividad Avanzada */
+@media (max-width: 768px) {
+    header {
+        padding: 3rem 1.5rem;
+    }
+
+    header h1 {
+        font-size: 2.25rem;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem; /* Espacio entre elementos */
+    }
+
+    .controls label {
+        margin-right: 0;
+        text-align: left;
+    }
+
+    .controls select {
+        width: 100%;
+    }
+
+    table {
+        overflow-x: auto; /* Scroll horizontal en tablas */
+    }
+
+    th, td {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    footer {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        padding: 2rem 1rem;
+    }
+
+    header h1 {
+        font-size: 1.75rem;
+    }
+
+    .controls label,
+    .controls select {
+        font-size: 0.9rem;
+    }
+
+    /* Ocultar columnas menos importantes en tablas */
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(3), td:nth-child(3) {
+        display: none;
+    }
+}
+
+/* Animaciones y Efectos */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+body {
+    animation: fadeIn 0.5s ease-out backwards 0.2s; /* Animación sutil al cargar */
+}
+
+/* Utilidades (Clases Reutilizables) */
+.text-center { text-align: center; }
+.mt-2 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 2rem; }
+.py-1 { padding-top: 1rem; padding-bottom: 1rem; }
+.px-1 { padding-left: 1rem; padding-right: 1rem; }
+</style>
+<body>
+    <header>
+        <h1>Evaluación de Habilidades y Comportamientos - CDPRS</h1>
+        <p>Selecciona un grupo de preguntas para ver la información detallada.</p>
+    </header>
+
+    <main>
+        <div class="controls">
+            <label for="group-select">Seleccionar Grupo:</label>
+            <select id="group-select">
+                <option value="">-- Selecciona un grupo --</option>
+                <option value="group1">Grupo 1 (0-2)</option>
+                <option value="group2">Grupo 2 (3-5)</option>
+                <option value="group3">Grupo 3 (6-8)</option>
+                <option value="group4">Grupo 4 (9-11)</option>
+                <option value="group5">Grupo 5 (12-14)</option>
+                <option value="group6">Grupo 6 (15-18)</option>
+                <option value="group7">Grupo 7 (19+)</option>
+            </select>
+        </div>
+
+        <div id="questions-container" class="questions-container">
+            <p class="placeholder-text">Por favor, selecciona un grupo para ver las preguntas.</p>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Derechos de Autor Joel Pineda</p>
+    </footer>
+
+    <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+    const groupSelect = document.getElementById('group-select');
+    const questionsContainer = document.getElementById('questions-container');
+
+    // --- Datos de las Preguntas ---
+    // He agrupado las preguntas como me las proporcionaste en las diferentes interacciones.
+    // Puedes ajustar los nombres de los grupos o agregar más si tienes más sets de preguntas.
+
+    const questionsData = {
+        group1: [ // Corresponde a las primeras 1 (0-2)
+  { no: 1, pregunta: "Sujeta un lápiz o crayón para garabatear.", r1: "No sujeta objetos para garabatear.", r2: "Intenta sujetar pero no garabatea.", r3: "Garabatea con apoyo.", r4: "Garabatea con seguridad." },
+  { no: 2, pregunta: "Puede seguir la historia en un libro ilustrado, especialmente mirando las fotos.", r1: "No sigue imágenes ni presta atención.", r2: "Mira imágenes sin comprender.", r3: "Sigue la historia con ayuda.", r4: "Sigue e interpreta la historia ilustrada." },
+  { no: 3, pregunta: "Está en capacidad de pronunciar frases o enunciados utilizando entre 3 a 5 palabras.", r1: "Usa solo una palabra o balbuceos.", r2: "Dice palabras sueltas, sin unir.", r3: "Usa frases cortas con pequeños errores.", r4: "Usa frases completas y claras." },
+  { no: 4, pregunta: "Busca objetos ocultos no conociendo la trayectoria a seguir y tiene noción clara de permanencia de los objetos.", r1: "No busca objetos ocultos.", r2: "Busca pero se frustra rápido.", r3: "Busca con guía.", r4: "Busca con lógica y constancia." },
+  { no: 5, pregunta: "Comunica emociones, impresiones y sentimientos sobre sus descubrimientos a través de su corporalidad, motricidad y sentido del gusto.", r1: "No expresa emociones ni reacciona.", r2: "Expresa poco o imita emociones.", r3: "Comunica emociones con gestos.", r4: "Comunica emociones con claridad y coherencia." },
+  { no: 6, pregunta: "Arma rompecabezas entre cinco y ocho piezas.", r1: "No intenta armar piezas.", r2: "Intenta pero no encaja.", r3: "Arma con apoyo.", r4: "Arma de 5 a 8 piezas correctamente." },
+  { no: 7, pregunta: "Utiliza crayones para colorear figuras circulares o cuadrados.", r1: "No sostiene crayón.", r2: "Mancha sin control.", r3: "Colorea parcialmente.", r4: "Colorea formas completas." },
+  { no: 8, pregunta: "Desordena y ordena torres entre 4 o más bloques y/o aros.", r1: "No interactúa con bloques.", r2: "Desordena sin intención.", r3: "Arma torres de 2-3 piezas.", r4: "Arma torres de 4 o más piezas." },
+  { no: 9, pregunta: "Es capaz de clasificar objetos sencillos por colores y tamaños.", r1: "No reconoce diferencias.", r2: "Mira sin clasificar.", r3: "Clasifica con errores.", r4: "Clasifica bien por color/tamaño." },
+  { no: 10, pregunta: "Manifiesta claramente a su mamá o cuidador su deseo de ir al baño.", r1: "No avisa necesidad.", r2: "Avisa después del hecho.", r3: "Avisa ocasionalmente.", r4: "Avisa con claridad antes de tiempo." },
+  { no: 11, pregunta: "Evidencia equilibrio cuando camina, corre y/o salta.", r1: "Se cae con frecuencia.", r2: "Camina inseguro.", r3: "Camina con algo de equilibrio.", r4: "Camina, corre y salta con equilibrio." },
+  { no: 12, pregunta: "Identifica las partes de su cuerpo y las señala cuando se le nombran.", r1: "No responde.", r2: "Señala solo 1 parte.", r3: "Señala varias con ayuda.", r4: "Señala correctamente todo el cuerpo." },
+  { no: 13, pregunta: "Su peso y talla están acordes a su edad y género.", r1: "Peso/talla muy bajos o altos.", r2: "Peso/talla en límites de alerta.", r3: "Peso/talla casi normales.", r4: "Peso y talla normales para edad y género." },
+  { no: 14, pregunta: "Tiene vacunas completas hasta la fecha.", r1: "No tiene vacunas.", r2: "Tiene solo algunas vacunas.", r3: "Le faltan pocas.", r4: "Tiene todas las vacunas al día." },
+  { no: 15, pregunta: "Evidencia reducción de enfermedades prevalentes, accidentes y lesiones.", r1: "Se enferma constantemente.", r2: "Se enferma con frecuencia.", r3: "Se enferma poco.", r4: "Presenta buena salud y prevención." },
+  { no: 16, pregunta: "Es capaz de comer solo, haciendo uso de la cuchara.", r1: "No sabe usar la cuchara.", r2: "Derrama al usarla.", r3: "Come con algo de ayuda.", r4: "Come solo sin derramar." },
+  { no: 17, pregunta: "Con la guía de su mamá o cuidador se lava y seca las manos y la cara.", r1: "No lo hace.", r2: "Lo hace con total ayuda.", r3: "Lo hace parcialmente con guía.", r4: "Lo hace con autonomía guiada." },
+  { no: 18, pregunta: "Come frutas, vegetales, papilla y granos.", r1: "Solo come papillas.", r2: "Come poca variedad.", r3: "Come frutas con dificultad.", r4: "Come frutas, vegetales y granos." },
+  { no: 19, pregunta: "Es capaz de vestirse con ropa sencilla y quitarse la ropa por sí mismo con el apoyo de instrucciones verbales.", r1: "No coopera.", r2: "Coopera sin entender.", r3: "Se viste con ayuda verbal.", r4: "Lo hace solo con mínima guía." },
+  { no: 20, pregunta: "Es capaz de comunicar necesidades como sed, hambre, deseo de ir al baño.", r1: "No comunica necesidades.", r2: "Señala o llora.", r3: "Usa gestos o frases cortas.", r4: "Dice lo que necesita claramente." },
+  { no: 21, pregunta: "Expresa cariño o aprecio a personas cercanas.", r1: "No muestra afecto.", r2: "Solo responde a afecto recibido.", r3: "Da muestras limitadas.", r4: "Abrazos, sonrisas y gestos frecuentes." },
+  { no: 22, pregunta: "Es capaz de seguir instrucciones y hacer dos cosas al mismo tiempo.", r1: "No sigue instrucciones.", r2: "Sigue solo una instrucción.", r3: "Sigue dos con ayuda.", r4: "Sigue dos instrucciones a la vez." },
+  { no: 23, pregunta: "Imita actividades de la mamá o cuidador.", r1: "No imita.", r2: "Imitación muy limitada.", r3: "Imita con errores.", r4: "Imita actividades cotidianas." },
+  { no: 24, pregunta: "Expresa su emotividad y/o rechazo de forma espontánea ante las demás personas.", r1: "No expresa emociones.", r2: "Muestra emociones muy tarde.", r3: "Expresa con apoyo.", r4: "Expresa y reacciona espontáneamente." },
+  { no: 25, pregunta: "Expresa con claridad palabras de mayor relevancia para él, como papá, mamá, agua.", r1: "Usa palabras sin sentido.", r2: "Dice pocas palabras clave.", r3: "Usa palabras conocidas.", r4: "Usa palabras claves como mamá, papá, agua." },
+  { no: 26, pregunta: "Comienza a compartir su juego o los elementos de juego con otros niños.", r1: "No interactúa con otros.", r2: "Solo juega cerca.", r3: "Interactúa con apoyo.", r4: "Comparte juguetes y juega en grupo." },
+  { no: 27, pregunta: "Copia los comportamientos y ademanes de adultos y niños mayores.", r1: "No imita adultos.", r2: "Imita ocasionalmente.", r3: "Imita conductas simples.", r4: "Imita gestos y acciones de adultos/niños." },
+  { no: 28, pregunta: "Repite de su madre o cuidador una frase corta religiosa.", r1: "No repite frases.", r2: "Repite de forma incompleta.", r3: "Repite con ayuda.", r4: "Repite claramente frases religiosas." },
+  { no: 29, pregunta: "Escucha atentamente historias bíblicas narradas por su madre o cuidador.", r1: "No presta atención.", r2: "Escucha distraído.", r3: "Escucha a ratos.", r4: "Escucha atentamente." },
+  { no: 30, pregunta: "Identifica y señala ilustraciones que aparecen en una biblia con gráficos o dibujos.", r1: "No señala.", r2: "Señala al azar.", r3: "Señala algunas con ayuda.", r4: "Señala bien con comprensión." },
+  { no: 31, pregunta: "Señala su corazón cuando le preguntan en dónde está Jesús.", r1: "No responde.", r2: "Toca otra parte.", r3: "Toca corazón con ayuda.", r4: "Señala correctamente el corazón." },
+  { no: 32, pregunta: "Repite de su madre o cuidador que Jesús le ama.", r1: "No lo repite.", r2: "Lo repite con errores.", r3: "Lo repite con guía.", r4: "Lo repite espontáneamente." },
+  { no: 33, pregunta: "Al presentarle varias siluetas, identifica y señala cuál es la de Jesús.", r1: "No lo reconoce.", r2: "Señala al azar.", r3: "Señala con ayuda.", r4: "Identifica claramente la silueta." },
+  { no: 34, pregunta: "Al orar con su mamá, cuidador u otra persona, cierra sus ojos, junta sus manos e inclina su cabeza.", r1: "No participa.", r2: "Necesita guía total.", r3: "Lo hace parcialmente.", r4: "Lo hace con naturalidad." },
+  { no: 35, pregunta: "Mueve su cuerpo y alza sus manos cuando escucha alabanzas.", r1: "No se mueve ni reacciona.", r2: "Reacciona mínimamente.", r3: "Mueve brazos con ayuda.", r4: "Se mueve con alegría en alabanzas." },
+  { no: 36, pregunta: "Observa con atención cuando su mamá, cuidador u otro familiar ora, alaba o lee la Biblia.", r1: "No observa.", r2: "Observa poco tiempo.", r3: "Observa con distracción.", r4: "Observa con atención y calma." }
+
+
+        ],
+        group2: [ // Corresponde a las preguntas 2 (3-5)
+    { no: 1, pregunta: "Identifica algunos números, letras y colores.", r1: "No identifica numeros, letras ni colores", r2: "Identifica un poco los colores pero se le dificulta", r3: "Identifica los colores y los numeros un poco", r4: "Identifica los colores, numeros y letras" },
+    { no: 2, pregunta: "Usando imágenes y dibujos cuenta historias con secuencia.", r1: "No logra usar imágenes para narrar; los dibujos no tienen relación aparente.", r2: "Intenta, pero la secuencia no es clara o la historia es difícil de seguir.", r3: "Puede contar historias simples con ayuda o con secuencias muy obvias.", r4: "Cuenta historias coherentes y secuenciadas usando imágenes o dibujos de forma independiente." },
+    { no: 3, pregunta: "Tiene direccionalidad (identifica derecha, izquierda, arriba, abajo, cerca, lejos, adelante y atrás).", r1: "Confunde constantemente las direcciones y no las aplica correctamente.", r2: "Muestra dificultad; a veces acierta, pero a menudo se equivoca o necesita mucha guía.", r3: "Identifica la mayoría de las direcciones, pero puede dudar o requerir recordatorios para algunas.", r4: "Identifica y aplica todas las direccionalidades de forma consistente y sin ayuda." },
+    { no: 4, pregunta: "Comunica opiniones, impresiones y sentimientos sobre sus descubrimientos a través de medios corporales, verbales y gráficos (motricidad).", r1: "Le cuesta mucho expresar lo que siente o piensa, o lo hace de forma incomprensible.", r2: "Intenta expresarse, pero su comunicación es limitada o no siempre efectiva.", r3: "Se comunica bien la mayor parte del tiempo, pero puede necesitar estímulo o un poco de ayuda para ser más claro.", r4: "Expresa sus opiniones, impresiones y sentimientos de forma clara y variada, usando gestos, palabras o dibujos según la situación." },
+    { no: 5, pregunta: "Expresa su creatividad usando juegos de palabras, canciones, ritmos, cuentos y dibujos.", r1: "No muestra iniciativa creativa y se le dificulta participar en estas actividades.", r2: "Participa si se le anima mucho, pero su creatividad es limitada o repetitiva.", r3: "Disfruta y participa creativamente, aunque a veces necesita una chispa o idea para arrancar.", r4: "Es muy creativo, inventa juegos de palabras, canciones, cuentos y dibujos con facilidad y originalidad." },
+    { no: 6, pregunta: "Expresa preferencia en relación a las actividades que realiza.", r1: "No sabe o no puede decir qué actividades le gustan o disgustan; siempre está indeciso.", r2: "A veces expresa preferencias, pero no de forma consistente o clara.", r3: "Generalmente puede decir qué le gusta o no, aunque a veces es un poco tímido al expresarlo.", r4: "Claramente expresa sus preferencias y elecciones sobre las actividades que realiza." },
+    { no: 7, pregunta: "Ahorra parte de sus monedas.", r1: "Gasta todo lo que tiene, no demuestra ningún interés en ahorrar.", r2: "Intenta ahorrar a veces, pero la mayoría de las veces gasta impulsivamente.", r3: "Ahorra pequeñas cantidades o de forma inconsistente, pero muestra el hábito.", r4: "Entiende la importancia de ahorrar y guarda una parte de sus monedas de forma regular." },
+    { no: 8, pregunta: "Practica juegos de roles productivos/negocios (vendedor, banquero, etc).", r1: "No comprende el concepto de juego de roles productivos o no participa.", r2: "Participa si se le guía, pero no entiende bien la dinámica o el propósito del rol.", r3: "Juega roles como vendedor o banquero con cierta comprensión, aunque puede necesitar recordatorios.", r4: "Se involucra activamente en juegos de roles productivos, comprendiendo y asumiendo bien su papel." },
+    { no: 9, pregunta: "Sabe qué es el trabajo y cuál es su importancia.", r1: "No tiene idea de lo que es el trabajo o por qué es importante.", r2: "Tiene una noción muy vaga del trabajo, pero no comprende su importancia o propósito.", r3: "Entiende a un nivel básico qué es el trabajo y por qué es útil, pero su explicación es limitada.", r4: "Puede explicar qué es el trabajo, por qué es importante para las personas y la sociedad." },
+    { no: 10, pregunta: "Describe las partes de su cuerpo y diferencia entre el cuerpo de un niño y una niña.", r1: "No nombra las partes del cuerpo o las confunde; no diferencia géneros.", r2: "Nombra algunas partes, pero con dificultad o sin diferenciar bien entre niños y niñas.", r3: "Conoce la mayoría de las partes del cuerpo y puede señalar algunas diferencias entre niños y niñas.", r4: "Nombra y describe las partes principales de su cuerpo y puede explicar claramente las diferencias físicas entre un niño y una niña." },
+    { no: 11, pregunta: "Menciona los hábitos básicos de higiene.", r1: "No sabe cuáles son los hábitos básicos de higiene o no los practica.", r2: "Menciona uno o dos hábitos, pero no comprende la importancia de practicarlos.", r3: "Nombra la mayoría de los hábitos de higiene y entiende por qué son importantes.", r4: "Menciona y explica los hábitos básicos de higiene y su importancia para la salud." },
+    { no: 12, pregunta: "Desarrolla tareas con el uso de sus manos.", r1: "Tiene mucha dificultad para realizar tareas que requieren motricidad fina con las manos.", r2: "Realiza algunas tareas con las manos, pero con poca destreza o mucha ayuda.", r3: "Realiza la mayoría de las tareas manuales de forma adecuada, aunque algunas le cuestan un poco.", r4: "Realiza tareas manuales con gran destreza y precisión de forma autónoma." },
+    { no: 13, pregunta: "Come frutas, vegetales, cereales, etc.", r1: "Rechaza constantemente frutas, vegetales y cereales; su dieta es muy limitada.", r2: "Come algunos, pero con mucha insistencia o solo si están camuflados.", r3: "Come la mayoría de las frutas, vegetales y cereales, aunque tiene algunas preferencias o disgustos.", r4: "Come una variedad balanceada de frutas, vegetales y cereales sin problema." },
+    { no: 14, pregunta: "Se lava las manos antes de comer y después de ir al baño. Se cepilla los dientes después de las comidas.", r1: "No se lava las manos ni se cepilla los dientes por iniciativa propia, y se resiste a hacerlo.", r2: "Lo hace solo si se le recuerda o se le supervisa activamente.", r3: "Recuerda hacerlo la mayoría de las veces, aunque ocasionalmente necesita un recordatorio.", r4: "Realiza estas acciones de higiene de forma autónoma y consistente." },
+    { no: 15, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso y/o talla no son acordes a su edad, y no se le lleva a controles médicos.", r2: "Hay alguna desviación leve en peso/talla o los controles médicos no son tan regulares como deberían.", r3: "Su peso y talla están generalmente bien y tiene acceso a controles médicos, aunque quizás no con la frecuencia óptima.", r4: "Su peso y talla son adecuados para su edad y tiene acceso regular a control médico." },
+    { no: 16, pregunta: "Realiza con autonomía tareas cotidianas como asearse, arreglarse, vestirse, alimentarse, entre otras.", r1: "Requiere ayuda constante para las tareas básicas de aseo y cuidado personal.", r2: "Intenta hacerlas, pero necesita mucha supervisión o ayuda significativa.", r3: "Realiza la mayoría de estas tareas de forma independiente, aunque a veces necesita un pequeño empujón o recordatorio.", r4: "Realiza todas estas tareas cotidianas de forma autónoma y sin recordatorios." },
+    { no: 17, pregunta: "Distingue su género.", r1: "No reconoce su propio género o lo confunde.", r2: "Duda al identificar su género o lo hace con poca convicción.", r3: "Identifica su género correctamente, pero puede que no entienda completamente el concepto.", r4: "Reconoce y expresa claramente su propio género." },
+    { no: 18, pregunta: "Agrupa gráficas (láminas/dibujos) diferenciando entre toques adecuados e inadecuados en su cuerpo.", r1: "No puede diferenciar entre toques adecuados e inadecuados, o se confunde.", r2: "Con mucha guía, puede señalar algunas diferencias, pero no es consistente.", r3: "Generalmente agrupa y diferencia los toques, aunque a veces necesita aclaraciones.", r4: "Agrupa y diferencia claramente los toques adecuados de los inadecuados en su cuerpo a través de láminas o dibujos." },
+    { no: 19, pregunta: "Respeta las normas de convivencia (aula, casa, etc).", r1: "Constantemente rompe las normas de convivencia y se resiste a seguirlas.", r2: "Cumple las normas solo si hay una figura de autoridad presente o si hay consecuencias inmediatas.", r3: "Generalmente respeta las normas, aunque ocasionalmente puede cometer errores o necesita un recordatorio.", r4: "Respeta y sigue activamente las normas de convivencia en diferentes entornos." },
+    { no: 20, pregunta: "Ingiere sus alimentos sin asistencia.", r1: "Necesita ser alimentado o no puede manejar los utensilios para comer.", r2: "Come de forma muy desordenada o necesita ayuda para algunos alimentos.", r3: "Come solo, pero a veces con algo de desorden o lentitud.", r4: "Come todos sus alimentos de forma independiente, usando los utensilios adecuadamente y con buenos modales." },
+    { no: 21, pregunta: "Expresa sus sentimientos, necesidades y deseos a los demás.", r1: "No verbaliza sus sentimientos o necesidades; se frustra fácilmente o se aísla.", r2: "Expresa algunas necesidades básicas, pero le cuesta hablar de sentimientos o deseos más complejos.", r3: "Expresa la mayoría de sus sentimientos y necesidades, aunque a veces le cuesta iniciar la conversación.", r4: "Comunica abierta y claramente sus sentimientos, necesidades y deseos a las personas." },
+    { no: 22, pregunta: "Expresa sus emociones positivas o negativas de manera espontánea.", r1: "No muestra expresión emocional o tiene reacciones muy limitadas o inapropiadas.", r2: "Expresa algunas emociones, pero de forma reprimida o cuando ya es muy evidente.", r3: "Expresa sus emociones de manera espontánea la mayoría de las veces, aunque algunas le cuestan más.", r4: "Expresa un rango amplio de emociones, tanto positivas como negativas, de forma espontánea y apropiada." },
+    { no: 23, pregunta: "Presta ayuda cuando a un compañero que lo necesita.", r1: "Es indiferente a las necesidades de los demás o se niega a ayudar.", r2: "Ayuda solo si se le pide directamente y sin mucho esfuerzo.", r3: "Generalmente ofrece ayuda a sus compañeros, aunque a veces necesita que se le anime.", r4: "Es proactivo, observador y ofrece ayuda a sus compañeros de forma espontánea cuando ve que lo necesitan." },
+    { no: 24, pregunta: "Cuida de animales, plantas y agua.", r1: "No muestra interés o descuida intencionadamente el cuidado de animales, plantas o el uso del agua.", r2: "Lo hace solo si se le obliga o supervisa, sin entender la importancia.", r3: "Colabora en el cuidado, aunque a veces necesita recordatorios para ser constante.", r4: "Muestra responsabilidad y cuidado activo hacia los animales, las plantas y el uso consciente del agua." },
+    { no: 25, pregunta: "Menciona el nombre de su tutor y/o patrocinador.", r1: "No sabe o no puede recordar el nombre de su tutor/patrocinador.", r2: "Lo confunde o solo lo recuerda si se le dan muchas pistas.", r3: "Recuerda el nombre de su tutor/patrocinador, aunque puede que no lo asocie completamente con el rol.", r4: "Menciona correctamente el nombre de su tutor y/o patrocinador." },
+    { no: 26, pregunta: "Menciona y describe a las personas que constituyen su entorno familiar y de la iglesia.", r1: "No puede nombrar a las personas de su familia o iglesia, o las confunde.", r2: "Nombra a algunos, pero no puede describirlos o lo hace con mucha dificultad.", r3: "Nombra a la mayoría de las personas de su entorno y puede dar descripciones básicas.", r4: "Nombra y describe con claridad a las personas importantes de su entorno familiar y de la iglesia." },
+    { no: 27, pregunta: "Se relaciona con sus compañeros y adultos de su entorno.", r1: "Tiene muchas dificultades para interactuar con otros, se aísla o tiene conflictos constantes.", r2: "Se relaciona solo con personas muy específicas o con mucha dificultad.", r3: "Se relaciona bien la mayoría del tiempo, aunque a veces es un poco tímido o necesita un empujón.", r4: "Interactúa de forma apropiada y amigable tanto con sus compañeros como con los adultos de su entorno." },
+    { no: 28, pregunta: "Explica con sus propias palabras que Dios creó la naturaleza y a ellos mismos.", r1: "No sabe o no puede explicar quién creó la naturaleza o a las personas.", r2: "Repite frases, pero no comprende realmente la idea de la creación por Dios.", r3: "Explica a un nivel básico que Dios es el creador, aunque su lenguaje es simple.", r4: "Explica de forma clara y con sus propias palabras que Dios creó la naturaleza y a los seres humanos." },
+    { no: 29, pregunta: "Narra por lo menos 3 historias bíblicas con sus propias palabras.", r1: "No puede narrar ninguna historia bíblica o las confunde completamente.", r2: "Recuerda fragmentos de historias, pero no logra narrar una completa.", r3: "Narra al menos 3 historias bíblicas, aunque a veces necesita ayuda para recordar detalles.", r4: "Narra con fluidez y sus propias palabras al menos 3 historias bíblicas, mostrando comprensión." },
+    { no: 30, pregunta: "Expresa que la Biblia es la palabra de Dios.", r1: "No sabe qué es la Biblia o no la asocia con Dios.", r2: "Repite que es la palabra de Dios, pero sin un entendimiento real.", r3: "Reconoce que la Biblia es la palabra de Dios, aunque su explicación es sencilla.", r4: "Expresa y entiende claramente que la Biblia es la palabra de Dios." },
+    { no: 31, pregunta: "Tiene una idea propia de quien es Dios y conoce la historia de Jesús.", r1: "No tiene idea de quién es Dios o Jesús.", r2: "Tiene nociones muy vagas o confusas sobre Dios y Jesús.", r3: "Tiene una idea básica de quién es Dios y conoce algunos episodios de la historia de Jesús.", r4: "Tiene una concepción personal de Dios y conoce los eventos principales de la vida y obra de Jesús." },
+    { no: 32, pregunta: "Señala a Jesús como alguien que lo ama.", r1: "No reconoce a Jesús como alguien que ama.", r2: "Lo dice si se le pide, pero no lo expresa con sentimiento.", r3: "Expresa que Jesús lo ama, aunque no de forma espontánea siempre.", r4: "Señala a Jesús de forma espontánea como alguien que lo ama." },
+    { no: 33, pregunta: "Distingue entre acciones buenas y malas.", r1: "No puede diferenciar entre acciones buenas y malas, o las confunde.", r2: "Con mucha guía, puede identificar algunas acciones, pero no consistentemente.", r3: "Distingue la mayoría de las acciones buenas y malas, aunque a veces duda.", r4: "Identifica y explica claramente la diferencia entre acciones buenas y malas." },
+    { no: 34, pregunta: "Ora en los momentos de iniciación de actividades (comida, jornada de trabajo, entre otras).", r1: "Nunca ora o se niega a hacerlo.", r2: "Ora solo si se le obliga o se le recuerda constantemente.", r3: "Generalmente ora en los momentos indicados, aunque a veces necesita un pequeño recordatorio.", r4: "Inicia la oración de forma espontánea y consistente en los momentos apropiados antes de actividades." },
+    { no: 35, pregunta: "Manifiesta que siente gusto y se entusiasma al cantar canciones cristianas y escuchar historias bíblicas.", r1: "Muestra desinterés o aburrimiento al cantar canciones cristianas o escuchar historias bíblicas.", r2: "Participa sin mucho entusiasmo, solo por cumplir.", r3: "Muestra cierto agrado y participa con entusiasmo moderado.", r4: "Manifiesta un gusto y entusiasmo genuino al cantar canciones cristianas y escuchar historias bíblicas." },
+    { no: 36, pregunta: "Se dirige a Dios a través de oraciones cortas.", r1: "No ora o no sabe cómo dirigirse a Dios.", r2: "Recita oraciones aprendidas, pero no hace oraciones propias o espontáneas.", r3: "Intenta orar con sus propias palabras, aunque sus oraciones son muy breves o incompletas.", r4: "Se dirige a Dios con oraciones cortas y significativas, expresando sus pensamientos de forma personal." }
+        ],
+        group3: [ // Corresponde a las preguntas 3 (6-8)
+            { no: 1, pregunta: "Recibe educación en el nivel para su edad y avanza satisfactoriamente.", r1: "No recibe educación o no avanza.", r2: "Recibe educación, pero con dificultades significativas.", r3: "Avanza satisfactoriamente, aunque a veces con ayuda.", r4: "Recibe educación y avanza plenamente para su edad." },
+            { no: 2, pregunta: "Lee, escribe, suma y resta de acuerdo a su edad.", r1: "No domina ninguna de estas habilidades.", r2: "Domina algunas con gran dificultad o poca precisión.", r3: "Domina la mayoría, con pequeños errores ocasionales.", r4: "Lee, escribe, suma y resta con fluidez y precisión." },
+            { no: 3, pregunta: "Realiza responsablemente sus tareas escolares.", r1: "No hace sus tareas o las hace sin ningún esfuerzo.", r2: "Hace las tareas, pero con mucha supervisión y recordatorios.", r3: "Generalmente hace sus tareas con responsabilidad.", r4: "Realiza sus tareas de forma autónoma y responsable." },
+            { no: 4, pregunta: "Participa de las actividades que fomentan los estilos de aprendizaje y las inteligencias.", r1: "No participa o se resiste a las actividades.", r2: "Participa pasivamente o solo si se le insiste.", r3: "Participa activamente en la mayoría de las actividades.", r4: "Participa con entusiasmo y aprovecha diversas actividades." },
+            { no: 5, pregunta: "Explora y reconoce los talentos dados por Dios.", r1: "No ha explorado o no reconoce sus talentos.", r2: "Empieza a reconocer algunos talentos, pero sin explorar.", r3: "Reconoce y empieza a explorar sus talentos.", r4: "Reconoce y usa activamente los talentos que tiene." },
+            { no: 6, pregunta: "Usa con frecuencia una habilidad o talento dado por Dios en su entorno.", r1: "No usa sus habilidades o talentos.", r2: "Usa sus talentos de forma muy ocasional o solo por encargo.", r3: "Usa sus talentos con cierta regularidad y propósito.", r4: "Usa sus habilidades y talentos de forma consistente en su entorno." },
+            { no: 7, pregunta: "Realiza compras y verifica los vueltos.", r1: "No hace compras o no verifica los vueltos.", r2: "Realiza compras, pero no verifica los vueltos o se equivoca.", r3: "Realiza compras y verifica los vueltos la mayoría de las veces.", r4: "Realiza compras y verifica los vueltos con precisión y confianza." },
+            { no: 8, pregunta: "Muestra iniciativas para resolver situaciones económicas de su cotidianidad.", r1: "No muestra iniciativa ni busca soluciones económicas.", r2: "Muestra poca iniciativa y necesita mucha guía.", r3: "Muestra alguna iniciativa, aunque a veces necesita ayuda para ejecutarla.", r4: "Toma la iniciativa para resolver situaciones económicas de su día a día." },
+            { no: 9, pregunta: "Explica la importancia de utilizar honrada y correctamente el tiempo, el dinero y los talentos.", r1: "No entiende la importancia o lo hace de forma deshonesta.", r2: "Repite la importancia, pero sin entender o aplicar.", r3: "Explica la importancia y trata de aplicarlo.", r4: "Explica claramente y aplica el uso honrado de tiempo, dinero y talentos." },
+            { no: 10, pregunta: "Entiende que su cuerpo es Creación de Dios y debe protegerlo.", r1: "No comprende que su cuerpo es creación divina o lo descuida.", r2: "Repite la idea, pero no la aplica a su cuidado.", r3: "Entiende y se esfuerza por proteger su cuerpo.", r4: "Comprende profundamente y protege su cuerpo como creación de Dios." },
+            { no: 11, pregunta: "Maneja de forma adecuada los desechos.", r1: "No maneja los desechos adecuadamente, los tira donde sea.", r2: "Intenta, pero a menudo los desecha incorrectamente.", r3: "Maneja los desechos adecuadamente la mayoría de las veces.", r4: "Siempre maneja los desechos de forma correcta y responsable." },
+            { no: 12, pregunta: "Practica al menos 1 actividad deportiva.", r1: "No practica ninguna actividad deportiva.", r2: "Practica una actividad muy ocasionalmente o sin interés.", r3: "Practica una actividad deportiva con cierta regularidad.", r4: "Practica al menos una actividad deportiva de forma constante." },
+            { no: 13, pregunta: "Consume agua potable y/o hervida.", r1: "Consume agua no segura o contaminada.", r2: "A veces consume agua potable, pero no siempre.", r3: "Generalmente consume agua potable o hervida.", r4: "Siempre consume agua potable y/o hervida." },
+            { no: 14, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso y/o talla no son acordes a su edad, y no se le lleva a controles médicos.", r2: "Hay alguna desviación leve en peso/talla o los controles médicos no son tan regulares como deberían.", r3: "Su peso y talla están generalmente bien y tiene acceso a controles médicos, aunque quizás no con la frecuencia óptima.", r4: "Su peso y talla son adecuados para su edad y tiene acceso regular a control médico." },
+            { no: 15, pregunta: "Menciona principios bíblicos sobre su sexualidad y toma medidas para proteger su integridad.", r1: "No conoce principios bíblicos o no se protege.", r2: "Conoce algunos principios, pero no los aplica para su protección.", r3: "Conoce principios bíblicos y se esfuerza por proteger su integridad.", r4: "Menciona principios bíblicos y activamente protege su integridad sexual." },
+            { no: 16, pregunta: "Señala a quién dirigirse para comunicar casos de acercamientos inadecuados.", r1: "No sabe a quién acudir o se niega a comunicarlo.", r2: "Sabe a quién acudir, pero le cuesta comunicarlo.", r3: "Se dirige a la persona adecuada, aunque con dificultad.", r4: "Identifica y comunica a la persona correcta sobre acercamientos inadecuados." },
+            { no: 17, pregunta: "Practica normas de conducta sociales básicas (saludar, agradecer, pedir por favor, pedir disculpas).", r1: "No practica ninguna de estas normas.", r2: "Practica algunas, pero solo con recordatorio.", r3: "Practica la mayoría de estas normas de forma consistente.", r4: "Practica todas estas normas de conducta social básica de forma natural." },
+            { no: 18, pregunta: "Expresa cuando está molesto, alegre o triste y reconoce sentimientos diferentes a los suyos.", r1: "No expresa sus emociones o las expresa de forma inapropiada.", r2: "Expresa sus emociones básicas, pero le cuesta reconocer las ajenas.", r3: "Expresa sus emociones y reconoce las ajenas en la mayoría de los casos.", r4: "Expresa sus emociones adecuadamente y reconoce los sentimientos de los demás." },
+            { no: 19, pregunta: "Reconoce cuando se equivoca y pide disculpas.", r1: "No reconoce sus errores ni pide disculpas.", r2: "Reconoce el error con dificultad y pide disculpas solo si se le insiste.", r3: "Reconoce sus errores y pide disculpas la mayoría de las veces.", r4: "Reconoce sus errores con humildad y pide disculpas de forma espontánea." },
+            { no: 20, pregunta: "Reconoce y respeta a los demás como personas iguales ante Dios y distintas en género, raza y costumbres.", r1: "No reconoce ni respeta la igualdad o diversidad.", r2: "Reconoce la igualdad en algunos aspectos, pero no en otros.", r3: "Reconoce y respeta la igualdad y diversidad en la mayoría de los casos.", r4: "Reconoce y respeta plenamente la igualdad y diversidad en género, raza y costumbres." },
+            { no: 21, pregunta: "Coloca los desechos en el lugar correspondiente.", r1: "Tira los desechos en cualquier lugar.", r2: "Coloca desechos en el lugar correcto solo si se le recuerda.", r3: "Coloca los desechos en su lugar la mayoría de las veces.", r4: "Siempre coloca los desechos en el lugar correspondiente." },
+            { no: 22, pregunta: "Practica normas de conducta sociales básicas (saludar, agradecer, pedir por favor, pedir disculpas).", r1: "No practica ninguna de estas normas.", r2: "Practica algunas, pero solo con recordatorio.", r3: "Practica la mayoría de estas normas de forma consistente.", r4: "Practica todas estas normas de conducta social básica de forma natural." },
+            { no: 23, pregunta: "Acepta y se siente parte de su familia, la iglesia y su comunidad.", r1: "Se siente aislado o no acepta su pertenencia.", r2: "Acepta, pero con poca participación o sentimiento de pertenencia.", r3: "Acepta y se siente parte, aunque con participación irregular.", r4: "Se acepta y se siente activamente parte de su familia, iglesia y comunidad." },
+            { no: 24, pregunta: "Establece relaciones respetuosas y cordiales con los demás y su familia.", r1: "Tiene relaciones conflictivas o muy distantes.", r2: "Establece algunas relaciones, pero con dificultades o falta de respeto.", r3: "Establece relaciones respetuosas, aunque no siempre cordiales.", r4: "Establece relaciones respetuosas y cordiales con todos." },
+            { no: 25, pregunta: "Reconoce las verdades bíblicas del amor de Dios a través de Jesús (Juan 3:16).", r1: "No conoce o no reconoce el amor de Dios.", r2: "Conoce Juan 3:16, pero sin entender su significado de amor.", r3: "Reconoce el amor de Dios a través de Jesús y Juan 3:16.", r4: "Reconoce y expresa claramente el amor de Dios a través de Jesús (Juan 3:16)." },
+            { no: 26, pregunta: "Cuenta con sus palabras la enseñanza de por lo menos 3 historias bíblicas.", r1: "No puede contar ninguna historia bíblica.", r2: "Cuenta fragmentos o solo con mucha ayuda.", r3: "Cuenta al menos 3 historias, aunque con algunos detalles faltantes.", r4: "Cuenta con sus palabras la enseñanza de 3 o más historias bíblicas." },
+            { no: 27, pregunta: "Reconoce por lo menos 3 textos de los evangelios.", r1: "No reconoce ningún texto de los evangelios.", r2: "Reconoce algunos textos, pero no sabe de dónde son.", r3: "Reconoce 3 textos de los evangelios, aunque no los cita perfectos.", r4: "Reconoce y puede identificar al menos 3 textos clave de los evangelios." },
+            { no: 28, pregunta: "Explica con sus propias palabras qué es Cristo como su Señor y Salvador.", r1: "No sabe o no puede explicar quién es Cristo.", r2: "Explica de forma confusa o con frases memorizadas.", r3: "Explica a un nivel básico qué es Cristo como Señor y Salvador.", r4: "Explica con claridad y sus propias palabras qué es Cristo como Señor y Salvador." },
+            { no: 29, pregunta: "Expresa con sus propias palabras su comprensión del sacrificio de Cristo como máxima expresión de amor.", r1: "No comprende el sacrificio de Cristo o su significado de amor.", r2: "Repite la idea, pero sin una comprensión profunda.", r3: "Expresa una comprensión básica del sacrificio de Cristo como amor.", r4: "Expresa con sus propias palabras una comprensión profunda del sacrificio de Cristo como amor." },
+            { no: 30, pregunta: "Reconoce que el pecado le hace daño a él y a los demás y lo aleja de Dios.", r1: "No reconoce el pecado ni sus consecuencias.", r2: "Reconoce el pecado, pero no su impacto personal o espiritual.", r3: "Reconoce el daño del pecado a sí mismo y a otros, y el alejamiento de Dios.", r4: "Reconoce plenamente que el pecado le hace daño, a otros y lo aleja de Dios." },
+            { no: 31, pregunta: "Participa ocasionalmente en actividades que realiza la Iglesia.", r1: "Nunca participa en actividades de la Iglesia.", r2: "Participa muy raramente y con resistencia.", r3: "Participa ocasionalmente en actividades de la Iglesia.", r4: "Participa frecuentemente y con agrado en las actividades de la Iglesia." },
+            { no: 32, pregunta: "Ayuda en actividades de servicio guiadas por personal del CDI.", r1: "No ayuda o se niega a participar.", r2: "Ayuda solo si se le exige o con mala actitud.", r3: "Ayuda ocasionalmente en actividades de servicio guiadas.", r4: "Ayuda de forma activa y voluntaria en actividades de servicio." },
+            { no: 33, pregunta: "Ora en público.", r1: "No ora en público o se niega rotundamente.", r2: "Ora en público solo si se le insiste mucho.", r3: "Ora en público con cierta timidez, pero lo hace.", r4: "Ora en público con naturalidad y confianza." },
+            { no: 34, pregunta: "Reconoce la importancia de la oración en su vida personal y familiar.", r1: "No reconoce la importancia de la oración.", r2: "Reconoce la importancia, pero no la aplica.", r3: "Reconoce la importancia y ora de forma inconsistente.", r4: "Reconoce y practica la oración como parte importante de su vida y familia." },
+            { no: 35, pregunta: "Demuestra amor, obediencia y gratitud a Dios.", r1: "No demuestra ninguno de estos valores hacia Dios.", r2: "Demuestra solo algunos de ellos, o de forma forzada.", r3: "Demuestra amor, obediencia y gratitud la mayoría de las veces.", r4: "Demuestra amor, obediencia y gratitud constantes hacia Dios." },
+            { no: 36, pregunta: "Conoce y recita al menos 3 versículos bíblicos de memoria.", r1: "No conoce ningún versículo de memoria.", r2: "Conoce 1 o 2 versículos, pero le cuesta recitarlos.", r3: "Conoce y recita 3 versículos, con pequeñas ayudas.", r4: "Conoce y recita al menos 3 versículos bíblicos de memoria con facilidad." }
+        ],
+        group4: [ // Corresponde a las preguntas 4 (9-11)
+            { no: 1, pregunta: "Recibe educación en el nivel para su edad y avanza satisfactoriamente.", r1: "No recibe educación o no avanza.", r2: "Recibe educación, pero con dificultades significativas.", r3: "Avanza satisfactoriamente, aunque a veces con ayuda.", r4: "Recibe educación y avanza plenamente para su edad." },
+            { no: 2, pregunta: "Lee textos cortos y contesta preguntas de comprensión. Resuelve problemas con operaciones básicas.", r1: "No lee, no contesta, no resuelve.", r2: "Lee con dificultad, contesta poco, resuelve con mucha ayuda.", r3: "Lee y contesta la mayoría; resuelve problemas básicos.", r4: "Lee y contesta bien; resuelve problemas básicos con facilidad." },
+            { no: 3, pregunta: "Tiene hábitos de estudio y un horario establecido para sus tareas.", r1: "No tiene hábitos ni horario de estudio.", r2: "Intenta tenerlos, pero sin constancia o disciplina.", r3: "Tiene hábitos y horario, pero a veces los rompe.", r4: "Tiene sólidos hábitos de estudio y sigue su horario." },
+            { no: 4, pregunta: "Identifica la manera cómo aprende mejor.", r1: "No identifica su estilo de aprendizaje.", r2: "Tiene una vaga idea, pero no la usa.", r3: "Identifica su estilo y lo aplica a veces.", r4: "Identifica y usa activamente su mejor forma de aprender." },
+            { no: 5, pregunta: "Desarrolla actividades artístico-musicales.", r1: "No participa ni muestra interés en actividades artísticas.", r2: "Participa, pero sin entusiasmo o habilidad.", r3: "Participa y disfruta de actividades artísticas.", r4: "Desarrolla con creatividad y habilidad actividades artístico-musicales." },
+            { no: 6, pregunta: "Realiza algunas actividades de servicio usando sus habilidades y talentos.", r1: "No realiza servicios ni usa talentos.", r2: "Realiza servicios solo si se le pide mucho.", r3: "Realiza algunos servicios usando sus talentos.", r4: "Realiza activamente servicios usando sus habilidades y talentos." },
+            { no: 7, pregunta: "Separa una parte de sus ingresos para ahorrar.", r1: "Gasta todo, no ahorra.", r2: "Intenta ahorrar, pero no es consistente.", r3: "Ahorra una parte de sus ingresos con regularidad.", r4: "Ahorra consistentemente una parte significativa de sus ingresos." },
+            { no: 8, pregunta: "Propone ideas para negocios.", r1: "No tiene ideas para negocios.", r2: "Tiene ideas, pero son poco realistas o incompletas.", r3: "Propone ideas de negocio, algunas con potencial.", r4: "Propone ideas creativas y viables para negocios." },
+            { no: 9, pregunta: "Explora diferentes campos de actividad económica, participa en talleres y actividades.", r1: "No explora ni participa en actividades económicas.", r2: "Explora mínimamente y participa si se le insiste.", r3: "Explora campos y participa en algunos talleres/actividades.", r4: "Explora activamente y participa en diversas actividades económicas." },
+            { no: 10, pregunta: "Comprende la importancia de los cambios de su cuerpo de acuerdo a su edad.", r1: "No comprende los cambios de su cuerpo.", r2: "Confunde o no acepta los cambios de su cuerpo.", r3: "Comprende la mayoría de los cambios de su cuerpo.", r4: "Comprende y acepta plenamente los cambios corporales de su edad." },
+            { no: 11, pregunta: "Identifica los cambios de su cuerpo propios a su edad (menstruación, erección, etc.).", r1: "No identifica ningún cambio corporal propio de la edad.", r2: "Identifica algunos cambios, pero con confusión o vergüenza.", r3: "Identifica los cambios de su cuerpo con alguna orientación.", r4: "Identifica y comprende claramente los cambios corporales propios de su edad." },
+            { no: 12, pregunta: "Practica al menos 1 actividad física y/o deportiva regularmente.", r1: "No practica ninguna actividad física.", r2: "Practica una actividad muy ocasionalmente o sin interés.", r3: "Practica una actividad deportiva con cierta regularidad.", r4: "Practica al menos una actividad deportiva de forma constante." },
+            { no: 13, pregunta: "Identifica los síntomas de las enfermedades más frecuentes de su entorno.", r1: "No identifica ningún síntoma de enfermedad.", r2: "Identifica algunos síntomas, pero con errores.", r3: "Identifica la mayoría de síntomas de enfermedades frecuentes.", r4: "Identifica con precisión los síntomas de enfermedades comunes." },
+            { no: 14, pregunta: "Explica los hábitos y prácticas saludables que previenen las enfermedades más frecuentes de su entorno.", r1: "No explica hábitos saludables o los confunde.", r2: "Explica algunos hábitos, pero sin entender la prevención.", r3: "Explica hábitos y prácticas que previenen enfermedades.", r4: "Explica y aplica con claridad hábitos que previenen enfermedades." },
+            { no: 15, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso y/o talla no son acordes a su edad, y no se le lleva a controles médicos.", r2: "Hay alguna desviación leve en peso/talla o los controles médicos no son tan regulares como deberían.", r3: "Su peso y talla están generalmente bien y tiene acceso a controles médicos, aunque quizás no con la frecuencia óptima.", r4: "Su peso y talla son adecuados para su edad y tiene acceso regular a control médico." },
+            { no: 16, pregunta: "No manifiesta signos asociados al consumo de bebidas tóxicas ni drogas.", r1: "Manifiesta signos claros de consumo.", r2: "Presenta algunos signos dudosos o puntuales.", r3: "No manifiesta signos, con algún incidente menor.", r4: "No manifiesta ningún signo de consumo de tóxicos." },
+            { no: 17, pregunta: "Aplica principios bíblicos sobre su sexualidad y toma medidas para proteger su integridad.", r1: "No aplica principios ni se protege.", r2: "Aplica algunos principios, pero sin protección efectiva.", r3: "Aplica principios bíblicos y toma medidas de protección.", r4: "Aplica fielmente principios bíblicos y protege activamente su integridad." },
+            { no: 18, pregunta: "Conoce y aplica medidas de prevención de abusos.", r1: "No conoce ni aplica medidas de prevención.", r2: "Conoce algunas medidas, pero no las aplica.", r3: "Conoce y aplica la mayoría de las medidas de prevención.", r4: "Conoce y aplica todas las medidas de prevención de abusos." },
+            { no: 19, pregunta: "Trata respetuosamente a los demás.", r1: "Trata a los demás con falta de respeto.", r2: "A veces es respetuoso, pero con inconsistencias.", r3: "Trata respetuosamente a los demás la mayoría del tiempo.", r4: "Siempre trata a los demás con respeto." },
+            { no: 20, pregunta: "Participa voluntariamente en actividades de servicio.", r1: "No participa voluntariamente en servicios.", r2: "Participa solo si se le fuerza o con poca frecuencia.", r3: "Participa voluntariamente en algunas actividades de servicio.", r4: "Participa con entusiasmo y voluntariedad en actividades de servicio." },
+            { no: 21, pregunta: "Expresa sus derechos y responsabilidades.", r1: "No sabe sus derechos ni responsabilidades.", r2: "Confunde derechos y responsabilidades.", r3: "Expresa algunos derechos y responsabilidades.", r4: "Expresa claramente sus derechos y responsabilidades." },
+            { no: 22, pregunta: "Se responsabiliza de sus actos y cuando se equivoca pide disculpas.", r1: "No asume responsabilidad ni pide disculpas.", r2: "Acepta culpa con dificultad y pide disculpas forzadas.", r3: "Se responsabiliza y pide disculpas la mayoría de las veces.", r4: "Se responsabiliza de sus actos y pide disculpas sinceramente." },
+            { no: 23, pregunta: "Cumple los compromisos y expresa satisfacción por ello.", r1: "No cumple compromisos ni muestra satisfacción.", r2: "Cumple a regañadientes y sin satisfacción.", r3: "Cumple la mayoría de compromisos y muestra alguna satisfacción.", r4: "Cumple sus compromisos y expresa genuina satisfacción." },
+            { no: 24, pregunta: "Realiza tareas como regar las plantas, limpieza del local sin desperdiciar agua.", r1: "No realiza tareas o las hace desperdiciando.", r2: "Realiza tareas, pero con supervisión y desperdicio ocasional.", r3: "Realiza tareas de forma básica, con algún desperdicio.", r4: "Realiza tareas cuidando recursos y sin desperdiciar." },
+            { no: 25, pregunta: "Mantiene una relación afectiva con su patrocinador(a) a través de las cartas.", r1: "No se comunica o no tiene relación con el patrocinador.", r2: "Se comunica con dificultad o con poca frecuencia.", r3: "Mantiene una relación afectiva, aunque la comunicación es irregular.", r4: "Mantiene una relación afectiva y se comunica regularmente con el patrocinador(a)." },
+            { no: 26, pregunta: "Identifica grupos sociales con conductas negativas.", r1: "No identifica conductas negativas en grupos.", r2: "Identifica algunas conductas, pero no las considera negativas.", r3: "Identifica grupos con conductas negativas, aunque no siempre las evita.", r4: "Identifica claramente y evita grupos con conductas negativas." },
+            { no: 27, pregunta: "Es respetuoso en el trato con sus compañeros.", r1: "No es respetuoso con sus compañeros.", r2: "A veces es respetuoso, a veces no.", r3: "Es respetuoso con la mayoría de sus compañeros.", r4: "Siempre es respetuoso en el trato con sus compañeros." },
+            { no: 28, pregunta: "Reconoce el plan de Dios para la humanidad y el plan específico que tiene para él como niño.", r1: "No reconoce el plan de Dios ni el propio.", r2: "Reconoce el plan de Dios vagamente, no el suyo.", r3: "Reconoce el plan de Dios y empieza a ver el suyo.", r4: "Reconoce y comprende el plan de Dios para la humanidad y para sí mismo." },
+            { no: 29, pregunta: "Comprende los propósitos y el mensaje básico de las Historias Bíblicas para su vida.", r1: "No comprende propósitos ni mensaje.", r2: "Comprende el mensaje superficialmente, no los propósitos.", r3: "Comprende el mensaje básico y algunos propósitos para su vida.", r4: "Comprende profundamente los propósitos y el mensaje bíblico para su vida." },
+            { no: 30, pregunta: "Reconoce la Biblia como un libro que enseña principios para vivir.", r1: "No reconoce la Biblia como fuente de principios.", r2: "Reconoce la Biblia, pero sin verla como guía de principios.", r3: "Reconoce la Biblia como un libro con principios de vida.", r4: "Reconoce y valora la Biblia como un libro de principios para vivir." },
+            { no: 31, pregunta: "Refleja conciencia de su necesidad de Cristo como Salvador.", r1: "No tiene conciencia de necesitar a Cristo.", r2: "Tiene una vaga idea de necesitar a Cristo.", r3: "Refleja conciencia de su necesidad de Cristo.", r4: "Refleja una clara y profunda conciencia de Cristo como Salvador." },
+            { no: 32, pregunta: "Muestra actitudes de un verdadero creyente (colaboración, amistad, respeto, etc...).", r1: "No muestra actitudes de creyente.", r2: "Muestra actitudes inconsistentes o superficiales.", r3: "Muestra algunas actitudes de creyente, aunque no siempre.", r4: "Muestra consistentemente actitudes de un verdadero creyente." },
+            { no: 33, pregunta: "Reconoce que a través de Jesús tenemos perdón de nuestros pecados y restaura la relación con Dios si acepta a Jesús como Señor y Salvador.", r1: "No reconoce el perdón ni la restauración.", r2: "Reconoce el perdón, pero no la restauración por Jesús.", r3: "Reconoce que Jesús perdona y restaura la relación con Dios.", r4: "Reconoce y acepta el perdón y la restauración total con Dios por medio de Jesús." },
+            { no: 34, pregunta: "Participa regularmente en actividades que realiza la iglesia..", r1: "Nunca participa en la Iglesia.", r2: "Participa muy raramente y con resistencia.", r3: "Participa ocasionalmente en actividades de la Iglesia.", r4: "Participa frecuentemente y con agrado en las actividades de la Iglesia." },
+            { no: 35, pregunta: "Realiza al menos dos actividades de servicio (ICP y casa).", r1: "No realiza actividades de servicio.", r2: "Realiza una actividad de servicio con poca constancia.", r3: "Realiza una o dos actividades de servicio con regularidad.", r4: "Realiza al menos dos actividades de servicio de forma consistente." },
+            { no: 36, pregunta: "Practica la lectura de la Biblia, adoración y alabanza frecuentemente.", r1: "No practica la lectura, adoración ni alabanza.", r2: "Practica alguna de forma muy esporádica..", r3: "Practica lectura, adoración y alabanza con cierta frecuencia.", r4: "Practica lectura de la Biblia, adoración y alabanza con regularidad y fervor." }
+        ],
+        group5: [ // Corresponde a las preguntas 5 (12-14)
+  { no: 1, pregunta: "Ha culminado la instrucción primaria.", r1: "No ha culminado la primaria.", r2: "Ha culminado, pero con grandes dificultades.", r3: "Ha culminado la primaria satisfactoriamente.", r4: "Ha culminado y se destaca en su nivel." },
+  { no: 2, pregunta: "Escribe textos cortos con sentido y resuelve problemas con operaciones básicas.", r1: "No escribe ni resuelve.", r2: "Escribe con dificultad, resuelve con mucha ayuda.", r3: "Escribe textos y resuelve problemas básicos.", r4: "Escribe con sentido y resuelve problemas básicos con facilidad." },
+  { no: 3, pregunta: "Tiene hábitos de estudio y aplica métodos de estudio.", r1: "No tiene hábitos ni métodos de estudio.", r2: "Intenta aplicarlos, pero sin constancia.", r3: "Tiene hábitos y aplica métodos de estudio.", r4: "Tiene sólidos hábitos y aplica métodos de estudio eficazmente." },
+  { no: 4, pregunta: "Tiene información acerca de carreras profesionales y conoce opciones vocacionales.", r1: "No tiene información sobre carreras ni opciones.", r2: "Tiene información muy limitada o confusa.", r3: "Tiene información básica y conoce algunas opciones.", r4: "Tiene buena información y conoce diversas opciones vocacionales." },
+  { no: 5, pregunta: "Identifica sus habilidades y potenciales vocacionales.", r1: "No identifica sus habilidades o potencial.", r2: "Identifica algunas, pero sin claridad.", r3: "Identifica sus habilidades y potenciales vocacionales.", r4: "Identifica y aprovecha sus habilidades y potenciales vocacionales." },
+  { no: 6, pregunta: "Desarrolla habilidades comunicacionales para mantener una relación con su patrocinador(a) expresando sus sentimientos y sus aprendizajes.", r1: "No desarrolla habilidades para comunicarse.", r2: "Se comunica, pero con dificultad o de forma limitada.", r3: "Se comunica expresando sentimientos y aprendizajes.", r4: "Desarrolla excelentes habilidades comunicacionales con el patrocinador." },
+  { no: 7, pregunta: "Hace uso adecuado de sus recursos económicos y separa parte para su ofrenda.", r1: "No usa bien sus recursos ni ofrenda.", r2: "Usa recursos de forma irregular, ofrenda a veces.", r3: "Usa adecuadamente recursos y separa para ofrenda.", r4: "Usa sus recursos responsablemente y aparta para ofrenda." },
+  { no: 8, pregunta: "Cuenta con un plan individual o grupal para implementar un pequeño negocio.", r1: "No tiene plan para un negocio.", r2: "Tiene una idea, pero no un plan claro.", r3: "Cuenta con un plan básico para un pequeño negocio.", r4: "Cuenta con un plan detallado y viable para un pequeño negocio." },
+  { no: 9, pregunta: "Aprende una habilidad generadora de ingresos y/o amplía sus conocimientos sobre la carrera que va a seguir.", r1: "No aprende ni amplía conocimientos.", r2: "Aprende con dificultad, no tiene clara su carrera.", r3: "Aprende alguna habilidad o amplía conocimientos.", r4: "Aprende habilidades y amplía conocimientos para su futura carrera." },
+  { no: 10, pregunta: "Identifica los cambios dados en su cuerpo y evita burlarse y discriminar a otros por su apariencia física.", r1: "No identifica cambios ni respeta.", r2: "Identifica algunos cambios, pero puede burlarse.", r3: "Identifica cambios y evita burlarse o discriminar.", r4: "Identifica cambios y respeta la apariencia física de todos." },
+  { no: 11, pregunta: "Practica hábitos de higiene personal, salud oral y de alimentación adecuada.", r1: "No practica hábitos de higiene o alimentación.", r2: "Practica con recordatorios, hábitos irregulares.", r3: "Practica la mayoría de hábitos de higiene y alimentación.", r4: "Practica todos los hábitos de higiene y alimentación adecuadamente." },
+  { no: 12, pregunta: "Practica al menos 1 actividad física y/o deportiva regularmente.", r1: "No practica ninguna actividad.", r2: "Practica con mucha irregularidad.", r3: "Practica una actividad física con regularidad.", r4: "Practica regularmente al menos una actividad física/deportiva." },
+  { no: 13, pregunta: "Practica las medidas de seguridad sugeridas en caso de epidemias, emergencias, etc.", r1: "No practica medidas de seguridad.", r2: "Practica algunas con mucha supervisión.", r3: "Practica la mayoría de medidas de seguridad.", r4: "Practica todas las medidas de seguridad sugeridas." },
+  { no: 14, pregunta: "Tiene un estado físico saludable y/o tratamiento adecuado según su necesidad.", r1: "No tiene estado saludable ni tratamiento.", r2: "Tiene salud irregular, tratamiento inconsistente.", r3: "Tiene estado saludable y recibe tratamiento si es necesario.", r4: "Tiene un estado físico excelente y acceso a tratamiento adecuado." },
+  { no: 15, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso/talla no es acorde y sin control.", r2: "Peso/talla desviado o controles irregulares.", r3: "Peso/talla generalmente acorde y acceso a control.", r4: "Peso/talla adecuado y control médico regular." },
+  { no: 16, pregunta: "Evita conductas negativas para su salud y sexualidad (anorexia, bulimia, obesidad, masturbación, adicciones, etc).", r1: "Exhibe una o más conductas negativas.", r2: "Muestra algunas conductas, pero con poca conciencia.", r3: "Evita la mayoría de conductas negativas para su salud.", r4: "Evita activamente todas las conductas negativas para su salud." },
+  { no: 17, pregunta: "Explica la importancia de decisiones cristianas sobre la práctica de su sexualidad.", r1: "No explica la importancia o tiene ideas erróneas.", r2: "Explica de forma básica, sin aplicación práctica.", r3: "Explica la importancia y se esfuerza en aplicarlas.", r4: "Explica y aplica consistentemente decisiones cristianas sobre su sexualidad." },
+  { no: 18, pregunta: "Menciona sus derechos según las leyes que lo protegen de encuentros sexuales forzados.", r1: "No conoce sus derechos de protección.", r2: "Conoce algunos, pero sin entender cómo aplicarlos.", r3: "Menciona sus derechos y su protección.", r4: "Menciona y comprende sus derechos ante encuentros sexuales forzados." },
+  { no: 19, pregunta: "Menciona sus fortalezas y debilidades.", r1: "No identifica fortalezas ni debilidades.", r2: "Identifica algunas con dificultad o confusión.", r3: "Identifica sus principales fortalezas y debilidades.", r4: "Identifica y reflexiona sobre sus fortalezas y debilidades." },
+  { no: 20, pregunta: "Se hace cargo de sí mismo según un proyecto de vida.", r1: "No tiene proyecto de vida ni se hace cargo.", r2: "Tiene una idea de proyecto, pero no se hace cargo.", r3: "Se hace cargo de sí mismo y tiene un proyecto de vida.", r4: "Se hace cargo de sí mismo y sigue un proyecto de vida definido." },
+  { no: 21, pregunta: "Maneja sus reacciones emocionales adecuadamente frente a diferentes situaciones.", r1: "Maneja sus emociones de forma inapropiada.", r2: "Maneja algunas emociones, pero con dificultades.", r3: "Maneja sus reacciones emocionales adecuadamente la mayoría del tiempo.", r4: "Maneja sus reacciones emocionales de forma madura y adecuada." },
+  { no: 22, pregunta: "Respeta a las autoridades establecidas por Dios en su familia y entorno.", r1: "No respeta a las autoridades.", r2: "Respeta a regañadientes o solo a algunas autoridades.", r3: "Respeta a la mayoría de las autoridades.", r4: "Respeta profundamente a las autoridades de su familia y entorno." },
+  { no: 23, pregunta: "Demuestra conciencia social en la relación con los demás, sin discriminación.", r1: "No muestra conciencia social ni evita la discriminación.", r2: "Muestra poca conciencia social, a veces discrimina.", r3: "Demuestra conciencia social y evita la discriminación.", r4: "Demuestra fuerte conciencia social y no discrimina." },
+  { no: 24, pregunta: "Participa en actividades de servicio social en su comunidad.", r1: "No participa en servicio social.", r2: "Participa solo si se le fuerza o con poca frecuencia.", r3: "Participa ocasionalmente en servicio social.", r4: "Participa activamente en actividades de servicio social." },
+  { no: 25, pregunta: "Mantiene una relación de gratitud con su patrocinador(a) a través de las cartas.", r1: "No mantiene relación de gratitud.", r2: "Se comunica con dificultad o sin expresar gratitud.", r3: "Mantiene relación y expresa gratitud por carta.", r4: "Mantiene una relación afectiva y expresa gratitud constante por carta." },
+  { no: 26, pregunta: "Rechaza ser parte de grupos sociales con conductas negativas.", r1: "Se une a grupos con conductas negativas.", r2: "Rechaza a veces, pero no consistentemente.", r3: "Rechaza la mayoría de grupos con conductas negativas.", r4: "Rechaza firmemente ser parte de grupos con conductas negativas." },
+  { no: 27, pregunta: "Trabaja en equipo con responsabilidad y respeto.", r1: "No trabaja en equipo, irresponsable o irrespetuoso.", r2: "Trabaja en equipo con dificultad, sin responsabilidad.", r3: "Trabaja en equipo con cierta responsabilidad y respeto.", r4: "Trabaja en equipo con responsabilidad y respeto." },
+  { no: 28, pregunta: "Identifica 5 principios bíblicos que pueden orientar su comportamiento.", r1: "No reconoce el plan de Dios ni el suyo.", r2: "Reconoce el plan de Dios vagamente, no el suyo.", r3: "Reconoce el plan de Dios y empieza a ver el suyo.", r4: "Reconoce y comprende el plan de Dios para la humanidad y para sí mismo." },
+  { no: 29, pregunta: "Explica los propósitos de la Biblia y el mensaje básico de los evangelios.", r1: "No comprende los Evangelios.", r2: "Comprende el mensaje superficial, no los propósitos.", r3: "Comprende el mensaje básico y algunos propósitos de los Evangelios.", r4: "Comprende profundamente los propósitos y el mensaje de los Evangelios." },
+  { no: 30, pregunta: "Identifica la estructura y autoría de la Biblia.", r1: "No reconoce la Biblia como fuente de principios.", r2: "Reconoce la Biblia, pero sin verla como guía.", r3: "Reconoce la Biblia como un libro con principios de vida.", r4: "Reconoce y valora la Biblia como un libro de principios para vivir." },
+  { no: 31, pregunta: "Toma la decisión de aceptar a Cristo como su Salvador (De acuerdo a la práctica de su Iglesia local).", r1: "No tiene conciencia de necesitar a Cristo.", r2: "Tiene una vaga idea de necesitar a Cristo.", r3: "Refleja conciencia de su necesidad de Cristo.", r4: "Refleja una clara y profunda conciencia de Cristo como Salvador." },
+  { no: 32, pregunta: "Toma decisiones de vida y se comporta como seguidor de Cristo.", r1: "No muestra actitudes de creyente.", r2: "Muestra actitudes inconsistentes o superficiales.", r3: "Muestra algunas actitudes de creyente, aunque no siempre.", r4: "Muestra consistentemente actitudes de un verdadero creyente." },
+  { no: 33, pregunta: "Confiesa su pecado en oración y solicita la ayuda de Jesús.", r1: "No reconoce el perdón ni la restauración.", r2: "Reconoce el perdón, pero no la restauración por Jesús.", r3: "Reconoce que Jesús perdona y restaura la relación con Dios.", r4: "Reconoce y acepta el perdón y la restauración total con Dios por medio de Jesús." },
+  { no: 34, pregunta: "Participa activamente en las reuniones y actividades de la iglesia.", r1: "No participa en la Iglesia.", r2: "Participa pasivamente o muy rara vez.", r3: "Participa ocasionalmente en reuniones y actividades.", r4: "Participa activa y regularmente en reuniones y actividades." },
+  { no: 35, pregunta: "Realiza al menos seis actividades de servicio (ICP y casa).", r1: "No realiza actividades de servicio.", r2: "Realiza pocas actividades o sin constancia.", r3: "Realiza al menos 3-5 actividades de servicio.", r4: "Realiza 6 o más actividades de servicio de forma consistente." },
+  { no: 36, pregunta: "Realiza devocionales con frecuencia y asiste a la escuela dominical regularmente.", r1: "No realiza devocionales ni asiste a la escuela dominical.", r2: "Realiza devocionales y asiste ocasionalmente.", r3: "Realiza devocionales y asiste a la escuela dominical con frecuencia.", r4: "Realiza devocionales frecuentes y asiste a la escuela dominical regularmente." }
+
+        ],
+        group6: [ // Corresponde a las preguntas 6 (15-18)
+  { no: 1, pregunta: "Ha culminado la instrucción secundaria.", r1: "No ha culminado la secundaria.", r2: "Ha culminado, pero con dificultades.", r3: "Ha culminado satisfactoriamente.", r4: "Ha culminado y se destaca en su nivel." },
+  { no: 2, pregunta: "Escribe y expone un ensayo.", r1: "No escribe ni expone ensayos.", r2: "Escribe/expone con mucha dificultad o ayuda.", r3: "Escribe y expone un ensayo con alguna ayuda.", r4: "Escribe y expone ensayos de forma independiente." },
+  { no: 3, pregunta: "Responde correctamente pruebas sobre un libro que ha leído.", r1: "No responde o lo hace incorrectamente.", r2: "Responde con errores o solo algunas preguntas.", r3: "Responde correctamente la mayoría de las preguntas.", r4: "Responde correctamente todas las preguntas de la prueba." },
+  { no: 4, pregunta: "Redacta su plan para el mañana que incluye metas de estudio.", r1: "No redacta plan ni metas de estudio.", r2: "Redacta plan vago, sin metas claras.", r3: "Redacta plan con metas de estudio, pero es simple.", r4: "Redacta un plan claro y detallado con metas de estudio." },
+  { no: 5, pregunta: "Se entrena de acuerdo a su vocación.", r1: "No se entrena ni tiene vocación.", r2: "Se entrena, pero sin dirección clara.", r3: "Se entrena de acuerdo a su vocación.", r4: "Se entrena activamente y con propósito según su vocación." },
+  { no: 6, pregunta: "Realiza y/o culmina un curso de capacitación técnica y obtiene la certificación del mismo.", r1: "No realiza cursos ni obtiene certificación.", r2: "Realiza curso, pero no lo culmina o sin certificar.", r3: "Realiza y culmina un curso, obtiene certificación.", r4: "Realiza, culmina y certifica cursos técnicos con éxito." },
+  { no: 7, pregunta: "Aplica principios y conceptos básicos de administración, comercialización y mayordomía basados en la Biblia.", r1: "No aplica principios o los desconoce.", r2: "Aplica algunos principios con dificultad o sin base bíblica.", r3: "Aplica principios básicos bíblicos de administración.", r4: "Aplica sólidamente principios bíblicos de administración." },
+  { no: 8, pregunta: "Implementa un pequeño negocio individual o grupal y/o busca su primer empleo.", r1: "No implementa negocio ni busca empleo.", r2: "Intenta, pero sin éxito o compromiso.", r3: "Implementa un pequeño negocio o busca su primer empleo.", r4: "Implementa un negocio o consigue su primer empleo activamente." },
+  { no: 9, pregunta: "Tiene una habilidad generadora de ingresos definida y/o define que carrera va a seguir.", r1: "No tiene habilidad ni define carrera.", r2: "Tiene habilidad, pero no genera ingresos o sin carrera definida.", r3: "Tiene habilidad para ingresos y/o define su carrera.", r4: "Posee una habilidad para generar ingresos y ha definido su carrera." },
+  { no: 10, pregunta: "Practica hábitos de higiene personal y tiene una sana alimentación.", r1: "No practica hábitos ni tiene sana alimentación.", r2: "Practica con irregularidad, alimentación no sana.", r3: "Practica la mayoría de hábitos de higiene y alimentación sana.", r4: "Practica consistentemente higiene personal y sana alimentación." },
+  { no: 11, pregunta: "Promueve hábitos de higiene personal, salud oral y de alimentación adecuada en su familia y comunidad.", r1: "No promueve hábitos saludables.", r2: "Promueve débilmente o solo en su familia.", r3: "Promueve hábitos saludables en su familia y entorno cercano.", r4: "Promueve activamente hábitos de higiene y alimentación en su comunidad." },
+  { no: 12, pregunta: "Practica al menos 1 actividad física y/o deportiva regularmente.", r1: "No practica ninguna actividad física.", r2: "Practica con mucha irregularidad.", r3: "Practica una actividad física con regularidad.", r4: "Practica regularmente al menos una actividad física/deportiva." },
+  { no: 13, pregunta: "Se conduce de forma adecuada en prácticas de desalojo en emergencia (usa las técnicas).", r1: "No se conduce adecuadamente en emergencias.", r2: "Se conduce con dificultad, no usa técnicas.", r3: "Se conduce adecuadamente, usa algunas técnicas.", r4: "Se conduce de forma excelente y usa todas las técnicas." },
+  { no: 14, pregunta: "Tiene un estado físico saludable y/o tratamiento adecuado según su necesidad.", r1: "No tiene estado saludable ni tratamiento.", r2: "Tiene salud irregular, tratamiento inconsistente.", r3: "Tiene estado saludable y recibe tratamiento si es necesario.", r4: "Tiene un estado físico excelente y acceso a tratamiento adecuado." },
+  { no: 15, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso/talla no es acorde y sin control.", r2: "Peso/talla desviado o controles irregulares.", r3: "Peso/talla generalmente acorde y acceso a control.", r4: "Peso/talla adecuado y control médico regular." },
+  { no: 16, pregunta: "Promueve conductas positivas sobre salud y sexualidad en su entorno.", r1: "No promueve conductas positivas.", r2: "Promueve débilmente o con poca convicción.", r3: "Promueve algunas conductas positivas de salud y sexualidad.", r4: "Promueve activamente conductas positivas de salud y sexualidad." },
+  { no: 17, pregunta: "Expresa su determinación de mantenerse sexualmente puro según los principios bíblicos.", r1: "No expresa determinación o la contradice.", r2: "Expresa determinación, pero con dudas.", r3: "Expresa su determinación y se esfuerza en la pureza.", r4: "Expresa firmemente su determinación de pureza sexual bíblica." },
+  { no: 18, pregunta: "Participa activamente en iniciativas de prevención de VIH, ETS, abuso y maltrato.", r1: "No participa en iniciativas de prevención.", r2: "Participa pasivamente o con poca regularidad.", r3: "Participa en algunas iniciativas de prevención.", r4: "Participa activamente y promueve iniciativas de prevención." },
+  { no: 19, pregunta: "Verbaliza con seguridad sus convicciones y valora la opinión de los demás.", r1: "No verbaliza convicciones ni valora opiniones.", r2: "Verbaliza con poca seguridad, no valora opiniones.", r3: "Verbaliza convicciones con seguridad y valora opiniones.", r4: "Verbaliza con seguridad sus convicciones y respeta la opinión ajena." },
+  { no: 20, pregunta: "Define, ejecuta y evalúa sus metas personales a corto plazo.", r1: "No define, ejecuta ni evalúa metas.", r2: "Define, pero no ejecuta o evalúa bien.", r3: "Define, ejecuta y evalúa metas a corto plazo.", r4: "Define, ejecuta y evalúa sus metas a corto plazo eficazmente." },
+  { no: 21, pregunta: "Toma decisiones con base a principios bíblicos.", r1: "No toma decisiones con principios bíblicos.", r2: "Toma decisiones, pero sin base bíblica consistente.", r3: "Toma decisiones con base en principios bíblicos la mayoría del tiempo.", r4: "Toma decisiones consistentemente basadas en principios bíblicos." },
+  { no: 22, pregunta: "Acepta y respeta a las autoridades establecidas por Dios en su familia y entorno.", r1: "No acepta ni respeta autoridades.", r2: "Acepta a regañadientes o solo a algunas.", r3: "Acepta y respeta a la mayoría de las autoridades.", r4: "Acepta y respeta plenamente a las autoridades divinamente establecidas." },
+  { no: 23, pregunta: "Demuestra conciencia social en la relación con los demás, sin discriminación.", r1: "No demuestra conciencia social ni evita discriminación.", r2: "Muestra poca conciencia, a veces discrimina.", r3: "Demuestra conciencia social y evita la discriminación.", r4: "Demuestra fuerte conciencia social y no discrimina." },
+  { no: 24, pregunta: "Toma medidas para el ahorro de recursos y reciclaje de desechos.", r1: "No toma medidas para ahorro/reciclaje.", r2: "Toma algunas medidas, pero inconsistentes.", r3: "Toma medidas para ahorro y reciclaje en general.", r4: "Toma medidas activas para el ahorro de recursos y reciclaje." },
+  { no: 25, pregunta: "Informa a su patrocinador(a) sobre su progreso en la consecución de sus metas.", r1: "No informa al patrocinador sobre metas.", r2: "Informa de forma irregular o incompleta.", r3: "Informa a su patrocinador sobre el progreso de sus metas.", r4: "Informa regularmente y con detalle sobre el progreso de sus metas." },
+  { no: 26, pregunta: "Toma vías no conflictivas para la solución de problemas.", r1: "Resuelve problemas de forma conflictiva.", r2: "Intenta vías no conflictivas, pero a veces falla.", r3: "Toma vías no conflictivas la mayoría del tiempo.", r4: "Siempre toma vías no conflictivas para resolver problemas." },
+  { no: 27, pregunta: "Redacta propuestas sobre modificaciones a la convivencia cotidiana y social.", r1: "No redacta propuestas ni piensa en modificaciones.", r2: "Redacta propuestas, pero son poco realistas o irrelevantes.", r3: "Redacta propuestas para mejorar la convivencia.", r4: "Redacta propuestas claras y pertinentes para la convivencia." },
+  { no: 28, pregunta: "Identifica 10 principios bíblicos que pueden orientar su comportamiento.", r1: "No identifica principios bíblicos.", r2: "Identifica algunos principios, pero no los relaciona con su conducta.", r3: "Identifica 10 principios que pueden orientar su conducta.", r4: "Identifica y aplica activamente 10 o más principios bíblicos." },
+  { no: 29, pregunta: "El joven expresa y comparte conceptos teológicos como salvación, amor, arrepentimiento, perdón y servicio a través de los estudios bíblicos.", r1: "No expresa ni comparte conceptos teológicos.", r2: "Expresa de forma vaga, sin entenderlos bien.", r3: "Expresa y comparte conceptos teológicos básicos.", r4: "Expresa y comparte con profundidad conceptos teológicos." },
+  { no: 30, pregunta: "Localiza con facilidad libros y textos del antiguo y nuevo testamento para preparar un mensaje.", r1: "No localiza libros ni textos bíblicos.", r2: "Localiza con dificultad y ayuda.", r3: "Localiza libros y textos, puede compartir mensajes.", r4: "Localiza con facilidad libros y textos, comparte mensajes claros." },
+  { no: 31, pregunta: "Puede explicar el significado del bautismo y expresa su deseo de bautizarse.", r1: "No explica el bautismo ni expresa deseo.", r2: "Explica con dificultad, sin deseo claro.", r3: "Explica el bautismo y expresa deseo de bautizarse.", r4: "Explica el bautismo y expresa un firme deseo de bautizarse." },
+  { no: 32, pregunta: "Las personas lo reconocen como ejemplo en la comunidad y como un servidor de Cristo.", r1: "No es reconocido como ejemplo o servidor.", r2: "Es reconocido por pocos o con dudas.", r3: "Es reconocido como ejemplo y servidor de Cristo por algunos.", r4: "Es ampliamente reconocido como ejemplo y servidor de Cristo." },
+  { no: 33, pregunta: "Comparte con otros el plan de salvación.", r1: "No comparte el plan de salvación.", r2: "Intenta compartir, pero con dificultad o incompletitud.", r3: "Comparte el plan de salvación con otros.", r4: "Comparte clara y eficazmente el plan de salvación." },
+  { no: 34, pregunta: "Elabora una reflexión sobre un pasaje de las escrituras.", r1: "No elabora reflexiones sobre las escrituras.", r2: "Elabora reflexiones superficiales o con ayuda.", r3: "Elabora reflexiones sobre pasajes de las escrituras.", r4: "Elabora reflexiones profundas e independientes sobre las escrituras." },
+  { no: 35, pregunta: "Realiza al menos 11 actividades de servicio (ICP, casa y colegio).", r1: "No realiza actividades de servicio.", r2: "Realiza pocas actividades o sin constancia.", r3: "Realiza al menos 6-10 actividades de servicio.", r4: "Realiza 11 o más actividades de servicio de forma consistente." },
+  { no: 36, pregunta: "Visita a sus compañeros enfermos. Coopera en actividades benéficas.", r1: "No visita ni coopera.", r2: "Visita/coopera ocasionalmente, sin iniciativa.", r3: "Visita compañeros enfermos y coopera en actividades.", r4: "Visita activamente a enfermos y coopera en beneficencia." }
+        ],
+        group7: [ // Corresponde a las preguntas 7 (19+)
+        { no: 1, pregunta: "Ha culminado la instrucción secundaria.", r1: "No ha culminado la secundaria.", r2: "Ha culminado, pero con dificultades.", r3: "Ha culminado satisfactoriamente.", r4: "Ha culminado y se destaca." },
+            { no: 2, pregunta: "Su rendimiento académico supera o está dentro del promedio de los estándares establecido por el Ministerio de Educación para su nivel.", r1: "Rendimiento muy bajo, lejos del promedio.", r2: "Rendimiento debajo del promedio, con dificultades.", r3: "Rendimiento en el promedio de los estándares.", r4: "Rendimiento superior al promedio, sobresaliente." },
+            { no: 3, pregunta: "Comparte, utiliza y reflexiona sobre textos escritos y/o digitales que le contribuyen en su desarrollo personal, profesional y social.", r1: "No comparte ni utiliza textos, sin reflexión.", r2: "Comparte, pero sin utilidad o reflexión.", r3: "Utiliza y reflexiona sobre textos que contribuyen a su desarrollo.", r4: "Utiliza, comparte y reflexiona críticamente sobre textos." },
+            { no: 4, pregunta: "Redacta en su proyecto de vida objetivos y metas a corto, mediano y largo plazo encaminados hacia la identificación de sus vocaciones y la consolidación de sueños.", r1: "No redacta proyecto de vida ni metas.", r2: "Redacta, pero objetivos y metas vagos o inconsistentes.", r3: "Redacta proyecto con metas claras a corto/mediano plazo.", r4: "Redacta proyecto de vida con metas claras a largo plazo y vocación." },
+            { no: 5, pregunta: "Tiene conocimiento y la habilidad para elaborar un presupuesto personal y plantear por lo menos dos alternativas de ahorro y/o inversión de dinero.", r1: "No tiene conocimiento ni habilidad para presupuestar/ahorrar.", r2: "Conocimiento limitado, sin alternativas de ahorro.", r3: "Conoce y puede elaborar un presupuesto, plantea algunas alternativas.", r4: "Tiene conocimiento y habilidad para presupuestar y planear ahorro/inversión." },
+            { no: 6, pregunta: "Ha sido certificado formalmente en una habilidad generadora de ingreso, formación técnica, tecnológica.", r1: "No ha sido certificado en ninguna habilidad.", r2: "Ha recibido certificación informal o incompleta.", r3: "Ha sido certificado en una habilidad generadora de ingreso.", r4: "Ha sido certificado formalmente en una habilidad generadora de ingreso." },
+            { no: 7, pregunta: "Aplica principios y conceptos básicos de administración, comercialización y mayordomía basados en la Biblia.", r1: "No aplica principios o los desconoce.", r2: "Aplica algunos principios con dificultad o sin base bíblica.", r3: "Aplica principios básicos bíblicos de administración.", r4: "Aplica sólidamente principios bíblicos de administración." },
+            { no: 8, pregunta: "Elabora un plan de negocio individual o grupal y/o busca su primer empleo.", r1: "No tiene plan de negocio ni busca empleo.", r2: "Tiene una idea, pero sin plan estructurado o busca empleo pasivamente.", r3: "Elabora un plan de negocio básico o busca activamente su primer empleo.", r4: "Elabora un plan de negocio viable y/o consigue su primer empleo." },
+            { no: 9, pregunta: "Ha elaborado una propuesta de mejoramiento de los conocimientos, habilidades, actitudes y/o valores que identifica como debilidades para avanzar en su independencia económica.", r1: "No ha elaborado ninguna propuesta de mejoramiento.", r2: "Ha elaborado una propuesta superficial o poco efectiva.", r3: "Ha elaborado una propuesta de mejora para sus debilidades.", r4: "Ha elaborado una propuesta detallada y efectiva para su independencia económica." },
+            { no: 10, pregunta: "Practica hábitos de higiene personal, salud oral y descanso adecuado.", r1: "No practica hábitos de higiene ni descansa bien.", r2: "Practica con irregularidad o sin descanso adecuado.", r3: "Practica la mayoría de hábitos de higiene y descansa.", r4: "Practica consistentemente higiene personal, salud oral y descanso adecuado." },
+            { no: 11, pregunta: "Practica al menos una actividad física y/o deportiva dos o tres veces por semana.", r1: "No practica ninguna actividad física.", r2: "Practica muy esporádicamente (menos de 2 veces/sem).", r3: "Practica una actividad física 2-3 veces por semana.", r4: "Practica al menos una actividad física/deportiva 2-3 veces por semana." },
+            { no: 12, pregunta: "Fomenta e implementa regularmente prácticas de buena salud y aseo en su hogar, CDI y comunidad.", r1: "No fomenta ni implementa prácticas de salud/aseo.", r2: "Fomenta, pero sin implementar regularmente.", r3: "Fomenta e implementa prácticas de salud/aseo en su hogar.", r4: "Fomenta e implementa activamente prácticas de salud/aseo en su hogar y comunidad." },
+            { no: 13, pregunta: "Ha desarrollado hábitos saludables en su alimentación (horarios regulares para las comidas e incluye los diferentes grupos de alimentos).", r1: "No tiene hábitos saludables de alimentación.", r2: "Tiene hábitos irregulares o dieta desequilibrada.", r3: "Ha desarrollado hábitos saludables de alimentación (horarios/grupos).", r4: "Tiene hábitos saludables de alimentación consistentes y balanceados." },
+            { no: 14, pregunta: "De acuerdo al chequeo médico presenta un estado físico saludable o está en tratamiento médico para recuperar su salud.", r1: "No presenta estado saludable ni tratamiento.", r2: "Presenta problemas de salud, tratamiento inconsistente.", r3: "Presenta estado físico saludable o está en tratamiento.", r4: "Presenta estado físico saludable y/o tratamiento adecuado." },
+            { no: 15, pregunta: "Tiene el peso y talla acorde a su edad y acceso a control médico.", r1: "Su peso/talla no es acorde y sin control.", r2: "Peso/talla desviado o controles irregulares.", r3: "Peso/talla generalmente acorde y acceso a control.", r4: "Peso/talla adecuado y control médico regular." },
+            { no: 16, pregunta: "Evita conductas negativas para su salud y sexualidad (anorexia, bulimia, obesidad, masturbación, adicciones, etc.).", r1: "Exhibe una o más conductas negativas.", r2: "Muestra algunas conductas, pero con poca conciencia.", r3: "Evita la mayoría de conductas negativas para su salud.", r4: "Evita activamente todas las conductas negativas para su salud." },
+            { no: 17, pregunta: "Toma decisiones basadas en los principios bíblicos frente a su sexualidad, elección de pareja, prevención de contagio de VIH e ITS.", r1: "No toma decisiones con principios bíblicos.", r2: "Toma decisiones, pero sin base bíblica o inconsistente.", r3: "Toma decisiones con principios bíblicos frente a sexualidad.", r4: "Toma decisiones consistentemente y bíblicas sobre sexualidad, pareja y prevención." },
+            { no: 18, pregunta: "Conoce los riesgos y consecuencias a los que se expone ante el consumo de sustancias psicoactivas y los previene.", r1: "Desconoce riesgos o no los previene.", r2: "Conoce algunos riesgos, pero no los previene eficazmente.", r3: "Conoce riesgos y consecuencias, y se esfuerza en prevenirlos.", r4: "Conoce y previene activamente los riesgos del consumo de sustancias." },
+            { no: 19, pregunta: "Identifica y puede nombrar nuevas responsabilidades, compromisos y obligaciones que ha asumido en su nueva etapa de vida adulta.", r1: "No identifica nuevas responsabilidades.", r2: "Identifica algunas, pero no las nombra o asume.", r3: "Identifica y nombra sus nuevas responsabilidades.", r4: "Identifica, nombra y asume plenamente sus nuevas responsabilidades." },
+            { no: 20, pregunta: "Emplea pensamientos y acciones favorables para superar el miedo ante situaciones que le demanden nuevas responsabilidades.", r1: "No emplea pensamientos/acciones para superar miedos.", r2: "Emplea con dificultad, no supera totalmente el miedo.", r3: "Emplea pensamientos y acciones que le ayudan a superar el miedo.", r4: "Emplea eficazmente pensamientos y acciones para superar el miedo." },
+            { no: 21, pregunta: "Argumenta asertivamente, consistente con el carácter cristiano al exponer su posición personal ante la presión social de su entorno.", r1: "No argumenta o lo hace de forma inconstante/no cristiana.", r2: "Argumenta con dificultad, no siempre asertivo.", r3: "Argumenta asertivamente, con carácter cristiano ante presión social.", r4: "Argumenta asertivamente y consistentemente su posición cristiana." },
+            { no: 22, pregunta: "Identifica conductas que pueden impedir a un joven asumir nuevas responsabilidades en su vida de adultez temprana.", r1: "No identifica conductas que impiden responsabilidades.", r2: "Identifica algunas, pero no comprende su impacto.", r3: "Identifica la mayoría de conductas que impiden responsabilidades.", r4: "Identifica y evita proactivamente conductas que impiden asumir responsabilidades." },
+            { no: 23, pregunta: "En situaciones adversas se sobrepone reconociendo que Dios está presente y da sentido a su vida.", r1: "Se derrumba, no reconoce la presencia de Dios.", r2: "Se sobrepone con dificultad, duda de la presencia de Dios.", r3: "Se sobrepone en adversidad, reconoce la presencia de Dios.", r4: "Se sobrepone y fortalece en adversidad, sintiendo a Dios presente." },
+            { no: 24, pregunta: "Ante una situación de dificultad y/o adversidad identifica oportunidades de aprendizaje y/o crecimiento y las aprovecha.", r1: "No identifica oportunidades de aprendizaje.", r2: "Identifica algunas, pero no las aprovecha.", r3: "Identifica oportunidades de aprendizaje y las aprovecha.", r4: "Identifica y aprovecha activamente oportunidades de aprendizaje en dificultad." },
+            { no: 25, pregunta: "Tiene dos o tres personas referentes que le aportan en la construcción de relaciones de amistad saludables.", r1: "No tiene referentes o son negativos.", r2: "Tiene referentes, pero la relación no es totalmente saludable.", r3: "Tiene 2-3 referentes que le aportan a la amistad.", r4: "Tiene 2-3 referentes sólidos que contribuyen a amistades saludables." },
+            { no: 26, pregunta: "Tiene la capacidad de comprender puntos de vista diferentes y/o contrarios a los suyos en un tema de discusión mostrando respeto y aceptación por las personas.", r1: "No comprende ni respeta puntos de vista diferentes.", r2: "Comprende con dificultad, no siempre acepta.", r3: "Comprende puntos de vista diferentes, muestra respeto.", r4: "Comprende y respeta puntos de vista contrarios, acepta a las personas." },
+            { no: 27, pregunta: "Ante situaciones de conflicto y dificultad con otros demuestra un comportamiento compasivo y de perdón.", r1: "Muestra comportamiento conflictivo, sin compasión/perdón.", r2: "Demuestra compasión/perdón con mucha dificultad.", r3: "Demuestra compasión y perdón en la mayoría de conflictos.", r4: "Demuestra comportamiento compasivo y de perdón en todo conflicto." },
+            { no: 28, pregunta: "Identifica claramente principios de la fe cristiana y asume una actitud de respeto ante otras expresiones de la fe diferente a la propia.", r1: "No identifica principios ni respeta otras fes.", r2: "Identifica algunos principios, pero con poca tolerancia.", r3: "Identifica principios y respeta otras expresiones de fe.", r4: "Identifica claramente principios de fe y respeta otras expresiones." },
+            { no: 29, pregunta: "Reconoce su vida como un regalo valioso de Dios que debe cuidar y apreciar.", r1: "No reconoce su vida como regalo de Dios.", r2: "Reconoce superficialmente, sin cuidado.", r3: "Reconoce su vida como regalo valioso y se esfuerza en cuidarla.", r4: "Reconoce profundamente su vida como regalo de Dios y la valora." },
+            { no: 30, pregunta: "Reconoce al menos tres elementos de la Fe Cristiana.", r1: "No reconoce elementos de la Fe Cristiana.", r2: "Reconoce 1 o 2 elementos con dificultad.", r3: "Reconoce 3 elementos de la Fe Cristiana.", r4: "Reconoce y explica claramente al menos 3 elementos de la Fe Cristiana." },
+            { no: 31, pregunta: "Reconoce la presencia consoladora de Jesús en medio de la adversidad/dolor.", r1: "No reconoce la presencia de Jesús en adversidad.", r2: "Reconoce la presencia, pero no como consuelo.", r3: "Reconoce la presencia consoladora de Jesús en la adversidad.", r4: "Reconoce y se consuela con la presencia de Jesús en la adversidad." },
+            { no: 32, pregunta: "Su actitud de amor, respeto, compasión y servicio en la iglesia y/o centro de desarrollo, familia, comunidad demuestran una vida transformada e impactada por la obra de Jesús.", r1: "Actitud ausente de amor/respeto/servicio.", r2: "Muestra actitud inconsistente o forzada.", r3: "Muestra actitud de amor/respeto/compasión/servicio.", r4: "Demuestra una vida transformada con actitud de amor/respeto/servicio." },
+            { no: 33, pregunta: "Convierte el evangelismo de invitación a otras personas especialmente a las que se encuentran en condiciones de vulnerabilidad y rechazo social.", r1: "No comparte el evangelio.", r2: "Comparte, pero sin enfoque en vulnerables/rechazados.", r3: "Convierte el evangelismo en invitación, enfocado en vulnerables.", r4: "Convierte el evangelismo en invitación activa a vulnerables y rechazados." },
+            { no: 34, pregunta: "Participa frecuentemente en actividades de servicio en la comunidad y en las que provee la Iglesia.", r1: "No participa en actividades de servicio.", r2: "Participa muy ocasionalmente o sin compromiso.", r3: "Participa con frecuencia en actividades de servicio.", r4: "Participa activamente y con compromiso en actividades de servicio." },
+            { no: 35, pregunta: "Realiza actos concretos de solidaridad ante situaciones adversas y/o de sufrimiento.", r1: "No realiza actos de solidaridad.", r2: "Realiza actos puntuales, sin iniciativa.", r3: "Realiza algunos actos de solidaridad.", r4: "Realiza actos concretos y frecuentes de solidaridad." },
+            { no: 36, pregunta: "Intencionalmente participa en actividades que nutren su vida espiritual que contribuyen a enfrentar los retos y adversidades que se le presenten.", r1: "No participa en actividades espirituales.", r2: "Participa, pero sin intención de crecimiento.", r3: "Participa en actividades que nutren su vida espiritual.", r4: "Participa intencionalmente en actividades que fortalecen su vida espiritual." }
+        ]
+    };
+
+    function displayQuestions(groupName) {
+        questionsContainer.innerHTML = ''; // Limpiar el contenedor
+        const selectedGroup = questionsData[groupName];
+
+        if (!selectedGroup) {
+            questionsContainer.innerHTML = '<p class="placeholder-text">Grupo de preguntas no encontrado.</p>';
+            return;
+        }
+
+        const table = document.createElement('table');
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Pregunta</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        `;
+
+        const tbody = table.querySelector('tbody');
+        selectedGroup.forEach(q => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${q.no}</td>
+                <td>${q.pregunta}</td>
+                <td>${q.r1}</td>
+                <td>${q.r2}</td>
+                <td>${q.r3}</td>
+                <td>${q.r4}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        questionsContainer.appendChild(table);
+    }
+
+    groupSelect.addEventListener('change', (event) => {
+        const selectedGroup = event.target.value;
+        if (selectedGroup) {
+            displayQuestions(selectedGroup);
+        } else {
+            questionsContainer.innerHTML = '<p class="placeholder-text">Por favor, selecciona un grupo para ver las preguntas.</p>';
+        }
+    });
+
+    // Opcional: Cargar un grupo por defecto al inicio (descomenta la línea si lo quieres)
+    // displayQuestions('group1');
+});
+
+    </script>
+</body>
+</html>

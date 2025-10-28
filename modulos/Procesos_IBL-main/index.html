@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestion</title>
+    <link rel="icon" type="image/png"
+        href="https://cdn-icons-png.flaticon.com/512/3214/3214710.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+        
+        .notification-critical {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            animation: pulseRed 2s infinite;
+        }
+        
+        .notification-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(217, 119, 6, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            animation: pulseOrange 2s infinite;
+        }
+        
+        .notification-info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        @keyframes pulseRed {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(239, 68, 68, 0.1); }
+        }
+        
+        @keyframes pulseOrange {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(245, 158, 11, 0.1); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-active { background: #10b981; }
+        .status-warning { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .table-row {
+            transition: all 0.2s ease;
+        }
+        
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+            transform: translateX(4px);
+        }
+        
+        .countdown-timer {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ef4444;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+        
+        .progress-ring {
+            transform: rotate(-90deg);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-ring circle {
+            transition: stroke-dashoffset 0.5s ease;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .evaluation-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .evaluation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .evaluation-card:hover::before {
+            left: 100%;
+        }
+        
+        .floating-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideInRight 0.5s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .grid-responsive {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-responsive {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .loading-skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            background-size: 200px 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+
+        /* Custom status styles */
+        .status-badge-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-badge-red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.05));
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        /* Calendar specific styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            text-align: center;
+        }
+        
+        .calendar-header-day {
+            font-weight: 600;
+            color: #94a3b8;
+            padding: 8px 0;
+            font-size: 0.9em;
+        }
+        
+        .calendar-day {
+            padding: 10px 0;
+            border-radius: 6px;
+            cursor: default;
+            transition: background-color 0.2s ease;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            display: flex; /* Added for responsivity */
+            flex-direction: column; /* Added for responsivity */
+            justify-content: center; /* Added for responsivity */
+            align-items: center; /* Added for responsivity */
+            min-height: 50px; /* Ensure days have enough height */
+        }
+
+        .calendar-day .day-number {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .calendar-day .day-message {
+            font-size: 0.7em;
+            margin-top: 2px;
+            opacity: 0.8;
+        }
+        
+        .calendar-day.current-month {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .calendar-day.prev-month, .calendar-day.next-month {
+            opacity: 0.5;
+            pointer-events: none; /* Make days from other months not clickable */
+        }
+        
+        .calendar-day.allowed {
+            background-color: rgba(16, 185, 129, 0.2); /* Green background */
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #d1fae5;
+        }
+        
+        .calendar-day.not-allowed {
+            background-color: rgba(239, 68, 68, 0.2); /* Red background */
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fee2e2;
+        }
+
+        .calendar-day.current-day-highlight {
+            outline: 2px solid #3b82f6; /* Blue highlight for current day */
+            outline-offset: 2px;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="floatingAlerts" class="fixed top-4 right-4 z-50 space-y-2"></div>
+    
+    <header class="p-6 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass-card p-6">
+                <div class="flex items-center justify-between flex-wrap gap-4"> <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-white">Sistema de Gestipo</h1>
+                            <p class="text-gray-400 text-sm">Gestión Inteligente de Procesos CO-0678</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6 flex-wrap justify-end"> <div class="flex items-center gap-2">
+                            <div class="status-dot status-active"></div>
+                            <span class="text-sm text-gray-300">Sistema Activo</span>
+                        </div>
+                        <div class="text-sm text-gray-400 text-right md:text-left"> <div id="currentDate"></div>
+                            <div id="currentTime" class="font-mono"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-6 space-y-8">
+        <section>
+            <div id="iblStatusIndicator" class="glass-card p-4 flex items-center gap-4">
+                <div class="status-dot"></div>
+                <span id="iblStatusText" class="text-lg font-semibold"></span>
+            </div>
+        </section>
+
+        <section>
+            <div id="photoStatusIndicator" class="glass-card p-4 flex items-center gap-4">
+                <div class="status-dot"></div>
+                <span id="photoStatusText" class="text-lg font-semibold"></span>
+            </div>
+        </section>
+
+        <section id="criticalNotifications" class="hidden">
+            <div class="glass-card notification-critical p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">PROCESOS IBL PAUSADOS</h3>
+                        <p class="text-gray-300">Los procesos están actualmente suspendidos</p>
+                    </div>
+                </div>
+                <div class="bg-red-900/20 p-4 rounded-lg">
+                    <p class="text-white mb-2">Tiempo restante para reactivación:</p>
+                    <div id="iblCountdown" class="countdown-timer"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="photoNotifications" class="hidden">
+            <div class="glass-card notification-warning p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">ACTUALIZACIONES DE FOTOS PAUSADAS</h3>
+                        <p class="text-gray-300">Las fotos están temporalmente suspendidas</p>
+                    </div>
+                </div>
+                <div class="bg-amber-900/20 p-4 rounded-lg">
+                    <p class="text-white mb-2">Se reanudarán el día 1 del próximo mes</p>
+                    <div id="photoCountdown" class="countdown-timer text-amber-400"></div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="glass-card p-6">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2"> <h2 class="text-xl font-bold text-white">Estado de Procesos IBL</h2>
+                    <div class="flex gap-2 items-center">
+                        <button id="prevIblMonth" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <span id="currentIblMonthYear" class="text-lg font-semibold text-white min-w-[150px] text-center"></span> <button id="nextIblMonth" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="iblCalendarContainer"></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="glass-card p-6">
+                <div class="flex justify-between items-center mb-4 flex-wrap gap-2"> <h2 class="text-xl font-bold text-white">Estado de Actualizaciones de Fotos</h2>
+                    <div class="flex gap-2 items-center">
+                        <button id="prevPhotoMonth" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <span id="currentPhotoMonthYear" class="text-lg font-semibold text-white min-w-[150px] text-center"></span> <button id="nextPhotoMonth" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                <div id="photoCalendarContainer"></div>
+            </div>
+        </section>
+
+        <section id="evaluationReminders" class="space-y-4"></section>
+
+        <section class="space-y-6">
+            <div class="flex items-center justify-between flex-wrap gap-4"> <h2 class="text-2xl font-bold text-white">Evaluaciones de Salud CO-0678</h2>
+                <div class="flex items-center gap-4">
+                    <div class="text-sm text-gray-400">
+                        <span>Total Evaluaciones: <span id="totalEvaluations" class="text-white font-semibold">24</span></span>
+                    </div>
+                    <div class="relative">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5-5-5h5v-5a7.81 7.81 0 01-7.5-8 7.81 7.81 0 018-7.5 7.81 7.81 0 017.5 8 7.81 7.81 0 01-8 7.5V17z"></path>
+                        </svg>
+                        <div id="notificationBadge" class="notification-badge hidden">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card p-6 evaluation-card">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-gray-700">
+                                <th class="text-left p-4 text-gray-300 font-medium">Tipo</th>
+                                <th class="text-left p-4 text-gray-300 font-medium">Supervivencia</th>
+                                <th class="text-left p-4 text-gray-300 font-medium">Caminadores</th>
+                                <th class="text-left p-4 text-gray-300 font-medium">Exploradores</th>
+                                <th class="text-left p-4 text-gray-300 font-medium">6 a 22 Años</th>
+                                <th class="text-left p-4 text-gray-300 font-medium">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="evaluationsTable">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid-responsive">
+            <div class="glass-card p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white">Evaluaciones Completadas</h3>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-3xl font-bold text-white">18</div>
+                    <div class="text-sm text-green-400">↗ 75%</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white">Procesos Activos</h3>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-3xl font-bold text-white" id="activeProcesses">6</div>
+                    <div class="text-sm text-blue-400">En progreso</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-white">Alertas Pendientes</h3>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-3xl font-bold text-white" id="pendingAlerts">0</div>
+                    <div class="text-sm text-gray-400">Ninguna</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="p-6 border-t border-gray-800 text-center text-gray-500 text-sm mt-8">
+        <p>&copy; 2025 Sistema de Gestion Procesos CO-0678. Todos los derechos reservados.</p>
+        <p>Desarrollado por Joel Pineda</p> </footer>
+        <script src="animaciones.js"></script>
+    <script>
+        // Data
+        const evaluationsData = [
+            {
+                id: 1,
+                tipo: 'ANTROPOMETRÍA',
+                supervivencia: 'MENSUAL X 10',
+                caminadores: 'TRIMESTRAL (FEB-MAY/AGO-NOV)',
+                exploradores: 'SEMESTRAL (MAY-NOV)',
+                grandes: 'ANUAL (ABRIL)',
+                nextDue: new Date(2025, 3, 1), // Abril 2025
+                frequency: 'anual'
+            },
+            {
+                id: 2,
+                tipo: 'CHEQUEO GENERAL',
+                supervivencia: 'SEMESTRAL (FEB-AGO)',
+                caminadores: 'SEMESTRAL (FEB-AGO)',
+                exploradores: 'SEMESTRAL (FEB-AGO)',
+                grandes: 'ANUAL',
+                nextDue: new Date(2025, 1, 1), // Febrero 2025
+                frequency: 'semestral'
+            },
+            {
+                id: 3,
+                tipo: 'TOTALES',
+                supervivencia: '12',
+                caminadores: '6',
+                exploradores: '4',
+                grandes: '2',
+                nextDue: new Date(2025, 1, 1), // Febrero 2025
+                frequency: 'semestral'
+            }
+        ];
+
+        // Calendar state variables
+        let currentIblMonth = new Date().getMonth();
+        let currentIblYear = new Date().getFullYear();
+        let currentPhotoMonth = new Date().getMonth();
+        let currentPhotoYear = new Date().getFullYear();
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            checkCriticalDates();
+            setInterval(checkCriticalDates, 60000); // Check every minute
+            
+            populateEvaluationsTable();
+            updateCountdowns();
+            setInterval(updateCountdowns, 1000);
+            
+            // Initialize calendars
+            initCalendars();
+
+            // Check for evaluation reminders
+            checkEvaluationReminders();
+            setInterval(checkEvaluationReminders, 3600000); // Check every hour
+
+            // Calendar navigation event listeners
+            document.getElementById('prevIblMonth').addEventListener('click', () => navigateCalendar(-1, 'ibl'));
+            document.getElementById('nextIblMonth').addEventListener('click', () => navigateCalendar(1, 'ibl'));
+            document.getElementById('prevPhotoMonth').addEventListener('click', () => navigateCalendar(-1, 'photo'));
+            document.getElementById('nextPhotoMonth').addEventListener('click', () => navigateCalendar(1, 'photo'));
+        });
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('es-ES');
+        }
+
+        function checkCriticalDates() {
+            const now = new Date();
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth();
+            
+            // IBL Status Indicator
+            const iblStatusIndicator = document.getElementById('iblStatusIndicator');
+            const iblStatusDot = iblStatusIndicator.querySelector('.status-dot');
+            const iblStatusText = document.getElementById('iblStatusText');
+
+            // Photo Status Indicator
+            const photoStatusIndicator = document.getElementById('photoStatusIndicator');
+            const photoStatusDot = photoStatusIndicator.querySelector('.status-dot');
+            const photoStatusText = document.getElementById('photoStatusText');
+
+            // Check IBL processes (10-16 of each month)
+            const iblSection = document.getElementById('criticalNotifications');
+            if (currentDay >= 10 && currentDay <= 16) {
+                iblSection.classList.remove('hidden');
+                iblSection.classList.add('slide-in');
+                document.getElementById('activeProcesses').textContent = '0';
+                showFloatingAlert('critical', 'PROCESOS IBL PAUSADOS', 'Del 10 al 16 de cada mes');
+                
+                // Update IBL Status Indicator
+                iblStatusIndicator.classList.remove('status-badge-green');
+                iblStatusIndicator.classList.add('status-badge-red');
+                iblStatusDot.classList.remove('status-active');
+                iblStatusDot.classList.add('status-error');
+                iblStatusText.textContent = 'No puedes realizar Procesos IBL';
+
+            } else {
+                iblSection.classList.add('hidden');
+                document.getElementById('activeProcesses').textContent = '6'; // Assuming 6 active processes when not paused
+                
+                // Update IBL Status Indicator
+                iblStatusIndicator.classList.remove('status-badge-red');
+                iblStatusIndicator.classList.add('status-badge-green');
+                iblStatusDot.classList.remove('status-error');
+                iblStatusDot.classList.add('status-active');
+                iblStatusText.textContent = 'Puedes realizar Procesos IBL';
+            }
+            
+            // Check photo updates (after 20th of each month)
+            const photoSection = document.getElementById('photoNotifications');
+            if (currentDay > 20) {
+                photoSection.classList.remove('hidden');
+                photoSection.classList.add('slide-in');
+                showFloatingAlert('warning', 'ACTUALIZACIONES DE FOTOS PAUSADAS', 'Se reanudarán el día 1 del próximo mes');
+                
+                // Update Photo Status Indicator
+                photoStatusIndicator.classList.remove('status-badge-green');
+                photoStatusIndicator.classList.add('status-badge-red');
+                photoStatusDot.classList.remove('status-active');
+                photoStatusDot.classList.add('status-error');
+                photoStatusText.textContent = 'No puedes tomar foto / Actualización';
+            } else {
+                photoSection.classList.add('hidden');
+                
+                // Update Photo Status Indicator
+                photoStatusIndicator.classList.remove('status-badge-red');
+                photoStatusIndicator.classList.add('status-badge-green');
+                photoStatusDot.classList.remove('status-error');
+                photoStatusDot.classList.add('status-active');
+                photoStatusText.textContent = 'Puedes tomar foto / Actualización';
+            }
+        }
+
+        function updateCountdowns() {
+            const now = new Date();
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            // IBL countdown
+            if (currentDay >= 10 && currentDay <= 16) {
+                let nextIBLReactivation = new Date(currentYear, currentMonth, 17); // Reanuda el 17 del mismo mes
+                if (now > nextIBLReactivation) { // If it's already past the 17th of this month, next reactivation is 17th of next month
+                    nextIBLReactivation = new Date(currentYear, currentMonth + 1, 17);
+                }
+                const timeDiffIBL = nextIBLReactivation - now;
+                
+                if (timeDiffIBL > 0) {
+                    const days = Math.floor(timeDiffIBL / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeDiffIBL % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((timeDiffIBL % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((timeDiffIBL % (1000 * 60)) / 1000);
+                    
+                    document.getElementById('iblCountdown').textContent = 
+                        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                } else {
+                    document.getElementById('iblCountdown').textContent = '¡Activo!';
+                }
+            }
+            
+            // Photo countdown
+            if (currentDay > 20) {
+                let nextPhotoReactivation = new Date(currentYear, currentMonth + 1, 1); // Reanuda el 1 del próximo mes
+                const timeDiffPhoto = nextPhotoReactivation - now;
+                
+                if (timeDiffPhoto > 0) {
+                    const days = Math.floor(timeDiffPhoto / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((timeDiffPhoto % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    
+                    document.getElementById('photoCountdown').textContent = 
+                        `${days} días ${hours} horas`;
+                } else {
+                    document.getElementById('photoCountdown').textContent = '¡Activo!';
+                }
+            }
+        }
+
+        function populateEvaluationsTable() {
+            const tableBody = document.getElementById('evaluationsTable');
+            
+            evaluationsData.forEach((evaluation, index) => {
+                const row = document.createElement('tr');
+                row.className = 'table-row border-b border-gray-800';
+                
+                const status = getEvaluationStatus(evaluation);
+                const statusClass = status === 'Pendiente' ? 'bg-red-500' : 
+                                  status === 'Próximo' ? 'bg-amber-500' : 'bg-green-500';
+                
+                row.innerHTML = `
+                    <td class="p-4 text-white font-medium">${evaluation.tipo}</td>
+                    <td class="p-4 text-gray-300">${evaluation.supervivencia}</td>
+                    <td class="p-4 text-gray-300">${evaluation.caminadores}</td>
+                    <td class="p-4 text-gray-300">${evaluation.exploradores}</td>
+                    <td class="p-4 text-gray-300">${evaluation.grandes}</td>
+                    <td class="p-4">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white ${statusClass}">
+                            ${status}
+                        </span>
+                    </td>
+                `;
+                
+                row.style.animationDelay = `${index * 0.1}s`;
+                row.classList.add('fade-in');
+                tableBody.appendChild(row);
+            });
+        }
+
+        function getEvaluationStatus(evaluation) {
+            const now = new Date();
+            const timeDiff = evaluation.nextDue - now;
+            const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+            
+            if (daysDiff < 0) return 'Pendiente';
+            if (daysDiff <= 30) return 'Próximo';
+            return 'Programado';
+        }
+
+        function checkEvaluationReminders() {
+            const now = new Date();
+            const remindersContainer = document.getElementById('evaluationReminders');
+            remindersContainer.innerHTML = '';
+            
+            evaluationsData.forEach(evaluation => {
+                const timeDiff = evaluation.nextDue - now;
+                const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                
+                if (daysDiff <= 30 && daysDiff >= 0) {
+                    const reminderCard = document.createElement('div');
+                    reminderCard.className = 'glass-card notification-info p-4 slide-in';
+                    reminderCard.innerHTML = `
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">${evaluation.tipo}</h4>
+                                <p class="text-sm text-gray-300">Vence en ${daysDiff} días</p>
+                            </div>
+                        </div>
+                    `;
+                    remindersContainer.appendChild(reminderCard);
+
+                    // Floating alert for evaluation reminders
+                    showFloatingAlert('info', `Evaluación próxima: ${evaluation.tipo}`, `Faltan ${daysDiff} días.`);
+                }
+            });
+            
+            // Update notification badge
+            const pendingCount = evaluationsData.filter(e => {
+                const timeDiff = e.nextDue - now;
+                const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                return daysDiff <= 30 && daysDiff >= 0;
+            }).length;
+            
+            const badge = document.getElementById('notificationBadge');
+            const alertsCount = document.getElementById('pendingAlerts');
+            
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.classList.remove('hidden');
+                alertsCount.textContent = pendingCount;
+                alertsCount.nextElementSibling.textContent = pendingCount === 1 ? 'Pendiente' : 'Pendientes';
+            } else {
+                badge.classList.add('hidden');
+                alertsCount.textContent = '0';
+                alertsCount.nextElementSibling.textContent = 'Ninguna';
+            }
+        }
+
+        function showFloatingAlert(type, title, message) {
+            const container = document.getElementById('floatingAlerts');
+            const alert = document.createElement('div');
+            
+            const bgClass = type === 'critical' ? 'notification-critical' : 
+                            type === 'warning' ? 'notification-warning' : 
+                            'notification-info';
+            
+            alert.className = `glass-card ${bgClass} p-4 max-w-sm floating-alert`;
+            alert.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center ${
+                        type === 'critical' ? 'bg-red-500' : type === 'warning' ? 'bg-amber-500' : 'bg-blue-500'
+                    }">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-semibold">${title}</h4>
+                        <p class="text-sm text-gray-300">${message}</p>
+                    </div>
+                    <button class="text-gray-400 hover:text-white" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                </div>
+            `;
+            
+            container.appendChild(alert);
+
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 10000);
+        }
+
+        // --- Calendar Functions ---
+        const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                            "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+        function initCalendars() {
+            const now = new Date();
+            currentIblMonth = now.getMonth();
+            currentIblYear = now.getFullYear();
+            currentPhotoMonth = now.getMonth();
+            currentPhotoYear = now.getFullYear();
+
+            renderCalendar(currentIblMonth, currentIblYear, 'ibl');
+            renderCalendar(currentPhotoMonth, currentPhotoYear, 'photo');
+        }
+
+        function renderCalendar(month, year, type) {
+            const firstDayOfMonth = new Date(year, month, 1);
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const firstDayOfWeek = firstDayOfMonth.getDay(); // 0 for Sunday, 1 for Monday
+
+            const calendarContainer = document.getElementById(`${type}CalendarContainer`);
+            const monthYearDisplay = document.getElementById(`current${type === 'ibl' ? 'Ibl' : 'Photo'}MonthYear`);
+
+            monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+
+            let calendarHTML = `
+                <div class="calendar-grid">
+                    ${dayNames.map(day => `<div class="calendar-header-day">${day}</div>`).join('')}
+            `;
+
+            // Fill leading empty days from previous month
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                calendarHTML += `<div class="calendar-day prev-month"></div>`;
+            }
+
+            const today = new Date();
+            const currentDay = today.getDate();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                let statusClass = '';
+                let statusMessage = '';
+                let isCurrentDay = (day === currentDay && month === currentMonth && year === currentYear);
+
+                if (type === 'ibl') {
+                    // IBL: Days 10-16 are "No" (Red)
+                    if (day >= 10 && day <= 16) {
+                        statusClass = 'not-allowed';
+                        statusMessage = 'No IBL';
+                    } else {
+                        statusClass = 'allowed';
+                        statusMessage = 'Sí IBL';
+                    }
+                } else if (type === 'photo') {
+                    // Photos: After day 20 (21 onwards) until end of month are "No" (Red)
+                    if (day > 20) {
+                        statusClass = 'not-allowed';
+                        statusMessage = 'No Foto';
+                    } else {
+                        statusClass = 'allowed';
+                        statusMessage = 'Sí Foto';
+                    }
+                }
+
+                calendarHTML += `
+                    <div class="calendar-day current-month ${statusClass} ${isCurrentDay ? 'current-day-highlight' : ''}">
+                        <span class="day-number">${day}</span>
+                        <span class="day-message">${statusMessage}</span>
+                    </div>
+                `;
+            }
+
+            calendarHTML += `</div>`;
+            calendarContainer.innerHTML = calendarHTML;
+        }
+
+        function navigateCalendar(direction, type) {
+            if (type === 'ibl') {
+                currentIblMonth += direction;
+                if (currentIblMonth < 0) {
+                    currentIblMonth = 11;
+                    currentIblYear--;
+                } else if (currentIblMonth > 11) {
+                    currentIblMonth = 0;
+                    currentIblYear++;
+                }
+                renderCalendar(currentIblMonth, currentIblYear, 'ibl');
+            } else if (type === 'photo') {
+                currentPhotoMonth += direction;
+                if (currentPhotoMonth < 0) {
+                    currentPhotoMonth = 11;
+                    currentPhotoYear--;
+                } else if (currentPhotoMonth > 11) {
+                    currentPhotoMonth = 0;
+                    currentPhotoYear++;
+                }
+                renderCalendar(currentPhotoMonth, currentPhotoYear, 'photo');
+            }
+        }
+    </script>
+</body>
+</html>
