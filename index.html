@@ -48,7 +48,7 @@
       min-height: 100vh;
       padding: 20px;
       position: relative;
-      background-image: url('imagen.jpeg'); /* RUTA DE TU IMAGEN DE FONDO */
+      background-image: url('./imagen.jpeg'); /* RUTA DE TU IMAGEN DE FONDO */
       background-size: cover;
       background-position: center;
       animation: fadeIn 1s ease;
@@ -323,7 +323,7 @@
       background: white;
       border-right: 1px solid var(--border);
       padding: 2rem 0;
-      transition: margin-left 0.3s ease, width 0.3s ease;
+      transition: margin-left 0.3s ease; /* Ajuste: removido width 0.3s ease para mejor colapso del content-area */
       flex-shrink: 0;
       height: calc(100vh - var(--header-height));
       overflow-y: auto;
@@ -439,7 +439,7 @@
       padding: 2rem;
       background: var(--bg-light);
       overflow-y: auto;
-      transition: padding-left 0.3s ease;
+      /* transition: padding-left 0.3s ease; <-- ELIMINADO para evitar salto del iframe al colapsar el menú */
     }
 
     .iframe-container {
@@ -707,11 +707,6 @@
         margin-top: 0.5rem;
       }
 
-      .datetime-display {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.7rem;
-      }
-
       .login-card {
         padding: 1.5rem;
       }
@@ -845,8 +840,7 @@
       <div class="header-content">
         <div class="logo-section">
           <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-            <i class="fas fa-bars" id="sidebarToggleIcon"></i>
-          </button>
+            <i class="fas fa-bars" id="sidebarToggleIcon"></i> </button>
           <button class="mobile-menu-toggle" onclick="toggleSidebar()">
             <i class="fas fa-bars" id="mobileSidebarToggleIcon"></i>
           </button>
