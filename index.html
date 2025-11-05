@@ -405,38 +405,38 @@
       text-align: center;
     }
 
-    /* TOGGLE BUTTON PARA PC - AJUSTADO */
-    .sidebar-toggle-btn {
-      background: var(--accent);
-      /* Fondo del botón para que resalte */
-      color: white;
-      /* Color del icono blanco */
-      border: none;
-      font-size: 1.3rem;
-      /* Tamaño más grande */
-      width: 40px;
-      /* Tamaño fijo */
-      height: 40px;
-      /* Tamaño fijo */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      /* Circular */
-      cursor: pointer;
-      transition: all 0.3s ease;
-      flex-shrink: 0;
-      margin-right: 1rem;
-      /* Espacio a la derecha del logo */
-    }
+/* TOGGLE BUTTON PARA PC - AJUSTADO */
+.sidebar-toggle-btn {
+  background: var(--accent);
+  /* Fondo del botón para que resalte */
+  color: white;
+  /* Color del icono blanco */
+  border: none;
+  font-size: 1.3rem;
+  /* Tamaño más grande */
+  width: 40px;
+  /* Tamaño fijo */
+  height: 40px;
+  /* Tamaño fijo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  /* Circular */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  margin-right: 1rem;
+  /* Espacio a la derecha del logo */
+}
 
-    .sidebar-toggle-btn:hover {
-      background: #cdeb25;
-      /* Un poco más oscuro al pasar el ratón */
-      transform: scale(1.05);
-      /* Efecto de crecimiento */
-      box-shadow: 0 4px 10px rgba(20, 196, 4, 0.3);
-    }
+.sidebar-toggle-btn:hover {
+  background: #cdeb25;
+  /* Un poco más oscuro al pasar el ratón */
+  transform: scale(1.05);
+  /* Efecto de crecimiento */
+  box-shadow: 0 4px 10px rgba(20, 196, 4, 0.3);
+}
 
     /* MOBILE MENU */
     .mobile-menu-toggle {
@@ -913,7 +913,7 @@
       <div class="header-content">
         <div class="logo-section">
           <button class="sidebar-toggle-btn" onclick="toggleSidebar()">
-            <i class="fas fa-bars" id="sidebarToggleIcon">0</i>
+            <i class="fa-solid fa-bars" id="sidebarToggleIcon">-</i>
           </button>
           <button class="mobile-menu-toggle" onclick="toggleSidebar()">
             <i class="fas fa-bars" id="mobileSidebarToggleIcon"></i>
