@@ -1,0 +1,4291 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gestión de Datos | 678</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <style>
+        /* ========================================================= */
+        /* CSS STYLES - DISEÑO PROFESIONAL MEJORADO                 */
+        /* ========================================================= */
+
+        /* Variables de Color Mejoradas */
+        :root {
+            --color-primario: #0891b2;
+            --color-primario-dark: #0e7490;
+            --color-secundario: #10b981;
+            --color-secundario-light: #34d399;
+            --color-fondo: #f0f9ff;
+            --color-card: #ffffff;
+            --color-texto: #0f172a;
+            --color-texto-light: #475569;
+            --color-alerta: #ef4444;
+            --color-exito: #10b981;
+            --color-warning: #f59e0b;
+            --color-completo: #d1fae5;
+            --color-incompleto: #fee2e2;
+            --sombra-card: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --sombra-hover: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --gradient-primary: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --gradient-bg: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: var(--gradient-bg);
+            color: var(--color-texto);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Patrón de fondo decorativo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 20% 50%,
+                    rgba(8, 145, 178, 0.03) 0%,
+                    transparent 50%),
+                radial-gradient(circle at 80% 80%,
+                    rgba(16, 185, 129, 0.03) 0%,
+                    transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .contenedor {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== HEADER MEJORADO ==================== */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--color-card);
+            border-radius: 20px;
+            box-shadow: var(--sombra-card);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .logo-container {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .resaltado {
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            font-weight: 600;
+            color: var(--color-texto);
+            margin-top: 5px;
+            font-size: 1.5rem;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        /* ==================== LOADER INICIAL ==================== */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                    #0891b2 0%,
+                    #06b6d4 50%,
+                    #10b981 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+            color: white;
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            border-top: 6px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        .loader-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loader-subtext {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        /* ==================== MODAL TÉRMINOS Y CONDICIONES ==================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid var(--color-primario);
+        }
+
+        .modal-icon {
+            font-size: 2.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .modal-body {
+            color: var(--color-texto-light);
+            line-height: 1.8;
+        }
+
+        .modal-body h3 {
+            color: var(--color-primario);
+            margin: 20px 0 10px;
+            font-size: 1.1rem;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body ul {
+            margin: 10px 0 10px 20px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        .modal-footer {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(8, 145, 178, 0.3);
+        }
+
+        .btn-decline {
+            background: #e5e7eb;
+            color: var(--color-texto);
+        }
+
+        .btn-decline:hover {
+            background: #d1d5db;
+        }
+
+        /* ==================== CONSENTIMIENTO BOX ==================== */
+        .consentimiento-box {
+            background: linear-gradient(135deg, #cffafe 0%, #e0f2fe 100%);
+            color: var(--color-primario-dark);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid var(--color-primario);
+            font-size: 0.95rem;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: start;
+            gap: 15px;
+            animation: fadeInLeft 0.6s ease-out;
+        }
+
+        .consentimiento-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        /* ==================== CARDS MEJORADAS ==================== */
+        .card {
+            background: var(--color-card);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: var(--sombra-card);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(8, 145, 178, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--sombra-hover);
+        }
+
+        .anim-entrada {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInSlide 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInSlide {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .paso-titulo {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--color-secundario);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .paso-numero {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* ==================== TABS MEJORADOS ==================== */
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: var(--color-card);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--color-texto-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: var(--color-primario);
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* ==================== FORMULARIOS MEJORADOS ==================== */
+        .input-grupo {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-texto);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        input:not([type="checkbox"]),
+        select {
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            font-family: "Poppins", sans-serif;
+        }
+
+        input:not([type="checkbox"]):focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-primario);
+            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input:not([type="checkbox"]):hover,
+        select:hover {
+            border-color: var(--color-primario);
+        }
+
+        fieldset {
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        fieldset:hover {
+            border-color: var(--color-primario);
+            background: white;
+        }
+
+        legend {
+            font-weight: 700;
+            color: var(--color-primario);
+            padding: 0 15px;
+            font-size: 1.1rem;
+        }
+
+        .grid-fecha {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        /* ==================== BOTONES MEJORADOS ==================== */
+        .btn-primario,
+        .btn-secundario,
+        .btn-resultado {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+            font-family: "Poppins", sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primario {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.3);
+        }
+
+        .btn-primario:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.4);
+        }
+
+        .btn-primario:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn-secundario {
+            background: var(--gradient-success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secundario:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primario:disabled,
+        .btn-secundario:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Efecto de onda al hacer click */
+        .btn-primario::after,
+        .btn-secundario::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primario:active::after,
+        .btn-secundario:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* ==================== BOTONES DE RESULTADO ==================== */
+        .btn-resultado {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: var(--color-texto);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-resultado:hover {
+            border-color: var(--color-primario);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(8, 145, 178, 0.15);
+        }
+
+        .btn-resultado.seleccionado {
+            border-color: var(--color-primario);
+            background: linear-gradient(135deg, #ecfeff 0%, #f0f9ff 100%);
+            box-shadow: 0 4px 20px rgba(8, 145, 178, 0.2);
+        }
+
+        .estado-tag {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .estado-nuevo {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .estado-editable {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .estado-bloqueado {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+        }
+
+        /* ==================== SECCIÓN TUTORA ==================== */
+        .select-tutora-box {
+            padding: 25px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transition: all 0.3s ease;
+        }
+
+        .select-tutora-box:hover {
+            border-color: var(--color-primario);
+            background: white;
+        }
+
+        .tutora-participante-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .participante-item {
+            padding: 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+
+        .participante-item.completo {
+            background: var(--color-completo);
+            color: var(--color-exito);
+            border-color: var(--color-exito);
+        }
+
+        .participante-item.incompleto {
+            background: var(--color-incompleto);
+            color: var(--color-alerta);
+            border-color: var(--color-alerta);
+        }
+
+        .participante-item:hover {
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .participante-item.selected {
+            border-width: 3px;
+            border-color: var(--color-primario);
+            transform: translateX(8px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(8, 145, 178, 0.25);
+        }
+
+        .tag-estado {
+            font-size: 0.8rem;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-completo {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .tag-incompleto {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .tag-bloqueado {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            color: white;
+        }
+
+        /* ==================== MENSAJES ==================== */
+        .mensaje-alerta,
+        .mensaje-confirmacion,
+        .mensaje-tiempo-restante {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.4s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .mensaje-alerta {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border-left: 5px solid #ef4444;
+        }
+
+        .mensaje-confirmacion {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border-left: 5px solid #10b981;
+        }
+
+        .mensaje-tiempo-restante {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            border-left: 5px solid #f59e0b;
+        }
+
+        .participante-info-resaltada {
+            background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+            padding: 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 25px;
+            border-left: 5px solid var(--color-primario);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ==================== LISTA DE RESULTADOS ==================== */
+        .lista-participantes {
+            display: grid;
+            gap: 15px;
+        }
+
+        /* ==================== SUBTITULO FAMILIAR ==================== */
+        .subtitulo-familiar {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin: 20px 0 15px;
+            border-left: 4px solid var(--color-primario);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ==================== LOADING SPINNER INLINE ==================== */
+        .spinner-inline {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* ==================== ANIMACIÓN DE GUARDADO ==================== */
+        .save-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            z-index: 9998;
+            display: none;
+            text-align: center;
+        }
+
+        .save-animation.show {
+            display: block;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .save-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .save-icon.saving {
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .save-icon.success {
+            animation: checkmark 0.5s ease-out;
+        }
+
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .save-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-texto);
+        }
+
+        .save-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 9997;
+            display: none;
+        }
+
+        .save-overlay.show {
+            display: block;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+            border-top: 2px solid #e2e8f0;
+            color: var(--color-texto-light);
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        /* ==================== ICONO DE ICC (SOLO IMAGEN) ==================== */
+        .icc {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            /* 🔥 Al lado izquierdo */
+            background: url('logo.png') no-repeat center center;
+            background-size: contain;
+            background-color: transparent;
+            color: transparent;
+            width: 60px;
+            height: 60px;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: none;
+            transition: all 0.3s ease;
+            z-index: 1001;
+            transform: scale(1.0);
+        }
+
+        .icc:hover {
+            transform: scale(1.15);
+            box-shadow: 0 8px 40px rgba(241, 101, 36, 1);
+        }
+
+        /* ================================================= */
+        /* === AJUSTES RESPONSIVOS PARA ICONO ICC (MÓVIL) === */
+        /* ================================================= */
+        @media (max-width: 600px) {
+            .icc {
+                width: 35px;
+                /* 🔥 10px más pequeño */
+                height: 35px;
+                /* 🔥 10px más pequeño */
+                bottom: 15px;
+                left: 15px;
+            }
+        }
+
+
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+
+            .grid-2col,
+            .grid-fecha {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            /* 🔥 AQUI VA LA CORRECCIÓN: Reduce el margen vertical */
+            .input-grupo {
+                margin-bottom: 15px;
+                /* Valor reducido de 20px a 15px */
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+
+            .logo-container {
+                font-size: 2rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .modal-content {
+                padding: 25px;
+                max-width: 90%;
+            }
+
+            .modal-title {
+                font-size: 1.4rem;
+            }
+
+            .btn-primario,
+            .btn-secundario {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+
+            .terms-link {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .paso-titulo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .participante-info-resaltada {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .contenedor {
+                gap: 20px;
+            }
+
+            .input-grupo {
+                margin-bottom: 12px;
+            }
+
+            header {
+                padding: 25px 15px;
+            }
+
+            .paso-titulo {
+                font-size: 1.3rem;
+            }
+
+            .consentimiento-box {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .consentimiento-icon {
+                font-size: 2rem;
+            }
+
+            .save-animation {
+                padding: 30px;
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 300px) {
+            body {
+                padding: 10px;
+            }
+
+            .input-grupo {
+                margin-bottom: 9px;
+            }
+
+            .contenedor {
+                gap: 20px;
+            }
+
+            header {
+                padding: 25px 15px;
+            }
+
+            .paso-titulo {
+                font-size: 1.3rem;
+            }
+
+            .consentimiento-box {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .consentimiento-icon {
+                font-size: 2rem;
+            }
+
+            .save-animation {
+                padding: 30px;
+                width: 90%;
+                max-width: 180px;
+            }
+        }
+
+        /* ==================== ESTILOS ADICIONALES ==================== */
+        .btn-primario,
+        .btn-secundario {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primario::before,
+        .btn-secundario::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primario:active:not(:disabled)::before,
+        .btn-secundario:active:not(:disabled)::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        /* Animación para inputs al hacer focus */
+        input:not([type="checkbox"]):focus,
+        select:focus {
+            animation: inputFocus 0.3s ease-out;
+        }
+
+        @keyframes inputFocus {
+            0% {
+                transform: scale(0.98);
+            }
+
+            50% {
+                transform: scale(1.01);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Scroll suave para toda la página */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Mejora visual para select cuando está deshabilitado */
+        input:disabled,
+        select:disabled {
+            background: #f1f5f9;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Estilo para cuando se carga la lista de participantes */
+        .lista-participantes:empty::after,
+        .tutora-participante-list:empty::after {
+            content: "Cargando participantes...";
+            display: block;
+            text-align: center;
+            padding: 40px;
+            color: var(--color-texto-light);
+            font-style: italic;
+        }
+
+
+        .paso-titulo {
+            display: flex;
+            /* 🔥 ESSENTIAL: Habilita el modelo flexbox */
+            align-items: center;
+            /* Alinea verticalmente los elementos */
+            gap: 15px;
+            /* Espacio entre los elementos (número, texto, botón) */
+            /* Aquí irían otros estilos que ya tengas para .paso-titulo (ej. margen, fuente) */
+        }
+
+        /* ========================================= */
+        /* === ESTILOS DEL BOTÓN SALIR (LOGOUT) === */
+        /* ========================================= */
+        .btn-logout {
+            background: var(--color-alerta);
+            /* Usa tu color de alerta para el fondo */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+
+            /* 🔥 ESSENTIAL: Empuja el botón lo más lejos posible hacia la derecha */
+            margin-left: auto;
+
+            /* Previene que el botón se encoja */
+            flex-shrink: 0;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            /* Rojo ligeramente más oscuro al pasar el ratón */
+            transform: translateY(-2px);
+            /* Pequeño efecto de elevación */
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        /* -------------------------------------- */
+        /* 3. Estilos del Pop-up (Modal) Detalle  */
+        /* -------------------------------------- */
+
+        /* 🔑 DETALLE-OVERLAY (Fondo y Posición Global) */
+        .detalle-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            /* Fondo más oscuro para enfoque total */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            /* Permite el scroll del fondo si el modal es muy alto */
+            overflow-y: auto;
+        }
+
+        .detalle-overlay.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        /* 🔑 DETALLE-CONTAINER (La Caja del Pop-up) */
+        .detalle-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 12px;
+
+            width: 95%;
+            max-width: 650px;
+            /* Ancho cómodo para escritorio */
+            max-height: 90vh;
+            /* Máximo alto de la pantalla */
+            overflow-y: auto;
+            /* Permite scroll del contenido interno del modal */
+
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            /* Sombra más profunda */
+
+            /* Centrado flexible: Usa relative y margin para funcionar con overflow-y */
+            position: relative;
+            margin: 30px auto;
+            /* Centrado vertical y horizontal */
+
+            /* Animación con rebote */
+            transform: scale(0.95);
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .detalle-overlay.visible .detalle-container {
+            transform: scale(1);
+        }
+
+        /* --- ELEMENTOS BÁSICOS DEL MODAL --- */
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            /* Fija el encabezado para que siempre esté visible al hacer scroll */
+            position: sticky;
+            top: -25px;
+            background-color: #fff;
+            z-index: 10;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.6rem;
+            color: var(--color-primario, #0891b2);
+            font-weight: 700;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #94a3b8;
+            line-height: 1;
+            padding: 0 5px;
+            transition: color 0.2s, transform 0.3s;
+        }
+
+        .close-button:hover {
+            color: #dc2626;
+            transform: rotate(90deg);
+        }
+
+        /* --- ESTRUCTURA RESPONSIVA (GRID) --- */
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        /* Cuadrícula Responsive: Se adapta automáticamente a 1 o 2 columnas */
+        .modal-grid {
+            display: grid;
+            /* Crea columnas de 250px mínimo. Si no caben dos, pasa a una */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px 30px;
+        }
+
+        .modal-body p {
+            margin: 0;
+            line-height: 1.4;
+            padding: 0;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+        }
+
+        .grid-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Etiqueta (Ej: 'Código:') */
+        .modal-body strong {
+            color: var(--color-texto, #0f172a);
+            font-weight: 600;
+            margin-right: 5px;
+            flex-shrink: 0;
+            /* IMPEDIMOS QUE SE COMPRIMA */
+            /* ELIMINADO: width: 150px; */
+        }
+
+        /* Valor (Ej: '12345') */
+        .modal-body .grid-item span {
+            font-weight: 400;
+            color: var(--color-texto-light, #475569);
+            word-break: break-word;
+        }
+
+        /* --- SECCIONES Y ACUDIENTES --- */
+
+        .subtitulo-familiar {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--color-primario-dark, #0e7490);
+            margin: 15px 0 15px;
+            border-left: 5px solid var(--color-primario, #0891b2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Contenedor de cada acudiente (Card) */
+        .acudiente-card {
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            background-color: #fcfcfc;
+            /* Fondo ligeramente gris para contraste */
+            transition: box-shadow 0.3s;
+        }
+
+        .acudiente-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            /* Sombra más definida en hover */
+        }
+
+        .acudiente-card h3 {
+            font-size: 1.15rem;
+            color: var(--color-texto, #0f172a);
+            margin: 0 0 12px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #e5e7eb;
+            /* Línea separadora */
+        }
+
+        /* --- ESTILOS ADICIONALES --- */
+
+        .tag-modal {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .tag-completo {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .tag-incompleto {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal-hint {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-align: right;
+            margin-top: 20px;
+            font-style: italic;
+            padding-top: 10px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            margin: 20px 0;
+        }
+
+        /* --- 📱 MEDIA QUERY (RESPONSIVIDAD MÓVIL) --- */
+        @media (max-width: 550px) {
+            .detalle-container {
+                padding: 15px;
+                margin: 2vh auto;
+            }
+
+            .modal-header {
+                top: -15px;
+                /* Ajuste para el padding reducido */
+            }
+
+            .modal-title {
+                font-size: 1.4rem;
+            }
+
+            /* En móviles, la etiqueta y el valor se APILAN verticalmente */
+            .grid-item {
+                display: block;
+            }
+
+            .modal-body strong {
+                display: block;
+                margin-bottom: 2px;
+                font-size: 0.95rem;
+            }
+
+            .modal-grid {
+                gap: 15px;
+                /* Ajuste de separación */
+            }
+
+            .acudiente-card {
+                padding: 10px;
+            }
+        }
+
+        /* --- 📱 MEDIA QUERY (RESPONSIVIDAD MÓVIL) --- */
+        @media (max-width: 300px) {
+            .detalle-container {
+                padding: 15px;
+                margin: 2vh auto;
+            }
+
+            .modal-header {
+                top: -15px;
+                /* Ajuste para el padding reducido */
+            }
+
+            .modal-title {
+                font-size: 1.4rem;
+            }
+
+            /* En móviles, la etiqueta y el valor se APILAN verticalmente */
+            .grid-item {
+                display: block;
+            }
+
+            .modal-body strong {
+                display: block;
+                margin-bottom: 2px;
+                font-size: 0.95rem;
+            }
+
+            .modal-grid {
+                gap: 15px;
+                /* Ajuste de separación */
+            }
+
+            .acudiente-card {
+                padding: 10px;
+            }
+        }
+
+        /* Estilo para todos los campos de formulario inválidos */
+        input:invalid,
+        select:invalid {
+            /* Pone el borde y la sombra en rojo fuerte */
+            border: 2px solid #dc3545 !important;
+            /* Rojo */
+            box-shadow: 0 0 5px rgba(220, 53, 69, 0.7) !important;
+        }
+
+        /* Opcional: Para resaltar la etiqueta cuando el campo es inválido */
+        .input-grupo:has(input:invalid) label,
+        .input-grupo:has(select:invalid) label {
+            color: #dc3545;
+            /* Pone el texto de la etiqueta en rojo */
+            font-weight: bold;
+        }
+
+        .radio-grupo {
+            display: flex;
+            gap: 20px;
+            margin-top: 5px;
+        }
+
+        .radio-grupo input[type="radio"] {
+            /* Ocultar el radio button nativo */
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-grupo label {
+            cursor: pointer;
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+
+        .radio-grupo input[type="radio"]:checked+label {
+            background-color: #007bff;
+            /* Color azul profesional al seleccionar */
+            color: white;
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        /* Opcional: Estilo para la leyenda */
+        .fieldset-academico legend {
+            font-size: 1.2em;
+            font-weight: bold;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        /* ==================== BOTÓN IR ARRIBA ==================== */
+.go-top {
+    position: fixed;
+    bottom: 15px;
+    right: 15px; /* 🔥 Aparece al lado derecho cuando se muestra */
+    background: url('arriba.png') no-repeat center center;
+    background-size: contain;
+    background-color: transparent;
+    width: 63px;
+    height: 63px;
+    border-radius: 0;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.8);
+    transition: all 0.4s ease;
+    z-index: 2000;
+}
+
+/* Cuando se activa al hacer scroll */
+.go-top.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* Hover */
+.go-top:hover {
+    transform: scale(1.15);
+    box-shadow: 0 8px 40px rgba(241, 101, 36, 1);
+}
+
+/* ===== RESPONSIVO MÓVIL ===== */
+@media (max-width: 600px) {
+    .go-top {
+        width: 35px;  /* 🔥 10px más pequeño */
+        height: 35px;
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+/* === FIX: Formularios más consistentes y responsive === */
+
+/* Fuerza controles a ocupar todo el ancho disponible */
+.input-grupo input[type="text"],
+.input-grupo input[type="tel"],
+.input-grupo input[type="email"],
+.input-grupo textarea,
+.input-grupo select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* Reduce padding interno de fieldset en móvil y mantiene estética en desktop */
+fieldset {
+    padding: 22px; /* cómodo en desktop */
+}
+@media (max-width: 768px) {
+    fieldset {
+        padding: 16px; /* menos padding en tablet/móvil para evitar compresión */
+    }
+}
+
+/* Ajusta leyendas para que no ocupen demasiado espacio en móvil */
+legend {
+    font-size: 1.05rem;
+    padding: 0 10px;
+}
+@media (max-width: 480px) {
+    legend {
+        font-size: 0.98rem;
+        padding: 0 6px;
+    }
+}
+
+/* Mejor comportamiento de la grid: 2 columnas en desktop, 1 columna en móvil */
+.grid-2col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+@media (max-width: 768px) {
+    .grid-2col {
+        grid-template-columns: 1fr; /* una columna en pantallas pequeñas */
+        gap: 12px;
+    }
+}
+
+/* Evita que labels o iconos generen reflow: forzar wrapping elegante */
+.input-grupo label {
+    white-space: normal;
+    line-height: 1.2;
+}
+
+/* Radios: apilar en móvil para no romper la columna */
+.radio-grupo {
+    gap: 12px;
+    flex-wrap: wrap;
+}
+@media (max-width: 480px) {
+    .radio-grupo {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Reduce tamaño de inputs/select en móvil para que no parezcan abultados */
+@media (max-width: 600px) {
+    input:not([type="checkbox"]), select, textarea {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+
+    /* Ajusta los fieldsets para que se vean como la segunda imagen: más compactos */
+    fieldset {
+        border-radius: 12px;
+    }
+
+    .subtitulo-familiar {
+        padding: 10px 12px;
+        font-size: 0.98rem;
+    }
+}
+
+/* Quitar márgenes/paddings que pueden “encoger” el contenido en algunos contenedores */
+.contenedor,
+.detalle-container,
+.card {
+    width: 100%;
+    max-width: 1100px;
+}
+
+/* Si tu formulario está dentro de un modal, asegura que use el 100% del ancho disponible en móvil */
+.detalle-container {
+    box-sizing: border-box;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+@media (max-width: 550px) {
+    .detalle-container {
+        max-width: 98%;
+        padding-left: 12px;
+        padding-right: 12px;
+        margin: 2vh auto;
+    }
+}
+
+/* Resaltar inputs invalidos sin empujar layout (evitar outline que salte) */
+input:invalid, select:invalid {
+    box-shadow: 0 0 0 3px rgba(220,53,69,0.12);
+}
+
+/* Opcional: si quieres que algunos selects largos no haporten ancho extra */
+select {
+    min-width: 0;
+}
+
+/* Evita scroll horizontal por iconos o leyendas largas */
+body, .contenedor, .detalle-container {
+    overflow-x: hidden;
+}
+
+
+    </style>
+</head>
+
+<body>
+    <!-- Loader Inicial -->
+    <div class="loader-overlay" id="loader-overlay">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <div class="loader-text" id="loader-text">
+                Cargando y Validando Datos...
+            </div>
+            <div class="loader-subtext">Por favor espere un momento</div>
+        </div>
+    </div>
+
+    <!-- Modal de Términos y Condiciones -->
+    <div class="modal-overlay" id="modal-terms">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon">📋</div>
+                <h2 class="modal-title">Términos y Condiciones de Uso</h2>
+            </div>
+            <div class="modal-body">
+                <h3>🔒 Confidencialidad y Protección de Datos</h3>
+                <p>
+                    Este sistema es de <strong>uso exclusivo</strong> para el personal
+                    autorizado del proyecto de la Guerreros C.A.P.I. Toda la información
+                    recopilada es tratada con estricta confidencialidad.
+                </p>
+
+                <h3>✅ Consentimiento Informado</h3>
+                <p>Al utilizar esta plataforma, usted reconoce y acepta que:</p>
+                <ul>
+                    <li>
+                        Los datos proporcionados serán utilizados únicamente para fines
+                        del proyecto social.
+                    </li>
+                    <li>
+                        La información personal está protegida conforme a las leyes de
+                        protección de datos vigentes.
+                    </li>
+                    <li>Solo personal autorizado tendrá acceso a esta información.</li>
+                    <li>
+                        Los datos no serán compartidos con terceros sin consentimiento
+                        previo.
+                    </li>
+                </ul>
+
+                <h3>👥 Responsabilidades del Usuario</h3>
+                <p>Como usuario de esta plataforma, usted se compromete a:</p>
+                <ul>
+                    <li>Proporcionar información veraz y actualizada.</li>
+                    <li>Mantener la confidencialidad de sus credenciales de acceso.</li>
+                    <li>Utilizar el sistema únicamente para los fines establecidos.</li>
+                    <li>Notificar cualquier irregularidad o acceso no autorizado.</li>
+                </ul>
+
+                <h3>⏱️ Política de Edición</h3>
+                <p>
+                    Los padres/acudientes disponen de <strong>30 minutos</strong> desde
+                    el primer guardado para realizar modificaciones. Transcurrido este
+                    tiempo, solo las tutoras autorizadas podrán editar la información.
+                </p>
+
+                <h3>📞 Contacto y Soporte</h3>
+                <p>
+                    Para cualquier duda o inconveniente, por favor contacte al equipo
+                    administrativo del proyecto.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-accept" id="btn-accept-terms">
+                    Acepto los Términos
+                </button>
+                <button class="btn-modal btn-decline" id="btn-decline-terms">
+                    No Acepto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay y animación de guardado -->
+    <div class="save-overlay" id="save-overlay"></div>
+    <div class="save-animation" id="save-animation">
+        <div class="save-icon" id="save-icon">💾</div>
+        <div class="save-text" id="save-text">Guardando información...</div>
+    </div>
+    <a href="https://icclafortalezacucuta.github.io/Iglesia_La_Fortaleza_Cruzada_Cristiana_C-ucuta/index.html"
+        target="_blank" class="icc" id="icc" title="Ir a la página de ICC">
+    </a>
+
+    <header>
+        <div class="logo-container">
+            ParentAccess <span class="resaltado">678</span>
+        </div>
+        <h1>Portal de Gestión de Datos</h1>
+    </header>
+
+    <main class="contenedor">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tab-publico">
+                <span>👪</span>
+                <span>Acceso Público</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-tutora">
+                <span>👩‍🏫</span>
+                <span>Acceso Administrativos</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-admin" style="display: none" id="tab-btn-admin">
+                <span>💻</span>
+                <span>Dashboard Admin</span>
+            </button>
+        </div>
+
+        <div id="tab-publico" class="tab-content active">
+            <div class="consentimiento-box">
+                <div class="consentimiento-icon">🤝</div>
+                <div>
+                    <strong>Instrucciones para Padres/Acudientes:</strong> Ingrese la
+                    fecha de nacimiento de su hijo(a) para confirmar identidad y
+                    actualizar sus datos de contacto.
+                </div>
+            </div>
+            <br />
+            <section id="seccion-busqueda" class="card anim-entrada">
+                <h2 class="paso-titulo">
+                    <span class="paso-numero">1</span>
+                    <span>Búsqueda por Fecha de Nacimiento</span>
+                </h2>
+                <form id="form-busqueda" class="form-busqueda">
+                    <div class="grid-fecha">
+                        <div class="input-grupo">
+                            <label for="dia">📅 Día</label>
+                            <select id="dia" required></select>
+                        </div>
+                        <div class="input-grupo">
+                            <label for="mes">📅 Mes</label>
+                            <select id="mes" required></select>
+                        </div>
+                        <div class="input-grupo">
+                            <label for="ano">📅 Año</label>
+                            <select id="ano" required></select>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-buscar" class="btn-primario">
+                        <span>🔍</span>
+                        <span>Buscar Participante</span>
+                    </button>
+                    <div id="mensaje-busqueda" class="mensaje-alerta" style="display: none"></div>
+                </form>
+            </section>
+
+            <section id="seccion-resultados" class="card anim-entrada" style="display: none">
+                <h2 class="paso-titulo">
+                    <span class="paso-numero">2</span>
+                    <span>Seleccione y Complete (Acudiente)</span>
+                </h2>
+                <div id="lista-resultados" class="lista-participantes"></div>
+            </section>
+
+            <section id="seccion-formulario-publico" class="card anim-entrada" style="display: none">
+                <p id="info-participante-seleccionado-publico" class="participante-info-resaltada"></p>
+                <div id="mensaje-guardado-publico" class="mensaje-confirmacion" style="display: none"></div>
+                <div id="mensaje-tiempo-restante" class="mensaje-tiempo-restante" style="display: none"></div>
+                <form id="form-datos-publico"></form>
+                <button type="submit" form="form-datos-publico" id="btn-guardar-publico" class="btn-secundario">
+                    <span>💾</span>
+                    <span>Guardar Información</span>
+                </button>
+            </section>
+        </div>
+
+        <div id="tab-tutora" class="tab-content">
+            <section id="seccion-login" class="card anim-entrada">
+                <h2 class="paso-titulo">
+                    <span class="paso-numero">1</span>
+                    <span>Acceso Administrativo</span>
+                </h2>
+                <form id="form-login">
+                    <div class="input-grupo">
+                        <label for="login-user">👤 Usuario</label>
+                        <input type="text" id="login-user" required placeholder="Ingrese su usuario" />
+                    </div>
+                    <div class="input-grupo">
+                        <label for="login-pass">🔑 Contraseña</label>
+                        <input type="password" id="login-pass" required placeholder="Ingrese su contraseña" />
+                    </div>
+                    <button type="submit" class="btn-primario">
+                        <span>🔓</span>
+                        <span>Ingresar</span>
+                    </button>
+                    <div id="mensaje-login" class="mensaje-alerta" style="display: none"></div>
+                </form>
+            </section>
+
+            <section id="seccion-gestion-tutora" class="card anim-entrada" style="display: none">
+                <h2 class="paso-titulo" id="titulo-gestion-tutora">
+                    <span class="paso-numero">2</span>
+                    <span>Gestión de Participantes (Tutora)</span>
+                    <button class="btn-logout" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </h2>
+
+                <div class="select-tutora-box">
+                    <div class="input-grupo">
+                        <label for="select-tutora">👩‍🏫 Seleccione su Nombre</label>
+                        <select id="select-tutora" required></select>
+                    </div>
+                    <button id="btn-cargar-participantes" class="btn-primario">
+                        <span>📊</span>
+                        <span>Cargar Lista</span>
+                    </button>
+                </div>
+
+                <div id="tutora-stats-box" style="margin-bottom: 25px; display: none">
+                    <h3 class="subtitulo-familiar" style="border-left: 4px solid var(--color-secundario)">
+                        <span>📈</span>
+                        <span>Resumen de Gestión</span>
+                    </h3>
+                    <div class="grid-2col">
+                        <div class="input-grupo">
+                            <label>✅ Completados / Total</label>
+                            <input type="text" id="stats-tutora-ratio" readonly value="0/0" />
+                        </div>
+                        <div class="input-grupo">
+                            <label>🎯 Porcentaje de Avance</label>
+                            <input type="text" id="stats-tutora-porcentaje" readonly value="0%" />
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="
+              margin-top: 30px;
+              border-bottom: 2px solid #e2e8f0;
+              padding-bottom: 15px;
+              color: var(--color-primario);
+              font-size: 1.2rem;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+            ">
+
+                    <span>📋</span>
+                    <span>Listado de Casos:</span>
+                </h3>
+                <div id="lista-participantes-tutora" class="tutora-participante-list"></div>
+            </section>
+
+            <section id="seccion-formulario-tutora" class="card anim-entrada" style="display: none">
+                <h2 class="paso-titulo">
+                    <span class="paso-numero">3</span>
+                    <span>Edición de Datos (Tutora)</span>
+                </h2>
+                <p id="info-participante-seleccionado-tutora" class="participante-info-resaltada"></p>
+
+                <div id="mensaje-guardado-tutora" class="mensaje-confirmacion" style="display: none"></div>
+                <form id="form-datos-tutora"></form>
+                <button type="submit" form="form-datos-tutora" id="btn-guardar-tutora" class="btn-secundario">
+                    <span>💾</span>
+                    <span>Guardar Información por Tutora</span>
+                </button>
+            </section>
+        </div>
+
+        <div id="tab-admin" class="tab-content">
+            <section id="seccion-dashboard-admin" class="card anim-entrada">
+                <section id="seccion-admin-dashboard" class="card anim-entrada" style="display: none">
+                    <h2 class="paso-titulo" id="titulo-admin-dashboard">
+                        <span class="paso-numero">1</span>
+                        <span>Dashboard de Administrador</span>
+                        <button class="btn-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </button>
+                    </h2>
+                    <p>Bienvenido Administrador.</p>
+                </section>
+
+                <h3 class="subtitulo-familiar" style="border-left: 4px solid var(--color-secundario)">
+                    <span>🌎</span>
+                    <span>Estadísticas Globales del Proyecto</span>
+                </h3>
+                <div class="grid-2col" style="margin-bottom: 30px">
+                    <div class="input-grupo">
+                        <label>👥 Total Participantes</label>
+                        <input type="text" id="stats-total-general" readonly value="0" />
+                    </div>
+                    <div class="input-grupo">
+                        <label>✅ Participantes Completados</label>
+                        <input type="text" id="stats-completados-general" readonly value="0" />
+                    </div>
+                    <div class="input-grupo">
+                        <label>❌ Participantes Faltantes</label>
+                        <input type="text" id="stats-faltantes-general" readonly value="0" />
+                    </div>
+                    <div class="input-grupo">
+                        <label>🎯 Porcentaje de Avance</label>
+                        <input type="text" id="stats-porcentaje-general" readonly value="0%" />
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 30px; height: 180px">
+                    <canvas id="completionChart"></canvas>
+                </div>
+
+                <h3 class="subtitulo-familiar" style="border-left: 4px solid var(--color-primario)">
+                    <span>📊</span>
+                    <span>Avance por Tutora (Desglose)</span>
+                </h3>
+                <div id="admin-tutora-breakdown" class="lista-participantes" style="margin-bottom: 30px"></div>
+
+                <h3 class="subtitulo-familiar" style="border-left: 4px solid var(--color-secundario)">
+                    <span>🔎</span>
+                    <span>Filtro de Participantes (Lista Inferior)</span>
+                </h3>
+
+                <div class="grid-2col" style="margin-bottom: 30px">
+                    <div class="input-grupo">
+                        <label for="admin-select-tutora">👩‍🏫 Filtrar por Tutora</label>
+                        <select id="admin-select-tutora" required></select>
+                    </div>
+                    <div class="input-grupo">
+                        <label for="admin-select-estado">✅ Filtrar por Estado</label>
+                        <select id="admin-select-estado" required>
+                            <option value="todos">Todos</option>
+                            <option value="completo">Completo</option>
+                            <option value="incompleto">Incompleto</option>
+                        </select>
+                    </div>
+                    <div class="input-grupo">
+                        <label for="admin-select-estudio">🪐 Filtrar por Estudio</label>
+                        <select id="admin-select-estudio" required>
+                            <option value="todos">Todos</option>
+                            <option value="Si">Si</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="input-grupo">
+                        <label for="admin-select-tipodocumentoparticipante">💷 Filtrar por Tipo Documento</label>
+                        <select id="admin-select-tipodocumentoparticipante" required>
+                            <option value="todos">Todos</option>
+                            <option value="R.C">Registro Civil Nacimiento (RC)</option>
+                            <option value="T.I">Tarjeta de Identidad (TI)</option>
+                            <option value="C.C">Cédula de Ciudadanía (CC)</option>
+                            <option value="Acta Nacimiento">Acta de Nacimiento (VEN)</option>
+                            <option value="PEP">Permiso Especial de Permanencia (PEP)</option>
+                            <option value="PPT">Permiso por Protección Temporal (PPT)</option>
+                            <option value="Cedula Extrangeria">Cédula de Extrangeria (CE)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-2col" style="margin-bottom: 30px">
+                    <div class="input-grupo">
+                        <label>📊 Total de Participantes Filtrados</label>
+                        <input type="text" id="stats-total-participantes" readonly value="0" />
+                    </div>
+                    <div class="input-grupo">
+                        <label>✅ % Completado Filtrado</label>
+                        <input type="text" id="stats-porcentaje-completo" readonly value="0%" />
+                    </div>
+                </div>
+
+                <h3 style="
+                    margin-top: 30px;
+                    border-bottom: 2px solid #e2e8f0;
+                    padding-bottom: 15px;
+                    color: var(--color-primario);
+                    font-size: 1.2rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    ">
+                    <span>📋</span>
+                    <span>Listado de Participantes (Admin):</span>
+                </h3>
+                <div id="lista-participantes-admin" class="lista-participantes"></div>
+            </section>
+        </div>
+    </main>
+
+    <div id="detalle-overlay" class="detalle-overlay">
+        <div id="detalle-container" class="detalle-container"></div>
+    </div>
+
+    <!-- BOTÓN PARA IR ARRIBA -->
+<div class="go-top" onclick="scrollToTop()"></div>
+
+    <footer class="footer">
+        <p>
+            &copy; 2025 ParentAccess. Desarrollado con ❤️ para el bienestar social y comunitario.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.85rem">
+            Ing. Joel Steven |
+
+            📞 <a href="https://wa.me/+573133118664" target="_blank"
+                style="color: inherit; text-decoration: none;">313***</a> |
+            ✉️ <a href="mailto:joelstevenpinedarincon20@gmail.com"
+                style="color: inherit; text-decoration: none;">joel****.com</a> |
+            🔗 <a href="https://evidencias640-arch.github.io/Portafolio-Profesional-Virtual/" target="_blank"
+                style="color: inherit; text-decoration: none;">Portafolio</a>
+        </p>
+
+        <p style="margin-top: 10px; font-size: 0.85rem">
+            Todos los derechos reservados. Uso exclusivo del proyecto.
+        </p>
+    </footer>
+    <script src="animaciones.js"></script>
+    <script src="eps.js"></script>
+    <script src="edu.js"></script>
+    <script src="movilidad.js"></script>
+    <script>
+        /* ========================================================= */
+        /* JAVASCRIPT LOGIC - CÓDIGO COMPLETO Y SIN ERRORES DE REFERENCIA */
+        /* ========================================================= */
+
+        // ⚠️ DEBE VERIFICAR QUE ESTA URL SEA LA CORRECTA DE SU DEPLIEGUE
+        const APPS_SCRIPT_URL =
+            "https://script.google.com/macros/s/AKfycbx4Iv227I2p3hfZlSQe9MkiwNzJ0YjTq8GoJ_BFGBrHoy8UENZXE2DLEImpBH3GBBw-nA/exec";
+
+        const INTERVALO_REFRESCO_MS = 5000; // 5 segundos
+
+        // --- Credenciales y Data --
+        const TUTORA_USER = "tutora678";
+        const TUTORA_PASS = "tutora678";
+        const ADMIN_USER = "admin678";
+        const ADMIN_PASS = "admin678";
+
+        // ⭐️ LISTA ESTATICA DE TUTORAS (Fuente única de verdad para nombres y IDs)
+        const TUTORAS_DISPONIBLES = [
+            "Diana Carolina Ureña Mendoza",
+            "Yrany Lisbeth Martinez Sanchez",
+            "Juliana Villamizar Ortiz",
+            "Helen Abelyn Sanchez Herrera",
+        ];
+
+        // --- Estado Global y Caché --
+        let participanteSeleccionado = null;
+        let modoActual = "publico";
+        let timerBloqueo = null;
+        const SELECT_BASE_OP = '<option value="">Seleccione...</option>';
+
+        let participantesCache = [];
+        let tutorasCache = []; // Contendrá IDs limpios y nombres completos.
+        let sessionCache = { user: null };
+        let dataLoaded = false;
+        let completionChartInstance = null;
+        // Verifica si Chart.js se cargó (necesario para las gráficas de Admin)
+        let isChartJsLoaded = typeof Chart !== "undefined";
+
+        // --- DOM Elements ---
+        const $ = (id) => document.getElementById(id);
+        const $busqueda = $("seccion-busqueda"),
+            $resultados = $("seccion-resultados"),
+            $formularioPublico = $("seccion-formulario-publico");
+        const $login = $("seccion-login"),
+            $gestionTutora = $("seccion-gestion-tutora"),
+            $formularioTutora = $("seccion-formulario-tutora");
+        // NUEVA LÍNEA AÑADIDA
+        const $adminDashboard = $("seccion-admin-dashboard");
+
+        function iniciarRefrescoAutomatico() {
+            // 1. Carga inicial: Con loader visible (mostrarProgreso = true, que es el valor por defecto)
+            loadAllSheetData(true);
+
+            console.log(
+                `[INICIO] Refresco automático activado cada ${INTERVALO_REFRESCO_MS / 1000
+                } segundos.`
+            );
+
+            // 2. Loop de actualización: SILENCIOSO (mostrarProgreso = false)
+            setInterval(() => loadAllSheetData(false), INTERVALO_REFRESCO_MS);
+        }
+
+        // 3. Reemplaza tu antigua línea de arranque con esta:
+        document.addEventListener("DOMContentLoaded", iniciarRefrescoAutomatico);
+
+        // ==================== FUNCIONES AUXILIARES ====================
+
+        /** Convierte el nombre de una tutora en un ID simple y único. */
+        const nameToId = (name) => {
+            return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+        };
+
+        /** Inicializa el caché de tutoras a partir de la lista estática. */
+        function initializeTutorasCache() {
+            // 1. Generar Tutora IDs a partir de la lista estática
+            let generatedTutoras = TUTORAS_DISPONIBLES.filter(
+                (name) => name !== "Otro/Administrador"
+            ).map((name) => ({
+                id: nameToId(name),
+                nombre: name,
+                role: "tutora",
+            }));
+
+            // 2. Agregar la entrada del administrador
+            generatedTutoras.push({
+                id: ADMIN_USER,
+                nombre: "Admin General",
+                role: "admin",
+            });
+
+            tutorasCache = generatedTutoras;
+        }
+
+        // ==================== LOADER Y ANIMACIONES ====================
+
+        function showLoader(text = "Cargando y Validando Datos...") {
+            const loader = $("loader-overlay");
+            const loaderText = $("loader-text");
+            if (loader) loader.classList.remove("hidden");
+            if (loaderText) loaderText.textContent = text;
+        }
+
+        function hideLoader() {
+            const loader = $("loader-overlay");
+            const loaderText = $("loader-text");
+            if (loaderText)
+                loaderText.textContent =
+                    "✅ Datos Cargados y Validados Correctamente";
+
+            setTimeout(() => {
+                if (loader) loader.classList.add("hidden");
+            }, 1000);
+        }
+
+        function showSaveAnimation(isSaving = true) {
+            const overlay = $("save-overlay");
+            const animation = $("save-animation");
+            const icon = $("save-icon");
+            const text = $("save-text");
+
+            if (overlay) overlay.classList.add("show");
+            if (animation) animation.classList.add("show");
+
+            if (isSaving) {
+                if (icon) {
+                    icon.textContent = "💾";
+                    icon.className = "save-icon saving";
+                }
+                if (text) text.textContent = "Guardando información...";
+            }
+        }
+
+        function showSaveSuccess() {
+            const icon = $("save-icon");
+            const text = $("save-text");
+
+            if (icon) {
+                icon.textContent = "✅";
+                icon.className = "save-icon success";
+            }
+            if (text) text.textContent = "¡Guardado Exitoso!";
+
+            setTimeout(() => {
+                hideSaveAnimation();
+            }, 2000);
+        }
+
+        function showSaveError(message) {
+            const icon = $("save-icon");
+            const text = $("save-text");
+
+            if (icon) {
+                icon.textContent = "❌";
+                icon.className = "save-icon";
+            }
+            if (text) text.textContent = message || "Error al guardar";
+
+            setTimeout(() => {
+                hideSaveAnimation();
+            }, 2500);
+        }
+
+        function hideSaveAnimation() {
+            const overlay = $("save-overlay");
+            const animation = $("save-animation");
+
+            if (overlay) overlay.classList.remove("show");
+            if (animation) animation.classList.remove("show");
+        }
+
+        function mostrarMensaje(elemento, texto, tipo) {
+            if (!elemento) return;
+            elemento.textContent = texto;
+            elemento.style.display = "block";
+            elemento.className = "";
+
+            let icono = "";
+            if (tipo === "alerta") {
+                elemento.classList.add("mensaje-alerta");
+                icono = "⚠️ ";
+            } else if (tipo === "confirmacion") {
+                elemento.classList.add("mensaje-confirmacion");
+                icono = "✅ ";
+            } else if (tipo === "tiempo") {
+                elemento.classList.add("mensaje-tiempo-restante");
+                icono = "⏳ ";
+            }
+
+            elemento.textContent = icono + texto;
+        }
+
+        /** Inicia el contador de 30 minutos (solo para acceso público). */
+        function iniciarContador(horaBloqueoStr) {
+            if (timerBloqueo) clearInterval(timerBloqueo);
+
+            const partes = horaBloqueoStr.split(":");
+            let horaBloqueo = new Date();
+
+            horaBloqueo.setHours(Number(partes[0]));
+            horaBloqueo.setMinutes(Number(partes[1]));
+            horaBloqueo.setSeconds(Number(partes[2] || 0));
+            horaBloqueo.setMilliseconds(0);
+
+            // Ajuste para cambios de día
+            if (horaBloqueo.getTime() < new Date().getTime() - 5 * 60 * 1000) {
+                horaBloqueo = new Date(horaBloqueo.getTime() + 24 * 60 * 60 * 1000);
+            }
+
+            const actualizarContador = () => {
+                const ahora = new Date();
+                let diferenciaMs = horaBloqueo.getTime() - ahora.getTime();
+
+                if (diferenciaMs <= 0) {
+                    clearInterval(timerBloqueo);
+                    bloquearFormulario(
+                        true,
+                        "El tiempo de 30 minutos ha expirado. El formulario está bloqueado."
+                    );
+                    return;
+                }
+
+                const minutos = Math.floor(diferenciaMs / (1000 * 60));
+                const segundos = Math.floor((diferenciaMs % (1000 * 60)) / 1000);
+
+                const mensajeRestante = $("mensaje-tiempo-restante");
+                if (mensajeRestante) {
+                    mensajeRestante.innerHTML = `⏳ <strong>Tienes Exatamente 00:30:00 Minutos para realizar alguna modificacion.</strong>`;
+                    mensajeRestante.style.display = "block";
+                    mensajeRestante.className = "mensaje-tiempo-restante";
+                }
+            };
+
+            actualizarContador();
+            timerBloqueo = setInterval(actualizarContador, 1000);
+        }
+
+        /** Bloquea o desbloquea todos los campos del formulario público. */
+        function bloquearFormulario(bloquear, mensaje) {
+            const formElement = $("form-datos-publico");
+            const btnGuardar = $("btn-guardar-publico");
+            if (!formElement || !btnGuardar) return;
+
+            const inputs = formElement.querySelectorAll("input, select");
+            const mensajeRestante = $("mensaje-tiempo-restante");
+
+            inputs.forEach((input) => {
+                input.disabled = bloquear;
+            });
+            btnGuardar.disabled = bloquear;
+
+            if (mensajeRestante) {
+                if (bloquear) {
+                    mensajeRestante.innerHTML = `🔒 ${mensaje}`;
+                    mensajeRestante.style.display = "block";
+                    mensajeRestante.classList.add("mensaje-alerta");
+                    mensajeRestante.classList.remove("mensaje-tiempo-restante");
+                    clearInterval(timerBloqueo);
+                } else {
+                    mensajeRestante.style.display = "none";
+                    mensajeRestante.classList.remove("mensaje-alerta");
+                    mensajeRestante.classList.add("mensaje-tiempo-restante");
+                }
+            }
+        }
+
+        // ==================== TÉRMINOS Y CONDICIONES ====================
+
+        function showTermsModal() {
+            const modal = $("modal-terms");
+            if (modal) modal.classList.add("show");
+        }
+
+        function hideTermsModal() {
+            const modal = $("modal-terms");
+            if (modal) modal.classList.remove("show");
+        }
+
+        // ==================== TABS, SELECTS, FORM TEMPLATES ====================
+
+        function cambiarTab(tabId) {
+            document
+                .querySelectorAll(".tab-btn")
+                .forEach((btn) => btn.classList.remove("active"));
+            document
+                .querySelectorAll(".tab-content")
+                .forEach((content) => content.classList.remove("active"));
+
+            const button = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (button) button.classList.add("active");
+            const content = $(tabId);
+            if (content) content.classList.add("active");
+
+            modoActual =
+                tabId === "tab-publico"
+                    ? "publico"
+                    : tabId === "tab-tutora"
+                        ? "tutora"
+                        : "admin";
+        }
+
+        function initTabs() {
+            document.querySelectorAll(".tab-btn").forEach((button) => {
+                button.addEventListener("click", () => {
+                    const tabId = button.getAttribute("data-tab");
+                    cambiarTab(tabId);
+
+                    if (tabId === "tab-publico") {
+                        $login.style.display = "block";
+                        $gestionTutora.style.display = "none";
+                        $formularioTutora.style.display = "none";
+                        $resultados.style.display = "none";
+                        $formularioPublico.style.display = "none";
+                    }
+                    if (tabId === "tab-admin") {
+                        if (dataLoaded) filtrarParticipantesAdmin();
+                    }
+                });
+            });
+        }
+
+        function initFechaSelects() {
+            const diaSelect = $("dia"),
+                mesSelect = $("mes"),
+                anoSelect = $("ano");
+            if (!diaSelect || !mesSelect || !anoSelect) return;
+
+            diaSelect.innerHTML = SELECT_BASE_OP;
+            for (let i = 1; i <= 31; i++) {
+                const value = i < 10 ? "0" + i : String(i);
+                diaSelect.innerHTML += `<option value="${value}">${value}</option>`;
+            }
+
+            mesSelect.innerHTML = SELECT_BASE_OP;
+            const meses = [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre",
+            ];
+            for (let i = 0; i < 12; i++) {
+                const value = i + 1 < 10 ? "0" + (i + 1) : String(i + 1);
+                mesSelect.innerHTML += `<option value="${value}">${meses[i]}</option>`;
+            }
+
+            const currentYear = new Date().getFullYear();
+            const minYear = currentYear - 20;
+            anoSelect.innerHTML = SELECT_BASE_OP;
+            for (let i = currentYear; i >= minYear; i--) {
+                anoSelect.innerHTML += `<option value="${i}">${i}</option>`;
+            }
+        }
+
+        function llenarSelectTutoras(selectElement, includeAll = false) {
+            if (!selectElement) return;
+
+            selectElement.innerHTML = SELECT_BASE_OP;
+            if (includeAll) {
+                selectElement.innerHTML =
+                    '<option value="todos">Todos los Participantes</option>';
+            }
+
+            // Usamos la caché de tutoras generada con IDs
+            tutorasCache
+                .filter(
+                    (t) => t.role === "tutora" || (includeAll && t.role === "admin")
+                )
+                .forEach((tutora) => {
+                    selectElement.innerHTML += `<option value="${tutora.id}">${tutora.nombre}</option>`;
+                });
+        }
+
+        function initFormularioTemplates() {
+            const template = `
+        <fieldset>
+            <legend>🆔 Información del Participante</legend>
+            <div class="grid-2col">
+                <div class="input-grupo">
+                    <label for="tipoDocParticipante">📄 Tipo de Documento</label>
+                    <select id="tipoDocParticipante" name="tipoDocParticipante" required>
+                        <option value="">Seleccione</option>
+                        <option value="R.C">Registro Civil Nacimiento (RC)</option>
+                        <option value="T.I">Tarjeta de Identidad (TI)</option>
+                        <option value="C.C">Cédula de Ciudadanía (CC)</option>
+                        <option value="Acta Nacimiento">Acta de Nacimiento (VEN)</option>
+                        <option value="PEP">Permiso Especial de Permanencia (PEP)</option>
+                        <option value="PPT">Permiso por Protección Temporal (PPT)</option>
+                        <option value="Cedula Extrangeria">Cédula de Extrangeria (CE)</option>
+                    </select>
+                </div>
+                <div class="input-grupo">
+                    <label for="numDocParticipante">🔢 Número de Documento</label>
+                    <input type="text" id="numDocParticipante" name="numDocParticipante" pattern="\\d+" title="Solo números" required placeholder="Ingrese el número">
+                </div>
+                <div class="input-grupo">
+                    <label for="regimenSalud">🩺 Regimen de Salud</label>
+                    <select id="regimenSalud" name="regimenSalud" required onchange="manejarRegimenSalud(this.value)">
+                        <option value="">Seleccione una opción</option>
+                        <option value="Subsidiado">Subsidiado - SUB</option>
+                        <option value="Contributivo">Contributivo - CON</option>
+                        <option value="No Salud">No Salud</option> </select>
+                    </div>
+                    <div class="input-grupo">
+                        <label for="epsActivo">💊 EPS Activo</label>
+                        <select id="epsActivo" name="epsActivo" required onchange="mostrarCampoOtraEPS(this.value)">
+                            <option value="">Seleccione su EPS</option>
+                            <option value="Ambuq">Ambuq</option>
+                            <option value="Cajacopi">Cajacopi</option>
+                            <option value="Comfacor">Comfacor</option>
+                            <option value="Comfasucre">Comfasucre</option>
+                            <option value="Comparta">Comparta</option>
+                            <option value="Coosalud">Coosalud</option>
+                            <option value="Emdisalud">Emdisalud</option>
+                            <option value="Mutual ser">Mutual ser</option>
+                            <option value="Nueva EPS">Nueva EPS</option>
+                            <option value="Saludvida">Saludvida</option>
+                            <option value="Salud total">Salud total</option>
+                            <option value="Cafesalud">Cafesalud</option>
+                            <option value="Convida">Convida</option>
+                            <option value="OTRA">OTRA (Especifique)</option>
+                        </select>
+    
+                        <input type="text" id="otraEps" name="otraEps" style="display:none; margin-top: 10px;" 
+                        placeholder="Escriba el nombre de la EPS">
+                    </div>
+                </div>
+                    <div class="input-grupo">
+                        <label for="estudiaActual">🎓 Educación</label>
+
+                        <label>¿Estudia actualmente?</label>
+                        <div class="radio-grupo" id="estudiaActual">
+                            <input type="radio" id="estudia-si" name="estudiaActual" value="si" onchange="manejarEstudio(this.value)">
+                            <label for="estudia-si">Sí</label>
+
+                            <input type="radio" id="estudia-no" name="estudiaActual" value="no" onchange="manejarEstudio(this.value)">
+                            <label for="estudia-no">No</label>
+                        </div>
+                    </div>
+
+                    <div class="input-grupo campo-dependiente" id="cursoActualGrupo" style="display:none;">
+                        <label for="cursoActual">Nivel/Curso Actual:</label>
+                        <select id="cursoActual" name="cursoActual">
+                            <option value="">Seleccione el curso actual</option>
+                            <option value="Transicion">Transición</option>
+                            <option value="1">1° de Básica</option>
+                            <option value="2">2° de Básica</option>
+                            <option value="3">3° de Básica</option>
+                            <option value="4">4° de Básica</option>
+                            <option value="5">5° de Básica</option>
+                            <option value="6">6° de Básica</option>
+                            <option value="7">7° de Básica</option>
+                            <option value="8">8° de Básica</option>
+                            <option value="9">9° de Básica</option>
+                            <option value="10">10° de Media</option>
+                            <option value="11">11° de Media</option>
+                            <option value="Tecnico año 1">Técnico - Año 1</option>
+                            <option value="Tecnico año 2">Técnico - Año 2</option>
+                            <option value="Tecnologo año 1">Tecnólogo - Año 1</option>
+                            <option value="Tecnologo año 2">Tecnólogo - Año 2</option>
+                            <option value="Tecnologo año 3">Tecnólogo - Año 3</option>
+                            <option value="Tecnologo año 4">Tecnólogo - Año 4</option>
+                            <option value="Universidad1">Universidad - Año 1</option>
+                            <option value="Universidad2">Universidad - Año 2</option>
+                            <option value="Universidad3">Universidad - Año 3</option>
+                            <option value="Universidad4">Universidad - Año 4</option>
+                            <option value="Universidad5">Universidad - Año 5</option>
+                        </select>
+                    </div>
+
+                    <div class="seccion-no-estudia" id="seccionNoEstudia" style="display:none;">
+
+                        <div class="input-grupo">
+                            <label for="ultimoAnio">Último año cursado:</label>
+                            <select id="ultimoAnio" name="ultimoAnio">
+                                <option value="">Seleccione el último año cursado</option>
+                                <option value="Esta Muy Pequeño">Esta Muy Pequeño</option>
+                                <option value="Nunca Ha Estudiado">Nunca ha Estudiado</option>
+                                <option value="Transicion">Transición</option>
+                                <option value="1">1° de Básica</option>
+                                <option value="2">2° de Básica</option>
+                                <option value="3">3° de Básica</option>
+                                <option value="4">4° de Básica</option>
+                                <option value="5">5° de Básica</option>
+                                <option value="6">6° de Básica</option>
+                                <option value="7">7° de Básica</option>
+                                <option value="8">8° de Básica</option>
+                                <option value="9">9° de Básica</option>
+                                <option value="10">10° de Media</option>
+                                <option value="11">11° de Media</option>
+                                <option value="Tecnico año 1">Técnico - Año 1</option>
+                                <option value="Tecnico año 2">Técnico - Año 2</option>
+                                <option value="Tecnologo año 1">Tecnólogo - Año 1</option>
+                                <option value="Tecnologo año 2">Tecnólogo - Año 2</option>
+                                <option value="Tecnologo año 3">Tecnólogo - Año 3</option>
+                                <option value="Tecnologo año 4">Tecnólogo - Año 4</option>
+                                <option value="Universidad1">Universidad - Año 1</option>
+                                <option value="Universidad2">Universidad - Año 2</option>
+                                <option value="Universidad3">Universidad - Año 3</option>
+                                <option value="Universidad4">Universidad - Año 4</option>
+                                <option value="Universidad5">Universidad - Año 5</option>
+                            </select>
+                        </div>
+
+                        <div class="input-grupo">
+                            <label>¿Estudiará el próximo año?</label>
+                            <div class="radio-grupo">
+                                <input type="radio" id="futuro-si" name="estudioFuturo" value="si" onchange="manejarEstudioFuturo(this.value)">
+                                <label for="futuro-si">Sí</label>
+
+                                <input type="radio" id="futuro-no" name="estudioFuturo" value="no" onchange="manejarEstudioFuturo(this.value)">
+                                <label for="futuro-no">No (Sin estudios)</label>
+                                
+                            </div>
+                        </div>
+
+                        <div class="input-grupo campo-dependiente" id="cursoFuturoGrupo" style="display:none;">
+                            <label for="cursoFuturo">Año a cursar el próximo año:</label>
+                            <select id="cursoFuturo" name="cursoFuturo">
+                                <option value="">Seleccione el curso</option>
+                                <option value="Transicion">Transición</option>
+                                <option value="1">1° de Básica</option>
+                                <option value="2">2° de Básica</option>
+                                <option value="3">3° de Básica</option>
+                                <option value="4">4° de Básica</option>
+                                <option value="5">5° de Básica</option>
+                                <option value="6">6° de Básica</option>
+                                <option value="7">7° de Básica</option>
+                                <option value="8">8° de Básica</option>
+                                <option value="9">9° de Básica</option>
+                                <option value="10">10° de Media</option>
+                                <option value="11">11° de Media</option>
+                                <option value="Tecnico año 1">Técnico - Año 1</option>
+                                <option value="Tecnico año 2">Técnico - Año 2</option>
+                                <option value="Tecnologo año 1">Tecnólogo - Año 1</option>
+                                <option value="Tecnologo año 2">Tecnólogo - Año 2</option>
+                                <option value="Tecnologo año 3">Tecnólogo - Año 3</option>
+                                <option value="Tecnologo año 4">Tecnólogo - Año 4</option>
+                                <option value="Universidad1">Universidad - Año 1</option>
+                                <option value="Universidad2">Universidad - Año 2</option>
+                                <option value="Universidad3">Universidad - Año 3</option>
+                                <option value="Universidad4">Universidad - Año 4</option>
+                                <option value="Universidad5">Universidad - Año 5</option>
+                                <option value="Aceleracion">ACELERACIÓN (2 años en 1)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-grupo campo-dependiente" id="sinEstudiosGrupo" style="display:none;">
+                            <input type="text" id="sinEstudios" name="sinEstudios" value="SIN ESTUDIOS - Confirmado" readonly>
+                        </div>
+                    </div>
+            </div>
+        </fieldset>
+
+
+                <fieldset>
+                    <legend>📞 Datos de Contacto y Ubicación</legend>
+
+                    <div class="grid-2col">
+                        <div class="input-grupo">
+                            <label for="direccion">🏡 Dirección Vivienda</label>
+                            <input type="text" id="direccion" name="direccion" required placeholder="Escriba la dirección completa">
+                        </div>
+                        <div class="input-grupo">
+                            <label for="barrio">🏮 Barrio</label>
+                            <input type="text" id="barrio" name="barrio" required placeholder="Escriba el nombre del barrio">
+                        </div>
+                    </div>
+
+                    <div class="input-grupo">
+                        <label for="telefono">📱 Número de Telefono</label>
+                        <input type="text" id="telefono" name="telefono" required placeholder="Escriba El Número de Telefono Actual">
+                    </div>
+                </fieldset>
+
+            <fieldset>
+                <legend>🗺️ Planes de Movilidad</legend>
+                <div class="grid-2col">
+                    <div class="input-grupo">
+                        <label for="irse">Piensa Irse de la Zona</label>
+                        <select id="irse" name="irse" required onchange="manejarMotivoIrse(this.value)">
+                            <option value="">Seleccione una opción</option>
+                            <option value="SI">Si, me voy para otra ciudad</option>
+                            <option value="NO">No, ya me estableci en la Zona</option> 
+                            <option value="3 Meses">Probablemente en unos 3 Meses</option> 
+                            <option value="6 Meses">Probablemente en unos 6 Meses</option> 
+                            <option value="En 1 Año">Probablemente en unos 1 Año</option>
+                            <option value="Situacion">Cuando la situacion en mi Pais Mejore</option>
+                            <option value="No se">Posiblemente</option> 
+                        </select>
+                    </div>
+
+                    <div class="input-grupo campo-dependiente" id="motivoIrseGrupo" style="display:none;">
+                        <label for="motivoIrse">Motivo Principal de la Partida:</label>
+                        <select id="motivoIrse" name="motivoIrse" disabled>
+                            <option value="">Seleccione un motivo</option>
+                            <option value="Violencia/Seguridad">Violencia/Inseguridad</option>
+                            <option value="Economico/Trabajo">Mejorar Situación Económica/Laboral/Vivienda</option>
+                            <option value="Familiar/Hogar">Reunificación Familiar/Problemas de Convivencia</option>
+                            <option value="Estudios/Educacion">Continuar Estudios/Educación (Cambio de ciudad/país)</option>
+                            <option value="Salud/Medico">Acceso a Servicios de Salud/Médicos</option>
+                            <option value="Otro">Otro Motivo</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+
+                <fieldset>
+    <legend>👨‍👩‍👧 Datos de Contacto del Acudiente Principal</legend>
+
+    <h3 class="subtitulo-familiar">
+        <span>👩</span>
+        <span>Información de la Madre</span>
+    </h3>
+    <div class="grid-2col">
+        <div class="input-grupo input-full-width">
+    <label for="viveMama">¿La Madre vive con el menor?</label>
+    <select id="viveMama" name="viveMama" required 
+            onchange="controlarBloqueo('viveMama', 'nombreMama', 'tipoDocMama', 'numDocMama')">
+        <option value="">Seleccione una opción</option>
+        <option value="SI">SI</option>
+        <option value="NO">NO</option>
+    </select>
+</div>
+        
+        <div class="input-grupo">
+            <label for="nombreMama">Nombre de la Madre</label>
+            <input type="text" id="nombreMama" name="nombreMama" required placeholder="Ingrese el nombre completo de la madre">
+        </div>
+        <div class="input-grupo">
+            <label for="tipoDocMama">📄 Tipo Doc. Madre</label>
+            <select id="tipoDocMama" name="tipoDocMama" required>
+                <option value="NO VIVE">Seleccione la Opcion Verifica</option>
+                <option value="C.C">Cédula de Ciudadanía (CC)</option>
+                <option value="Acta Nacimiento">Acta de Nacimiento (VEN)</option>
+                <option value="PEP">Permiso Especial de Permanencia (PEP)</option>
+                <option value="PPT">Permiso por Protección Temporal (PPT)</option>
+                <option value="Cedula Extrangeria">Cédula de Extrangeria (CE)</option>
+            </select>
+        </div>
+        <div class="input-grupo">
+            <label for="numDocMama">🔢 Número Doc. Madre</label>
+            <input type="text" id="numDocMama" name="numDocMama" pattern="\\d+" title="Solo números" required placeholder="Ingrese el número">
+        </div>
+    </div>
+
+    <h3 class="subtitulo-familiar">
+        <span>👨</span>
+        <span>Información del Padre</span>
+    </h3>
+    <div class="grid-2col">
+        <div class="input-grupo input-full-width">
+    <label for="vivePapa">¿El Padre vive con el menor?</label>
+    <select id="vivePapa" name="vivePapa" required 
+            onchange="controlarBloqueo('vivePapa', 'nombrePapa', 'tipoDocPapa', 'numDocPapa')">
+        <option value="">Seleccione una opción</option>
+        <option value="SI">SI</option>
+        <option value="NO">NO</option>
+    </select>
+</div>
+        
+        <div class="input-grupo">
+            <label for="nombrePapa">Nombre del Padre</label>
+            <input type="text" id="nombrePapa" name="nombrePapa" required placeholder="Ingrese el nombre completo del padre">
+        </div>
+        <div class="input-grupo">
+            <label for="tipoDocPapa">📄 Tipo Doc. Padre</label>
+            <select id="tipoDocPapa" name="tipoDocPapa" required>
+                <option value="NO VIVE">Seleccione la Opcion Verifica</option>
+                <option value="C.C">Cédula de Ciudadanía (CC)</option>
+                <option value="Acta Nacimiento">Acta de Nacimiento (VEN)</option>
+                <option value="PEP">Permiso Especial de Permanencia (PEP)</option>
+                <option value="PPT">Permiso por Protección Temporal (PPT)</option>
+                <option value="Cedula Extrangeria">Cédula de Extrangeria (CE)</option>
+            </select>
+        </div>
+        <div class="input-grupo">
+            <label for="numDocPapa">🔢 Número Doc. Padre</label>
+            <input type="text" id="numDocPapa" name="numDocPapa" pattern="\\d+" title="Solo números" required placeholder="Ingrese el número">
+        </div>
+    </div>
+</fieldset>
+        <fieldset id="fieldset-otro-familiar">
+            <legend>👤 Otro Familiar/Acudiente (Si no es Mamá o Papá)</legend>
+            <div class="input-grupo">
+                <label for="parentescoOtro">👥 Parentesco</label>
+                <select id="parentescoOtro" name="parentescoOtro">
+                    <option value="">Seleccione el Parentesco</option>
+                    <option value="Abuelo Paterno">Abuelo Paterno</option>
+                    <option value="Abuela Paterna">Abuela Paterna</option>
+                    <option value="Abuelo Materno">Abuelo Materno</option>
+                    <option value="Abuela Materna">Abuela Materna</option>
+                    <option value="Tio">Tío</option>
+                    <option value="Tia">Tía</option>
+                    <option value="Primo">Primo/Prima</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="input-grupo">
+    <label for="nombreOtroFamiliar">Nombre de Otro Familiar o Acudiente Secundario</label>
+    <input type="text" id="nombreOtroFamiliar" name="nombreOtroFamiliar" placeholder="Ingrese el nombre completo del otro familiar">
+</div>
+            <div class="grid-2col">
+                <div class="input-grupo">
+                    <label for="tipoDocOtro">📄 Tipo Doc. Otro</label>
+                    <select id="tipoDocOtro" name="tipoDocOtro">
+                        <option value="">Seleccione</option>
+                        <option value="C.C">Cédula de Ciudadanía (CC)</option>
+                        <option value="Acta Nacimiento">Acta de Nacimiento (VEN)</option>
+                        <option value="PEP">Permiso Especial de Permanencia (PEP)</option>
+                        <option value="PPT">Permiso por Protección Temporal (PPT)</option>
+                        <option value="Cedula Extrangeria">Cédula de Extrangeria (CE)</option>
+                    </select>
+                </div>
+                <div class="input-grupo">
+                    <label for="numDocOtro">🔢 Número Doc. Otro</label>
+                    <input type="text" id="numDocOtro" name="numDocOtro" pattern="\\d+" title="Solo números" placeholder="Opcional">
+                </div>
+            </div>
+        </fieldset>
+    `;
+            const formPublico = $("form-datos-publico");
+            if (formPublico) formPublico.innerHTML = template;
+            const formTutora = $("form-datos-tutora");
+            if (formTutora) formTutora.innerHTML = template;
+        }
+
+        function cargarDatosEnFormulario(participante, formElement) {
+            formElement.querySelectorAll("input, select").forEach((field) => {
+                const key = field.name;
+                if (participante[key] !== undefined) {
+                    field.value = participante[key] || "";
+                }
+            });
+        }
+
+        // ==================== CONEXIÓN Y CACHÉ ====================
+
+        async function loadAllSheetData(mostrarProgreso = true) {
+            // 🔑 CLAVE: Solo mostramos el loader en la carga inicial (cuando mostrarProgreso es true)
+            if (mostrarProgreso) {
+                showLoader("Cargando y Validando Datos...");
+            } else {
+                // Mensaje para debug. Solo se ve en la consola.
+                console.log(`[.] Hacking (${new Date().toLocaleTimeString()})`);
+            }
+
+            // PASO 1: Inicializar la caché de tutoras antes de cargar los participantes
+            initializeTutorasCache();
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, { method: "GET" });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.status === "exito" && result.data) {
+                    // PASO 2: Mapear los datos de participantes para añadir el 'tutora_id'
+                    participantesCache = result.data.map((p) => {
+                        const tutoraEntry = tutorasCache.find(
+                            (t) => t.nombre === p.tutora
+                        );
+
+                        return {
+                            ...p,
+                            tutora_id: tutoraEntry
+                                ? tutoraEntry.id
+                                : nameToId(p.tutora || "Sin Asignar"),
+                            participante_estado: p.tipoDocParticipante
+                                ? "Completo"
+                                : "Incompleto",
+                        };
+                    });
+
+                    dataLoaded = true;
+
+                    // 🔑 CLAVE: Ocultamos el loader solo si se mostró
+                    if (mostrarProgreso) {
+                        hideLoader();
+                    }
+
+                    // Llenar selects de tutoras (solo se hace al inicio, pero no interfiere)
+                    llenarSelectTutoras($("select-tutora"), false);
+                    llenarSelectTutoras($("admin-select-tutora"), true);
+
+                    // 🔑 CLAVE: Redibujar la lista. ESTO SIEMPRE DEBE EJECUTARSE
+                    filtrarParticipantesAdmin();
+
+                    if (isChartJsLoaded) {
+                        updateGlobalStats();
+                    } else {
+                        console.warn(
+                            "Chart.js no está cargado. El dashboard de admin no mostrará la gráfica."
+                        );
+                    }
+
+                    // 🔑 CLAVE: Mostrar mensaje de éxito solo en la carga inicial
+                    if (mostrarProgreso) {
+                        mostrarMensaje(
+                            $("mensaje-busqueda"),
+                            "Sistema listo. Ingrese la fecha o inicie sesión.",
+                            "confirmacion"
+                        );
+                    }
+
+                    return { status: "exito" };
+                } else {
+                    throw new Error(
+                        result.message ||
+                        "Error al cargar los datos iniciales o formato de respuesta incorrecto."
+                    );
+                }
+            } catch (error) {
+                // Manejo de Errores
+                console.error("Error al cargar datos:", error);
+
+                // 🔑 CLAVE: Solo mostramos el error visible si es la carga inicial
+                if (mostrarProgreso) {
+                    hideLoader();
+                    mostrarMensaje(
+                        $("mensaje-busqueda"),
+                        `Error crítico al inicializar (GET): ${error.message}. Verifique el Apps Script.`,
+                        "alerta"
+                    );
+                } else {
+                    // En modo refresco, solo registramos el error en consola y continuamos el ciclo
+                    console.warn(
+                        `[REFRESCO FALLIDO] Error en ciclo silencioso: ${error.message}. Se reintentará en el próximo intervalo.`
+                    );
+                }
+                return { status: "error", message: error.message };
+            }
+        }
+
+        /** Usa el caché local para buscar o filtrar, y hace POST para guardar. */
+        async function sendToAppsScript(data) {
+            if (!dataLoaded && data.action !== "guardar") {
+                return {
+                    status: "error",
+                    message:
+                        "Datos no cargados. Por favor, acepte los términos y espere a que el sistema esté listo.",
+                };
+            }
+
+            if (data.action === "buscar") {
+                const fechaBusqueda = data.fecha;
+                const ahora = new Date().getTime();
+
+                const resultados = participantesCache
+                    .filter((p) => p.fechaNacimiento === fechaBusqueda)
+                    .map((p) => {
+                        let estado = "nuevo";
+                        let fechaBloqueo = null;
+
+                        if (p.participante_estado === "Completo" && p.fechaGuardado) {
+                            const limiteMs = p.fechaGuardado + 30 * 60 * 1000;
+                            if (ahora > limiteMs) {
+                                estado = "bloqueado";
+                            } else {
+                                estado = "editable";
+                                // Usamos el epoch time de fechaGuardado y le sumamos 30min para mostrar el límite
+                                const limiteDate = new Date(p.fechaGuardado + 30 * 60 * 1000);
+                                fechaBloqueo = limiteDate.toLocaleTimeString("es-CO", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                });
+                            }
+                        }
+                        if (p.participante_estado === "Completo" && !p.fechaGuardado) {
+                            estado = "editable";
+                        }
+                        return { ...p, estado: estado, fechaBloqueo: fechaBloqueo };
+                    });
+
+                if (resultados.length === 0) {
+                    return {
+                        status: "error",
+                        message:
+                            "No se encontraron participantes con esa fecha de nacimiento.",
+                    };
+                }
+
+                return { status: "exito", resultados: resultados };
+            } else if (data.action === "listarPorTutora") {
+                // CORRECCIÓN CLAVE: El filtro usa el 'tutora_id' generado en el mapeo.
+                const tutoraId = data.tutoraId;
+                const ahora = new Date().getTime();
+
+                const participantes = participantesCache
+                    .filter((p) => p.tutora_id === tutoraId)
+                    .map((p) => {
+                        let estadoTutora = "incompleto";
+                        if (p.participante_estado === "Completo") {
+                            if (!p.fechaGuardado) {
+                                estadoTutora = "completo";
+                            } else {
+                                const limiteMs = p.fechaGuardado + 30 * 60 * 1000;
+                                if (ahora > limiteMs) {
+                                    estadoTutora = "bloqueado";
+                                } else {
+                                    estadoTutora = "completo";
+                                }
+                            }
+                        }
+                        return { ...p, estado: estadoTutora };
+                    });
+
+                return { status: "exito", participantes: participantes };
+            } else if (data.action === "guardar") {
+                showSaveAnimation(true);
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: "POST",
+                    mode: "cors",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify(data),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error HTTP! status: ${response.status}`);
+                }
+                const result = await response.json();
+
+                if (result.status === "guardado") {
+                    const participanteIndex = participantesCache.findIndex(
+                        (p) => p.fila === data.fila
+                    );
+                    if (participanteIndex !== -1) {
+                        // Actualizar el caché local con los nuevos datos
+                        participantesCache[participanteIndex].fechaGuardado =
+                            result.fechaGuardado;
+                        if (data.mode === "publico") {
+                            participantesCache[participanteIndex].participante_estado =
+                                "Completo";
+                        }
+                        Object.keys(data).forEach((key) => {
+                            if (key !== "action" && key !== "mode" && key !== "fila") {
+                                participantesCache[participanteIndex][key] = data[key];
+                            }
+                        });
+                        if (isChartJsLoaded) updateGlobalStats();
+                    }
+                }
+                return result;
+            }
+
+            return { status: "error", message: "Acción no válida." };
+        }
+
+        // ==================== LÓGICA DE ACCESO PÚBLICO ====================
+
+        $("form-busqueda").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (!dataLoaded) {
+                mostrarMensaje(
+                    $("mensaje-busqueda"),
+                    "El sistema aún está cargando. Por favor, espere o acepte los términos.",
+                    "alerta"
+                );
+                return;
+            }
+
+            $resultados.style.display = "none";
+            $formularioPublico.style.display = "none";
+            mostrarMensaje(
+                $("mensaje-busqueda"),
+                "Buscando participantes...",
+                "confirmacion"
+            );
+
+            const dia = $("dia").value,
+                mes = $("mes").value,
+                ano = $("ano").value;
+            if (!dia || !mes || !ano) {
+                mostrarMensaje(
+                    $("mensaje-busqueda"),
+                    "Por favor, complete todos los campos de fecha.",
+                    "alerta"
+                );
+                return;
+            }
+
+            const diaFormateado = String(dia).padStart(2, "0");
+            const mesFormateado = String(mes).padStart(2, "0");
+            // CORRECCIÓN: El Apps Script usa DD/MM/YYYY, por eso debe ser 'dd/MM/yyyy'
+            const fechaBusqueda = `${diaFormateado}/${mesFormateado}/${ano}`;
+
+            const data = { action: "buscar", fecha: fechaBusqueda };
+            const result = await sendToAppsScript(data);
+
+            if (result.status === "exito") {
+                renderResultadosPublicos(result.resultados);
+            } else {
+                mostrarMensaje(
+                    $("mensaje-busqueda"),
+                    result.message || "Ocurrió un error desconocido.",
+                    "alerta"
+                );
+            }
+        });
+
+        // --- FUNCIÓN DE LOGOUT ADAPTADA A TU ESTRUCTURA ---
+        function logout() {
+            // 1. Resetear el estado global
+            // Se asume que sessionCache, participanteSeleccionado, y modoActual están declarados globalmente.
+            if (typeof sessionCache !== "undefined") sessionCache.user = null;
+            if (typeof participanteSeleccionado !== "undefined")
+                participanteSeleccionado = null;
+            if (typeof modoActual !== "undefined") modoActual = "publico";
+
+            // 2. Ocultar TODAS las secciones de gestión (Usando las variables DOM que definiste)
+            $gestionTutora.style.display = "none";
+            $formularioTutora.style.display = "none";
+
+            // Oculta la sección específica del Dashboard Admin
+            if ($adminDashboard) $adminDashboard.style.display = "none";
+
+            // Ocultar la pestaña del admin si está presente (se asume el ID 'tab-btn-admin')
+            const tabAdminBtn = $("tab-btn-admin");
+            if (tabAdminBtn) tabAdminBtn.style.display = "none";
+
+            // 3. Volver a la pestaña pública
+            if (typeof cambiarTab === "function") {
+                cambiarTab("tab-publico");
+            } else if (typeof activateTab === "function") {
+                activateTab("tab-publico");
+            }
+
+            // 4. Asegurar que la sección de login se muestre.
+            $login.style.display = "block";
+
+            // 5. Limpiar campos de login
+            document
+                .querySelectorAll(
+                    '#form-login input[type="text"], #form-login input[type="password"], #form-login select'
+                )
+                .forEach((input) => (input.value = ""));
+
+            // 6. Mostrar mensaje de cierre de sesión
+            const mensajeLogin = $("mensaje-login");
+            if (mensajeLogin && typeof mostrarMensaje === "function") {
+                // Usamos la función personalizada 'mostrarMensaje'
+                mostrarMensaje(
+                    mensajeLogin,
+                    "Sesión cerrada exitosamente.",
+                    "alerta"
+                );
+            }
+        }
+
+        window.logout = logout; // Esto asegura que el HTML pueda llamar a la función
+
+        function renderResultadosPublicos(resultados) {
+            const listaResultados = $("lista-resultados");
+            if (!listaResultados) return;
+            listaResultados.innerHTML = "";
+            $("mensaje-busqueda").style.display = "none";
+
+            if (resultados.length === 0) {
+                mostrarMensaje(
+                    $("mensaje-busqueda"),
+                    "No se encontraron participantes con esa fecha de nacimiento.",
+                    "alerta"
+                );
+                return;
+            }
+
+            $resultados.style.display = "block";
+
+            resultados.forEach((p) => {
+                const button = document.createElement("button");
+                button.className = "btn-resultado";
+                const estadoTexto =
+                    p.estado === "bloqueado"
+                        ? "BLOQUEADO"
+                        : p.estado === "editable"
+                            ? p.participante_estado === "Completo"
+                                ? `MODIFICAR (Hasta ${p.fechaBloqueo || "Ahora"})`
+                                : "PENDIENTE"
+                            : "SELECCIONAR";
+                const estadoClass =
+                    p.estado === "bloqueado"
+                        ? "estado-bloqueado"
+                        : p.participante_estado === "Completo"
+                            ? "estado-editable"
+                            : "estado-nuevo";
+
+                // Busca el nombre de la tutora en la caché (p.tutora ya viene con el nombre)
+                const nombreTutora = p.tutora || "Sin asignar";
+
+                button.innerHTML = `
+            <span>${p.nombre} (${p.codigo}) Tutora: ${nombreTutora}</span>
+            <span class="estado-tag ${estadoClass}">${estadoTexto}</span>
+        `;
+                button.onclick = () => seleccionarParticipantePublico(p, button);
+                listaResultados.appendChild(button);
+            });
+        }
+
+        function seleccionarParticipantePublico(participante, btn) {
+            document
+                .querySelectorAll("#lista-resultados .btn-resultado")
+                .forEach((b) => b.classList.remove("seleccionado"));
+            btn.classList.add("seleccionado");
+
+            participanteSeleccionado = participante;
+
+            const infoParticipante = $("info-participante-seleccionado-publico");
+            if (infoParticipante) {
+                infoParticipante.innerHTML = `
+            <span>👤</span>
+            <span>Participante Seleccionado: <strong>${participante.nombre}</strong> Código: ${participante.codigo}</span>
+        `;
+            }
+
+            $formularioPublico.style.display = "block";
+            $("mensaje-guardado-publico").style.display = "none";
+            $("form-datos-publico").reset();
+
+            if (participante.participante_estado === "Completo") {
+                cargarDatosEnFormulario(participante, $("form-datos-publico"));
+            }
+
+            if (participante.estado === "bloqueado") {
+                bloquearFormulario(
+                    true,
+                    "Su información ya fue enviada y el tiempo de modificación ha expirado. Solo puede visualizarla."
+                );
+            } else {
+                bloquearFormulario(false, "");
+                if (participante.estado === "editable" && participante.fechaBloqueo) {
+                    iniciarContador(participante.fechaBloqueo);
+                    mostrarMensaje(
+                        $("mensaje-guardado-publico"),
+                        `Ya tiene datos guardados. Puede modificar hasta las ${participante.fechaBloqueo}.`,
+                        "confirmacion"
+                    );
+                } else {
+                    const mensajeRestante = $("mensaje-tiempo-restante");
+                    if (mensajeRestante) mensajeRestante.style.display = "none";
+                }
+            }
+
+            $formularioPublico.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+
+        $("form-datos-publico").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (
+                !participanteSeleccionado ||
+                participanteSeleccionado.estado === "bloqueado"
+            )
+                return;
+
+            const btnGuardar = $("btn-guardar-publico");
+            if (btnGuardar) btnGuardar.disabled = true;
+
+            showSaveAnimation(true);
+
+            const form = e.target;
+
+            const datos = {
+                action: "guardar",
+                mode: "publico", // o "publico" según el bloque
+                fila: participanteSeleccionado.fila,
+
+                tipoDocParticipante: form.tipoDocParticipante.value || "",
+                numDocParticipante: form.numDocParticipante.value || "",
+                nombreMama: form.nombreMama.value || "",
+                tipoDocMama: form.tipoDocMama.value || "",
+                numDocMama: form.numDocMama.value || "",
+                nombrePapa: form.nombrePapa.value || "",
+                tipoDocPapa: form.tipoDocPapa.value || "",
+                numDocPapa: form.numDocPapa.value || "",
+                parentescoOtro: form.parentescoOtro.value || "",
+                nombreOtroFamiliar: form.nombreOtroFamiliar.value || "",
+                tipoDocOtro: form.tipoDocOtro.value || "",
+                numDocOtro: form.numDocOtro.value || "",
+                regimenSalud: form.regimenSalud.value || "",
+                epsActivo: form.epsActivo.value || "",
+
+                // 🔸 EDUCACIÓN (CORREGIDO)
+                estudiaActual: document.querySelector('input[name="estudiaActual"]:checked')?.value || "", // ✅ CORREGIDO
+
+                cursoActual_ultimoAnio:
+                    document.getElementById('cursoActualGrupo').style.display !== 'none'
+                        ? document.getElementById('cursoActual').value || ""
+                        : document.getElementById('ultimoAnio').value || "",
+
+                estudioFuturo: document.querySelector('input[name="estudioFuturo"]:checked')?.value || "", // ✅ CORREGIDO
+
+                cursoFuturo_sinEstudio:
+                    document.getElementById('cursoFuturoGrupo').style.display !== 'none'
+                        ? document.getElementById('cursoFuturo').value || ""
+                        : document.getElementById('sinEstudios').value || "",
+
+                // 🔸 DATOS DE CONTACTO Y OTROS
+                telefono: form.telefono.value || "",
+                direccion: form.direccion.value || "",
+                barrio: form.barrio.value || "",
+                irse: form.irse.value || "",
+                motivoIrse: form.motivoIrse.value || "",
+            };
+
+            try {
+                const result = await sendToAppsScript(datos);
+
+                if (btnGuardar) btnGuardar.disabled = false;
+
+                if (result.status === "guardado") {
+                    showSaveSuccess();
+                    mostrarMensaje(
+                        $("mensaje-guardado-publico"),
+                        result.message,
+                        "confirmacion"
+                    );
+
+                    const limiteMs = result.fechaGuardado + 30 * 60 * 1000;
+                    const horaBloqueoStr = new Date(limiteMs).toLocaleTimeString(
+                        "es-CO",
+                        { hour: "2-digit", minute: "2-digit", second: "2-digit" }
+                    );
+                    iniciarContador(horaBloqueoStr);
+                } else if (result.status === "bloqueado") {
+                    showSaveError("Tiempo Expirado");
+                    bloquearFormulario(true, result.message);
+                    mostrarMensaje(
+                        $("mensaje-guardado-publico"),
+                        result.message,
+                        "alerta"
+                    );
+                } else {
+                    showSaveError("Error al Guardar");
+                    mostrarMensaje(
+                        $("mensaje-guardado-publico"),
+                        `Error al guardar: ${result.message}`,
+                        "alerta"
+                    );
+                }
+            } catch (error) {
+                if (btnGuardar) btnGuardar.disabled = false;
+                showSaveError("Error de Conexión");
+                mostrarMensaje(
+                    $("mensaje-guardado-publico"),
+                    `Error de red o servidor: ${error.message}`,
+                    "alerta"
+                );
+            }
+        });
+
+        // ==================== LÓGICA DE ACCESO TUTORA / ADMIN ====================
+
+        $("form-login").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const user = $("login-user").value.toLowerCase();
+            const pass = $("login-pass").value;
+
+            let role = null;
+            let userId = null;
+            let userName = null;
+
+            if (user === TUTORA_USER && pass === TUTORA_PASS) {
+                role = "tutora";
+
+                // CORRECCIÓN: Usamos la primera tutora real de nuestra caché
+                const tutora = tutorasCache.find((t) => t.role === "tutora");
+                if (tutora) {
+                    userId = tutora.id;
+                    userName = tutora.nombre;
+                } else {
+                    mostrarMensaje(
+                        $("mensaje-login"),
+                        "Acceso denegado: No se encontraron tutoras registradas en el sistema.",
+                        "alerta"
+                    );
+                    return;
+                }
+            } else if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                role = "admin";
+                userId = ADMIN_USER;
+                userName = "Admin General";
+            }
+
+            if (role) {
+                sessionCache.user = { role: role, id: userId, nombre: userName };
+                mostrarMensaje(
+                    $("mensaje-login"),
+                    `Acceso concedido como ${userName}.`,
+                    "confirmacion"
+                );
+                $("mensaje-login").style.display = "block";
+                $login.style.display = "none";
+
+                const tabBtnAdmin = $("tab-btn-admin");
+                if (tabBtnAdmin) tabBtnAdmin.style.display = "none";
+                $gestionTutora.style.display = "none";
+
+                if (role === "admin") {
+                    if (tabBtnAdmin) tabBtnAdmin.style.display = "block";
+                    cambiarTab("tab-admin");
+                    if (dataLoaded) filtrarParticipantesAdmin();
+                } else if (role === "tutora") {
+                    $gestionTutora.style.display = "block";
+                    cambiarTab("tab-tutora");
+                    $(
+                        "titulo-gestion-tutora"
+                    ).innerHTML = `<span class="paso-numero">2</span> <span>Gestión de Participantes (${userName})</span>`;
+                    $("select-tutora").value = userId;
+                }
+            } else {
+                mostrarMensaje(
+                    $("mensaje-login"),
+                    "Usuario o contraseña incorrectos.",
+                    "alerta"
+                );
+            }
+        });
+
+        $("btn-cargar-participantes").addEventListener("click", async () => {
+            const tutoraId = $("select-tutora").value;
+            const tutoraNombre =
+                tutorasCache.find((t) => t.id === tutoraId)?.nombre || "Su Tutora";
+
+            if (!tutoraId) {
+                mostrarMensaje(
+                    $("mensaje-login"),
+                    "Por favor, seleccione su nombre.",
+                    "alerta"
+                );
+                return;
+            }
+
+            $("titulo-gestion-tutora").innerHTML = `
+        <span class="paso-numero">2</span>
+        <span>Gestión de Participantes de ${tutoraNombre}</span>
+    `;
+            const listaParticipantesTutora = $("lista-participantes-tutora");
+            if (listaParticipantesTutora) {
+                listaParticipantesTutora.innerHTML =
+                    '<p style="text-align:center; padding: 40px; color: var(--color-texto-light);"><span class="spinner-inline" style="width: 20px; height: 20px; border-width: 3px; border-color: var(--color-primario); border-top-color: transparent;"></span> Cargando lista...</p>';
+            }
+
+            $formularioTutora.style.display = "none";
+            $("mensaje-guardado-tutora").style.display = "none";
+
+            const tutoraStatsBox = $("tutora-stats-box");
+            if (tutoraStatsBox) tutoraStatsBox.style.display = "none";
+
+            // CORRECCIÓN CLAVE: El filtro usa el 'tutora_id'
+            const data = { action: "listarPorTutora", tutoraId: tutoraId };
+            const result = await sendToAppsScript(data);
+
+            if (result.status === "exito") {
+                renderListaTutora(result.participantes);
+            } else {
+                if (listaParticipantesTutora) {
+                    listaParticipantesTutora.innerHTML = `<p class="mensaje-alerta" style="text-align: center;">${result.message}</p>`;
+                }
+            }
+        });
+
+        function renderListaTutora(participantes) {
+            const lista = $("lista-participantes-tutora");
+            if (!lista) return;
+
+            lista.innerHTML = "";
+
+            const total = participantes.length;
+            const completos = participantes.filter(
+                (p) => p.estado === "completo" || p.estado === "bloqueado"
+            ).length;
+            const porcentaje =
+                total > 0 ? ((completos / total) * 100).toFixed(1) : 0;
+
+            const tutoraStatsBox = $("tutora-stats-box");
+            if (tutoraStatsBox) tutoraStatsBox.style.display = "block";
+            const statsTutoraRatio = $("stats-tutora-ratio");
+            if (statsTutoraRatio) statsTutoraRatio.value = `${completos}/${total}`;
+            const statsTutoraPorcentaje = $("stats-tutora-porcentaje");
+            if (statsTutoraPorcentaje)
+                statsTutoraPorcentaje.value = `${porcentaje}%`;
+
+            participantes.sort((a, b) => {
+                if (a.estado === "incompleto" && b.estado !== "incompleto") return -1;
+                if (a.estado !== "incompleto" && b.estado === "incompleto") return 1;
+                return a.nombre.localeCompare(b.nombre);
+            });
+
+            if (participantes.length === 0) {
+                lista.innerHTML =
+                    '<p style="text-align:center; color:#4b5563;">No hay participantes asignados a esta tutora.</p>';
+                return;
+            }
+
+            participantes.forEach((p) => {
+                const item = document.createElement("div");
+                const estadoClass =
+                    p.estado === "completo"
+                        ? "completo"
+                        : p.estado === "bloqueado"
+                            ? "bloqueado"
+                            : "incompleto";
+                const tagClass =
+                    p.estado === "completo"
+                        ? "tag-completo"
+                        : p.estado === "bloqueado"
+                            ? "tag-bloqueado"
+                            : "tag-incompleto";
+                const estadoTexto =
+                    p.estado === "completo"
+                        ? "COMPLETO"
+                        : p.estado === "bloqueado"
+                            ? "BLOQUEADO"
+                            : "INCOMPLETO";
+
+                item.className = `participante-item ${estadoClass}`;
+                item.innerHTML = `
+            <span>${p.nombre} (${p.codigo})</span>
+            <span class="tag-estado ${tagClass}">${estadoTexto}</span>
+        `;
+                item.onclick = () => seleccionarParticipanteTutora(p, item);
+                lista.appendChild(item);
+            });
+        }
+
+        function seleccionarParticipanteTutora(participante, item) {
+            document
+                .querySelectorAll("#lista-participantes-tutora .participante-item")
+                .forEach((i) => i.classList.remove("selected"));
+            item.classList.add("selected");
+
+            participanteSeleccionado = participante;
+
+            const infoParticipante = $("info-participante-seleccionado-tutora");
+            if (infoParticipante) {
+                infoParticipante.innerHTML = `
+            <span>✏️</span>
+            <span>Editando: <strong>${participante.nombre}</strong> Código: ${participante.codigo}</span>
+        `;
+            }
+
+            $formularioTutora.style.display = "block";
+            $("mensaje-guardado-tutora").style.display = "none";
+
+            cargarDatosEnFormulario(participante, $("form-datos-tutora"));
+
+            const btnGuardar = $("btn-guardar-tutora");
+            if (btnGuardar)
+                btnGuardar.disabled = participante.estado === "bloqueado";
+
+            if (participante.estado === "bloqueado") {
+                mostrarMensaje(
+                    $("mensaje-guardado-tutora"),
+                    "El acudiente ya completó el formulario y expiró el tiempo de edición. Solo puede visualizar.",
+                    "alerta"
+                );
+            } else {
+                $("mensaje-guardado-tutora").style.display = "none";
+            }
+
+            $formularioTutora.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+
+        $("form-datos-tutora").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (
+                !participanteSeleccionado ||
+                participanteSeleccionado.estado === "bloqueado"
+            )
+                return;
+
+            const btnGuardar = $("btn-guardar-tutora");
+            if (btnGuardar) btnGuardar.disabled = true;
+
+            showSaveAnimation(true);
+
+            const form = e.target;
+
+            const datos = {
+                action: "guardar",
+                mode: "tutora", // o "publico" según el bloque
+                fila: participanteSeleccionado.fila,
+
+                tipoDocParticipante: form.tipoDocParticipante.value || "",
+                numDocParticipante: form.numDocParticipante.value || "",
+                nombreMama: form.nombreMama.value || "",
+                tipoDocMama: form.tipoDocMama.value || "",
+                numDocMama: form.numDocMama.value || "",
+                nombrePapa: form.nombrePapa.value || "",
+                tipoDocPapa: form.tipoDocPapa.value || "",
+                numDocPapa: form.numDocPapa.value || "",
+                parentescoOtro: form.parentescoOtro.value || "",
+                nombreOtroFamiliar: form.nombreOtroFamiliar.value || "",
+                tipoDocOtro: form.tipoDocOtro.value || "",
+                numDocOtro: form.numDocOtro.value || "",
+                regimenSalud: form.regimenSalud.value || "",
+                epsActivo: form.epsActivo.value || "",
+
+                // 🔸 EDUCACIÓN (CORREGIDO)
+                estudiaActual: document.querySelector('input[name="estudiaActual"]:checked')?.value || "", // ✅ CORREGIDO
+
+                cursoActual_ultimoAnio:
+                    document.getElementById('cursoActualGrupo').style.display !== 'none'
+                        ? document.getElementById('cursoActual').value || ""
+                        : document.getElementById('ultimoAnio').value || "",
+
+                estudioFuturo: document.querySelector('input[name="estudioFuturo"]:checked')?.value || "", // ✅ CORREGIDO
+
+                cursoFuturo_sinEstudio:
+                    document.getElementById('cursoFuturoGrupo').style.display !== 'none'
+                        ? document.getElementById('cursoFuturo').value || ""
+                        : document.getElementById('sinEstudios').value || "",
+
+                // 🔸 DATOS DE CONTACTO Y OTROS
+                telefono: form.telefono.value || "",
+                direccion: form.direccion.value || "",
+                barrio: form.barrio.value || "",
+                irse: form.irse.value || "",
+                motivoIrse: form.motivoIrse.value || "",
+            };
+
+
+            try {
+                const result = await sendToAppsScript(datos);
+
+                if (btnGuardar) btnGuardar.disabled = false;
+
+                if (result.status === "guardado") {
+                    showSaveSuccess();
+                    mostrarMensaje(
+                        $("mensaje-guardado-tutora"),
+                        `${result.message} Los datos han sido actualizados.`,
+                        "confirmacion"
+                    );
+
+                    setTimeout(() => {
+                        const btnCargar = $("btn-cargar-participantes");
+                        if (btnCargar) btnCargar.click(); // Recargar lista para actualizar estado
+                    }, 1500);
+                } else {
+                    showSaveError("Error al Guardar");
+                    mostrarMensaje(
+                        $("mensaje-guardado-tutora"),
+                        `Error al guardar: ${result.message}`,
+                        "alerta"
+                    );
+                }
+            } catch (error) {
+                if (btnGuardar) btnGuardar.disabled = false;
+                showSaveError("Error de Conexión");
+                mostrarMensaje(
+                    $("mensaje-guardado-tutora"),
+                    `Error de red o servidor: ${error.message}`,
+                    "alerta"
+                );
+            }
+        });
+
+        // ==================== DASHBOARD ADMINISTRADOR ====================
+
+        function renderCompletionChart(completos, faltantes) {
+            if (!isChartJsLoaded) return;
+
+            const canvas = $("completionChart");
+            if (!canvas) return;
+
+            const ctx = canvas.getContext("2d");
+
+            if (completionChartInstance) {
+                completionChartInstance.destroy();
+            }
+
+            completionChartInstance = new Chart(ctx, {
+                type: "doughnut",
+                data: {
+                    labels: ["✅ Completados", "❌ Faltantes"],
+                    datasets: [
+                        {
+                            data: [completos, faltantes],
+                            backgroundColor: [
+                                "rgba(16, 185, 129, 0.8)",
+                                "rgba(239, 68, 68, 0.8)",
+                            ],
+                            hoverOffset: 8,
+                            borderWidth: 0,
+                        },
+                    ],
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            labels: { boxWidth: 15, padding: 15 },
+                        },
+                        title: { display: false },
+                    },
+                },
+            });
+        }
+
+        function renderTutoraBreakdown(participantes) {
+            const breakdownContainer = $("admin-tutora-breakdown");
+            if (!breakdownContainer) return;
+
+            breakdownContainer.innerHTML = "";
+
+            const statsByTutora = participantes.reduce((acc, p) => {
+                // Usa el tutora_id (limpio) para agrupar, pero el nombre original para mostrar
+                const tutoraId = p.tutora_id || "ID_SIN_ASIGNAR";
+                const name = p.tutora || `ID: ${p.tutora_id} (No Asignada)`;
+
+                if (!acc[name]) {
+                    acc[name] = { total: 0, completos: 0 };
+                }
+                acc[name].total++;
+
+                if (p.participante_estado === "Completo") {
+                    acc[name].completos++;
+                }
+                return acc;
+            }, {});
+
+            const sortedTutoras = Object.keys(statsByTutora).sort();
+
+            sortedTutoras.forEach((name) => {
+                const stats = statsByTutora[name];
+                const item = document.createElement("div");
+
+                const ratioText = `${stats.completos}/${stats.total}`;
+                const ratioPercent =
+                    stats.total > 0
+                        ? ((stats.completos / stats.total) * 100).toFixed(0)
+                        : 0;
+
+                item.className = "btn-resultado";
+                item.style.backgroundColor = "var(--color-fondo)";
+                item.style.border = "2px solid var(--color-secundario-light)";
+
+                const isComplete = stats.completos === stats.total;
+
+                item.innerHTML = `
+            <div>
+                <strong style="color: var(--color-primario);">${name}</strong>
+            </div>
+            <div style="font-weight: 700; font-size: 1.2rem; color: ${isComplete ? "var(--color-exito)" : "var(--color-warning)"
+                    }">
+                ${ratioText} 
+                <span style="font-size: 0.9rem; font-weight: 500; color: var(--color-texto-light);">(${ratioPercent}%)</span>
+            </div>
+        `;
+                breakdownContainer.appendChild(item);
+            });
+        }
+
+        function updateGlobalStats() {
+            if (!dataLoaded) return;
+
+            const total = participantesCache.length;
+            const completos = participantesCache.filter(
+                (p) => p.participante_estado === "Completo"
+            ).length;
+            const faltantes = total - completos;
+            const porcentaje =
+                total > 0 ? ((completos / total) * 100).toFixed(1) : 0;
+
+            const statsTotalGeneral = $("stats-total-general");
+            if (statsTotalGeneral) statsTotalGeneral.value = total;
+            const statsCompletadosGeneral = $("stats-completados-general");
+            if (statsCompletadosGeneral) statsCompletadosGeneral.value = completos;
+            const statsFaltantesGeneral = $("stats-faltantes-general");
+            if (statsFaltantesGeneral) statsFaltantesGeneral.value = faltantes;
+            const statsPorcentajeGeneral = $("stats-porcentaje-general");
+            if (statsPorcentajeGeneral)
+                statsPorcentajeGeneral.value = `${porcentaje}%`;
+
+            if (isChartJsLoaded) renderCompletionChart(completos, faltantes);
+
+            renderTutoraBreakdown(participantesCache);
+        }
+
+        // =================================================================
+        // FUNCIÓN DE FILTRADO ORIGINAL (MODIFICADA PARA LLAMAR AL MODAL)
+        // =================================================================
+
+        function filtrarParticipantesAdmin() {
+            const tutoraFiltro = $("admin-select-tutora").value; // Es un ID limpio (tutora_id)
+            const estadoFiltro = $("admin-select-estado").value;
+
+            // --- NUEVAS VARIABLES DE FILTRO ---
+            const estudioFiltro = $("admin-select-estudio").value; // Nuevo filtro de estudio
+            const tipoDocFiltro = $("admin-select-tipodocumentoparticipante").value; // Nuevo filtro de tipo de documento
+            // ----------------------------------
+
+            const listaAdmin = $("lista-participantes-admin");
+            if (!listaAdmin) return;
+
+            listaAdmin.innerHTML = "";
+
+            let participantesFiltrados = participantesCache;
+
+            if (tutoraFiltro && tutoraFiltro !== "todos") {
+                participantesFiltrados = participantesFiltrados.filter(
+                    (p) => p.tutora_id === tutoraFiltro
+                );
+            }
+
+            if (estadoFiltro && estadoFiltro !== "todos") {
+                participantesFiltrados = participantesFiltrados.filter(
+                    (p) => p.participante_estado.toLowerCase() === estadoFiltro
+                );
+            }
+
+            // --- LÓGICA DEL NUEVO FILTRO DE ESTUDIO ---
+            if (estudioFiltro && estudioFiltro !== "todos") {
+                const valorFiltro = estudioFiltro.toLowerCase();
+
+                participantesFiltrados = participantesFiltrados.filter(
+                    // Compara el valor guardado (p.estudiaActual: 'si' o 'no') con el filtro seleccionado
+                    (p) => (p.estudiaActual ? p.estudiaActual.toLowerCase() : '') === valorFiltro
+                );
+            }
+
+            // --- LÓGICA DEL NUEVO FILTRO DE TIPO DE DOCUMENTO ---
+            if (tipoDocFiltro && tipoDocFiltro !== "todos") {
+                participantesFiltrados = participantesFiltrados.filter(
+                    // Compara el valor guardado (p.tipoDocParticipante: 'CC', 'TI', etc.) con el filtro seleccionado
+                    (p) => p.tipoDocParticipante === tipoDocFiltro
+                );
+            }
+            // ----------------------------------------------------
+
+            if (participantesFiltrados.length === 0) {
+                listaAdmin.innerHTML =
+                    '<p style="text-align:center; padding: 40px; color: var(--color-texto-light);">No hay participantes que coincidan con los filtros.</p>';
+            } else {
+                participantesFiltrados.forEach((p) => {
+                    const btn = document.createElement("button");
+                    const estado = p.participante_estado;
+                    const estadoClass =
+                        estado === "Completo" ? "completo" : "incompleto";
+                    const tagClass =
+                        estado === "Completo" ? "tag-completo" : "tag-incompleto";
+
+                    btn.className = `btn-resultado ${estadoClass}`;
+                    btn.type = "button";
+
+                    const nombreTutora = p.tutora || "Sin asignar";
+
+                    btn.innerHTML = `
+                <div>
+                    <strong style="font-size: 1.1rem; color: var(--color-texto);">${p.nombre
+                        }</strong>
+                    <p style="font-size: 0.9rem; color: var(--color-texto-light); margin-top: 5px;">
+                        <span style="font-weight: 700;">Tutora:</span> ${nombreTutora} | 
+                        <span style="font-weight: 700;">Código:</span> ${p.codigo
+                        }
+                    </p>
+                </div>
+                <div class="tag-estado ${tagClass}">${estado.toUpperCase()}</div>
+            `;
+
+                    // 🔑 MODIFICACIÓN: Agregar el event listener que llama al modal
+                    btn.addEventListener("click", () => {
+                        mostrarDetalleParticipante(p);
+                    });
+
+                    listaAdmin.appendChild(btn);
+                });
+            }
+
+            // ... (El resto de tu código para las estadísticas) ...
+            const totalFiltrado = participantesFiltrados.length;
+            const completosFiltrados = participantesFiltrados.filter(
+                (p) => p.participante_estado === "Completo"
+            ).length;
+            const porcentajeFiltrado =
+                totalFiltrado > 0
+                    ? ((completosFiltrados / totalFiltrado) * 100).toFixed(1)
+                    : 0;
+
+            const statsTotalParticipantes = $("stats-total-participantes");
+            if (statsTotalParticipantes)
+                statsTotalParticipantes.value = totalFiltrado;
+            const statsPorcentajeCompleto = $("stats-porcentaje-completo");
+            if (statsPorcentajeCompleto)
+                statsPorcentajeCompleto.value = `${porcentajeFiltrado}%`;
+        }
+
+        // ==================== INICIALIZACIÓN DE EVENTOS ====================
+
+        function initTermsButton() {
+            const termsLink = $("terms-link");
+            if (termsLink)
+                termsLink.addEventListener("click", () => {
+                    showTermsModal();
+                });
+            const icc = $("icc");
+            if (icc)
+                icc.addEventListener("click", () => {
+                    showTermsModal();
+                });
+
+            const btnAccept = $("btn-accept-terms");
+            if (btnAccept)
+                btnAccept.addEventListener("click", async () => {
+                    hideTermsModal();
+                    await loadAllSheetData();
+                });
+
+            const btnDecline = $("btn-decline-terms");
+            if (btnDecline)
+                btnDecline.addEventListener("click", () => {
+                    alert(
+                        "Debe aceptar los términos y condiciones para utilizar el sistema."
+                    );
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // ⚠️ Re-verificar si Chart.js se cargó, para el dashboard
+            isChartJsLoaded = typeof Chart !== "undefined";
+
+            showTermsModal();
+
+            // Llamadas a funciones auxiliares
+            initFechaSelects();
+            initFormularioTemplates();
+            initTabs();
+            initTermsButton();
+
+            document.querySelectorAll(".anim-entrada").forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Eventos de filtros del Administrador
+
+            // --- Filtros Existentes ---
+            const adminSelectTutora = $("admin-select-tutora");
+            if (adminSelectTutora)
+                adminSelectTutora.addEventListener(
+                    "change",
+                    filtrarParticipantesAdmin
+                );
+            const adminSelectEstado = $("admin-select-estado");
+            if (adminSelectEstado)
+                adminSelectEstado.addEventListener(
+                    "change",
+                    filtrarParticipantesAdmin
+                );
+
+            // --- NUEVOS FILTROS AGREGADOS (Necesario para que funcionen) ---
+            const adminSelectEstudio = $("admin-select-estudio");
+            if (adminSelectEstudio)
+                adminSelectEstudio.addEventListener(
+                    "change",
+                    filtrarParticipantesAdmin
+                );
+
+            const adminSelectTipoDoc = $("admin-select-tipodocumentoparticipante");
+            if (adminSelectTipoDoc)
+                adminSelectTipoDoc.addEventListener(
+                    "change",
+                    filtrarParticipantesAdmin
+                );
+
+        });
+
+        /**
+         * Muestra un pop-up estilizado con la información detallada del participante.
+         * CLAVES CORREGIDAS: Usa los nombres de propiedades del objeto 'participante'
+         * que corresponden a tu estructura de datos (ej: tipoDocParticipante).
+         * * @param {Object} participante - El objeto completo del participante (p).
+         */
+        function mostrarDetalleParticipante(participante) {
+            // Se asume que la función '$' existe y es un alias para document.getElementById
+            const modal = $("detalle-overlay");
+            const modalContenido = $("detalle-container");
+
+            if (!modal || !modalContenido) {
+                console.error("Estructura del modal de detalle no encontrada.");
+                return;
+            }
+
+            const p = participante; // Alias del objeto para simplificar
+            const nombreTutora = p.tutora || "Sin asignar";
+            const estado = p.participante_estado;
+            const estadoTag = `<span class="tag-modal ${estado === "Completo" ? "tag-completo" : "tag-incompleto"
+                }">${estado.toUpperCase()}</span>`;
+
+            // 🔑 AHORA USAMOS LAS CLAVES EXACTAS DE TU OBJETO:
+
+            // Participante
+            const tipoDocP = p.tipoDocParticipante || "N/A";
+            const numDocP = p.numDocParticipante || "N/A";
+
+            // Madre
+            const nombreMama = p.nombreMama || "N/A";
+            const tipoDocM = p.tipoDocMama || "N/A";
+            const numDocM = p.numDocMama || "N/A";
+
+            // Padre  
+            const nombrePapa = p.nombrePapa || "N/A";
+            const tipoDocPa = p.tipoDocPapa || "N/A";
+            const numDocPa = p.numDocPapa || "N/A";
+
+            // Otro Acudiente
+            const parentescoOtro = p.parentescoOtro || "Otro"; // Usar el parentesco si existe
+            const nombreOtroFamiliar = p.nombreOtroFamiliar || "Otro"; // Usar el parentesco si existe
+            const tipoDocO = p.tipoDocOtro || "N/A";
+            const numDocO = p.numDocOtro || "N/A";
+
+            modalContenido.innerHTML = `
+        <div class="modal-header">
+            <h2 class="modal-title">${p.nombre}</h2>
+            <button class="close-button" onclick="cerrarModalDetalle()">&times;</button>
+        </div>
+        <div class="modal-body">
+            
+            <div class="info-section">
+                <p class="subtitulo-familiar"><i class="fas fa-user-circle"></i> Participante</p>
+                <div class="modal-grid">
+                  <p class="grid-item"><strong>Código:</strong> <span>${p.codigo || "N/A"
+                }</span></p>
+                  <p class="grid-item"><strong>Estado:</strong> <span>${estadoTag}</span></p>
+                  <p class="grid-item full-width"><strong>Documento:</strong> <span>${tipoDocP} - ${numDocP}</span></p>
+                  
+                  <p class="grid-item full-width"><strong>Salud:</strong> <span>${p.regimenSalud
+                } - ${p.epsActivo}</span></p>
+                  
+                <p class="grid-item full-width">
+    <strong>Educación:</strong> 
+    <span>
+        ${p.estudiaActual === 'si'
+                    ? // CASO 1: SÍ ESTUDIA ACTUALMENTE
+                    `Estudia Actualmente: Sí | Curso Actual: ${p.cursoActual_ultimoAnio || 'No especificado'}`
+
+                    : // CASO 2: NO ESTUDIA ACTUALMENTE
+                    `No Estudia Actualmente | Último Año Cursado: ${p.cursoActual_ultimoAnio || 'No especificado'}`
+                }
+        
+        ${p.estudiaActual === 'no' ? ' | ' : ''} 
+
+        ${p.estudiaActual === 'no' && p.estudioFuturo
+                    ? p.estudioFuturo === 'si'
+                        ? `Estudiará el Próximo Año: Sí | Grado Futuro: ${p.cursoFuturo_sinEstudio || 'No especificado'}`
+                        : `Estudiará el Próximo Año: No | Estado: ${p.cursoFuturo_sinEstudio || 'Sin estudios'}`
+                    : ''
+                }
+    </span>
+</p>
+<p class="grid-item full-width"><strong>Telefono:</strong> <span>${p.telefono}</span></p>
+<p class="grid-item full-width"><strong>Dirección:</strong> <span>${p.direccion}</span></p>
+<p class="grid-item full-width"><strong>Barrio:</strong> <span>${p.barrio}</span></p>
+<p class="grid-item full-width"><strong>Piensa Irse de la Zona:</strong> <span>${p.irse}</span></p>
+
+${p.irse !== 'NO' && p.irse !== ''
+                    ? // Si la respuesta no es 'NO' ni vacía, muestra el motivo
+                    `<p class="grid-item full-width">
+        <strong>Motivo Principal de la Partida:</strong> 
+        <span>${p.motivoIrse || 'No especificado'}</span>
+      </p>`
+                    : // Si la respuesta es 'NO' o vacía, no muestra nada
+                    ''
+                }
+                  <p class="grid-item full-width"><strong>Tutora:</strong> <span>${nombreTutora}</span></p>
+              </div>
+            </div>
+
+            <hr>
+
+            <div class="info-section">
+                <p class="subtitulo-familiar"><i class="fas fa-users"></i> Documentación de Acudientes</p>
+                
+                <div class="acudiente-card">
+                    <h3>Madre</h3>
+                    <div class="modal-grid">
+                        <p class="grid-item"><strong>Nombre:</strong> <span>${nombreMama}</span></p>
+                        <p class="grid-item"><strong>Tipo Doc:</strong> <span>${tipoDocM}</span></p>
+                        <p class="grid-item"><strong>N° Documento:</strong> <span>${numDocM}</span></p>
+                    </div>
+                </div>
+
+                <div class="acudiente-card">
+                    <h3>Padre</h3>
+                    <div class="modal-grid">
+                        <p class="grid-item"><strong>Nombre:</strong> <span>${nombrePapa}</span></p>
+                        <p class="grid-item"><strong>Tipo Doc:</strong> <span>${tipoDocPa}</span></p>
+                        <p class="grid-item"><strong>N° Documento:</strong> <span>${numDocPa}</span></p>
+                    </div>
+                </div>
+
+                <div class="acudiente-card">
+                    <h3>${parentescoOtro}</h3>
+                    <div class="modal-grid">
+                        <p class="grid-item"><strong>Nombre:</strong> <span>${nombreOtroFamiliar}</span></p>
+                        <p class="grid-item"><strong>Tipo Doc:</strong> <span>${tipoDocO}</span></p>
+                        <p class="grid-item"><strong>N° Documento:</strong> <span>${numDocO}</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="modal-hint">Datos generales del registro.</p>
+        </div>
+    `;
+
+            modal.classList.add("visible");
+        }
+
+        // (Las funciones 'cerrarModalDetalle' y el listener de 'document' se mantienen igual) 
+
+        // (Las funciones 'cerrarModalDetalle' y el listener de 'document' se mantienen igual)
+
+        function cerrarModalDetalle() {
+            const modal = $("detalle-overlay");
+            if (modal) {
+                modal.classList.remove("visible");
+            }
+        }
+
+        // Lógica para cerrar al hacer clic en el fondo
+        document.addEventListener("click", (event) => {
+            const modal = $("detalle-overlay");
+            if (
+                modal &&
+                modal.classList.contains("visible") &&
+                event.target === modal
+            ) {
+                cerrarModalDetalle();
+            }
+        });
+    </script>
+    <script>
+        // Mostrar botón cuando se baja más de 200px
+        window.addEventListener('scroll', () => {
+            const goTop = document.querySelector('.go-top');
+            if (window.scrollY > 200) {
+                goTop.classList.add('active');
+            } else {
+                goTop.classList.remove('active');
+            }
+        });
+    
+        // Volver al inicio al hacer clic
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
+    
+
+</body>
+
+</html>
