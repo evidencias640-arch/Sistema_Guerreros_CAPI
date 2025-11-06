@@ -1,0 +1,2593 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Sistema de Evidencias</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            /* Verde brillante para la acción */
+            --secondary-color: #8BC34A;
+            /* Verde más suave */
+            --accent-color: #FFC107;
+            /* Amarillo para destacar */
+            --background-light: #e8f5e9;
+            /* Fondo suave verde claro */
+            --background-dark: #f0f4c3;
+            /* Alternativa para secciones */
+            --text-dark: #333;
+            --text-light: #555;
+            --card-bg: #fff;
+            --border-color: #c8e6c9;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --success-color: #2e7d32;
+            /* Verde oscuro para éxito */
+            --error-color: #d32f2f;
+            /* Rojo oscuro para error */
+            --info-color: #1976d2;
+            /* Azul para información */
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--background-light) 0%, var(--background-dark) 100%);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 950px;
+            margin: 25px auto;
+            background: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 15px 40px var(--shadow-medium);
+            overflow: hidden;
+            padding: 35px;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid var(--border-color);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.8em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .header h1 span {
+            display: inline-block;
+            animation: bounceIn 0.8s ease-out both;
+        }
+
+        .header h1 span:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .header h1 span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .header h1 span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .header h1 span:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .header p {
+            font-style: italic;
+            color: var(--text-light);
+            margin-top: 0;
+            font-size: 1.1em;
+        }
+
+        /* Navegación Modular */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-color);
+            background-color: #f7fdf7;
+            border-radius: 10px;
+            padding: 5px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 15px 28px;
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: all 0.3s ease-in-out;
+            border-bottom: 4px solid transparent;
+            position: relative;
+            z-index: 1;
+            border-radius: 8px;
+        }
+
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .tab-button:hover:not(.active) {
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1.05em;
+        }
+
+        select,
+        input[type="text"],
+        input[type="month"] {
+            width: 100%;
+            padding: 14px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1.05em;
+            background-color: #fcfcfc;
+            transition: all 0.3s ease-in-out;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%234CAF50%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.1L146.2%20227.3%2018.8%2074.5a17.6%2017.6%200%200%200-25.3%2023.6l130.4%20130.4c6.6%206.6%2017.3%206.6%2023.9%200l130.4-130.4c7.3-7.3%207.3-19.1%200-26.4z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
+        button.main-button {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease-in-out;
+            width: 100%;
+            margin-top: 15px;
+            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button.main-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        button.main-button:active {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(76, 175, 80, 0.2);
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* Estilos del Modal de Cámara - CON DISEÑO SOLICITADO */
+        /* ---------------------------------------------------------------------- */
+        #fullscreen-camera-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+        }
+
+        #fullscreen-camera-modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            width: 95%;
+            max-width: 700px;
+            max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            background: black;
+            /* Fondo negro para evitar bordes blancos */
+        }
+
+        /* NUEVO: Header con botón SALIR a la derecha */
+        .camera-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .camera-title {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            flex-grow: 1;
+            text-align: center;
+            margin-right: -100px;
+            /* Centra mejor el título al ignorar el espacio del botón */
+        }
+
+        .close-button {
+            background-color: #f44336;
+            /* Rojo para el botón de cerrar/SALIR */
+            color: white;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 6px;
+            transition: background-color 0.2s, transform 0.2s;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 2px solid #d32f2f;
+            /* Borde sutil para darle más impacto */
+        }
+
+        .close-button:hover {
+            background-color: #d32f2f;
+            transform: scale(1.05);
+        }
+
+        .camera-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            /* Alinea los elementos arriba */
+            padding: 0;
+            background-color: #000;
+            position: relative;
+            /* Importante para el overlay y el contenedor de botones de captura */
+            min-height: 400px;
+            /* Altura mínima para asegurar el espacio */
+            width: 100%;
+        }
+
+        /* SOLUCIÓN: object-fit: contain para mostrar el 100% del campo visual */
+        #webcam-video,
+        #photo-canvas {
+            width: 95%;
+            /* Ocupa casi todo el ancho disponible */
+            max-width: 500px;
+            /* Limita el tamaño en pantallas grandes */
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            margin: 20px 0 0 0;
+            /* Espacio arriba, 0 abajo */
+            object-fit: contain;
+            /* <-- FIX: Muestra el 100% del campo, sin recorte */
+            background: black;
+            height: auto;
+            /* Eliminamos aspect-ratio para que se adapte a la cámara nativamente */
+        }
+
+        /* Contenedor de video/canvas para limitar el área visible */
+        .video-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+
+        #photo-canvas {
+            display: none;
+        }
+
+        /* Contenedor de botones superpuestos (Tomar Otra y Guardar) */
+        .button-overlay {
+            position: absolute;
+            bottom: 120px;
+            /* Posición ajustada para no chocar con el grupo de botones de captura */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .button-overlay.show {
+            opacity: 1;
+        }
+
+        .button-overlay button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .button-overlay button:hover {
+            transform: translateY(-3px);
+        }
+
+        #retake-button {
+            background-color: #f39c12;
+            /* Naranja */
+            color: white;
+            border: 2px solid #e67e22;
+        }
+
+        #save-button {
+            background-color: #27ae60;
+            /* Verde de Guardar */
+            color: white;
+            border: 2px solid #2ecc71;
+        }
+
+        /* NUEVO: Contenedor para los botones de "Tomar" y "Cambiar" */
+        .capture-button-wrapper {
+            position: absolute;
+            /* Posicionamiento absoluto sobre el fondo negro */
+            bottom: 20px;
+            /* Pegado a la parte inferior */
+            width: 90%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .capture-button-wrapper button {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        #capture-button {
+            background-color: var(--primary-color);
+            /* Verde */
+            color: white;
+            border: 2px solid var(--primary-color);
+            /* Borde verde */
+            padding: 15px 20px;
+        }
+
+        #capture-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        #switch-camera-button {
+            background-color: #3498db;
+            /* Azul */
+            color: white;
+            border: 2px solid #3498db;
+            /* Borde azul */
+            padding: 15px 20px;
+        }
+
+        #switch-camera-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+
+        /* ---------------------------------------------------------------------- */
+        /* FIN Modificaciones del Modal */
+        /* ---------------------------------------------------------------------- */
+
+
+        #message {
+            margin-top: 30px;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            opacity: 0;
+            transition: all 0.6s ease-in-out;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            line-height: 1.4;
+        }
+
+        #message.show {
+            opacity: 1;
+            display: block;
+        }
+
+        .success {
+            background-color: #e6ffed;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .error {
+            background-color: #ffe6e6;
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+
+        .info {
+            background-color: #e0f2f7;
+            color: var(--info-color);
+            border: 1px solid var(--info-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Estilos específicos para la sección de información */
+        #info-tab h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        #info-tab h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary-color);
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        #info-tab p,
+        #info-tab ul {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: var(--text-light);
+        }
+
+        #info-tab ul {
+            list-style-type: disc;
+            padding-left: 25px;
+        }
+
+        #info-tab li {
+            margin-bottom: 8px;
+        }
+
+        #info-tab code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        #info-tab strong {
+            color: var(--text-dark);
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+
+            0%,
+            20%,
+            40%,
+            60%,
+            80%,
+            100% {
+                transition-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+            }
+
+            0% {
+                opacity: 0;
+                transform: scale3d(.3, .3, .3);
+            }
+
+            20% {
+                transform: scale3d(1.1, 1.1, 1.1);
+            }
+
+            40% {
+                transform: scale3d(.9, .9, .9);
+            }
+
+            60% {
+                opacity: 1;
+                transform: scale3d(1.03, 1.03, 1.03);
+            }
+
+            80% {
+                transform: scale3d(.97, .97, .97);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale3d(1, 1, 1);
+            }
+        }
+
+        /* Media Queries para Responsividad */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 15px auto;
+            }
+
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .tab-button {
+                padding: 12px 18px;
+                font-size: 1em;
+            }
+
+            button {
+                padding: 12px 18px;
+                font-size: 1em;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            #info-tab h2 {
+                font-size: 1.8em;
+            }
+
+            #info-tab h3 {
+                font-size: 1.2em;
+            }
+
+            body {
+                font-size: 15px;
+            }
+
+            .button-overlay {
+                bottom: 80px;
+                /* Ajuste para móvil para no chocar con el botón de captura */
+                gap: 10px;
+            }
+
+            .capture-button-wrapper {
+                bottom: 10px;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                margin: 10px auto;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+                gap: 5px;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            label {
+                font-size: 0.95em;
+            }
+
+            select,
+            input[type="text"],
+            input[type="month"],
+            button {
+                font-size: 0.95em;
+                padding: 12px;
+            }
+
+            #info-tab h2 {
+                font-size: 1.6em;
+            }
+
+            #info-tab h3 {
+                font-size: 1.1em;
+            }
+
+            body {
+                font-size: 14px;
+            }
+        }
+
+        /* Estilos para el nuevo módulo de Galería */
+        .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--background-light);
+        }
+
+        .evidence-item {
+            width: 150px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+            background-color: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .evidence-item img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+        .evidence-item a.download-link {
+            display: block;
+            width: 90%;
+            padding: 5px 0;
+            margin: 5px 0 10px 0;
+            background-color: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .evidence-item span {
+            font-size: 0.8em;
+            color: var(--text-light);
+            padding: 5px;
+            word-break: break-all;
+            white-space: normal;
+            height: 35px;
+            overflow: hidden;
+        }
+
+        .hidden-module {
+            display: none;
+        }
+
+        /* Asegúrate de que tienes un estilo para la clase 'hidden' en tus form-groups */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1><span>📸</span> <span>Sistema</span> <span>de</span> <span>Evidencias</span></h1>
+            <p><a href="index-1.html" style="text-decoration: none; font-weight: bold;">📦 Ir a Carga de Evidencia en Lote. 📑</a></p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="upload-tab">⬆️ Cargar Evidencia</button>
+            <button class="tab-button" data-tab="download-ind">💫 Descargar Evidencia Individual</button>
+            <button class="tab-button" data-tab="download-tab">⬇️ Descargar Evidencia General</button>
+            <button class="tab-button" data-tab="info-tab">💢 Información & Ayuda</button>
+        </div>
+
+        <div id="upload-tab" class="tab-content active">
+            <div class="form-group">
+                <label for="evidenceType">Elige el Tipo Principal de Evidencia:</label>
+                <select id="evidenceType">
+                    <option value="">-- Selecciona una opción --</option>
+                    <option value="participantes">Participantes</option>
+                    <option value="actividades">Actividades</option>
+                    <option value="donaciones">Donaciones, Gestión y Regalos ICC</option>
+                </select>
+            </div>
+
+            <div id="participants-section" class="hidden">
+                <div class="form-group">
+                    <label for="participantCode">Selecciona el Participante:</label>
+                    <select id="participantCode"></select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="specificType">Elige el Tipo Específico de Evidencia:</label>
+                <select id="specificType">
+                    <option value="">-- Selecciona el tipo principal primero --</option>
+                </select>
+            </div>
+
+            <div id="description-section" class="hidden">
+                <div class="form-group">
+                    <label for="description">Descripción breve de la donación/gestión:</label>
+                    <input type="text" id="description" placeholder="Ej: Gestiones con la iglesia para alimentos">
+                </div>
+            </div>
+
+            <div id="tutor-section" class="hidden">
+                <div class="form-group">
+                    <label for="tutorName">Selecciona la Tutora:</label>
+                    <select id="tutorName">
+                        <option value="">-- Selecciona una tutora --</option>
+                        <option value="LISBETH">Lisbeth</option>
+                        <option value="DIANA">Diana</option>
+                        <option value="HELEN">Helen</option>
+                        <option value="JULIANA">Juliana</option>
+                        <option value="GENERAL">General</option>
+                    </select>
+                </div>
+
+                <div id="extraTitleWrapper" style="display:none;">
+                    <label for="extraActivityTitle">Título de la Actividad:</label>
+                    <input type="text" id="extraActivityTitle" placeholder="Escribe el título específico" />
+                </div>
+            </div>
+
+            <button id="start-camera-button" class="main-button hidden">Abrir Cámara</button>
+            <p id="message" class="info"></p>
+        </div>
+
+        <div id="download-tab" class="tab-content">
+            <div class="form-group">
+                <label for="downloadMainType">Tipo Principal de Evidencia a Descargar:</label>
+                <select id="downloadMainType">
+                    <option value="">-- Selecciona una opción --</option>
+                    <option value="participantes">Participantes</option>
+                    <option value="actividades">Actividades</option>
+                    <option value="donaciones">Donaciones y Gestión</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="downloadSpecificType">Tipo Específico de Evidencia a Descargar:</label>
+                <select id="downloadSpecificType">
+                    <option value="">-- Primero selecciona el tipo principal --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="downloadMonth">Selecciona el Mes de las Evidencias:</label>
+                <input type="month" id="downloadMonth">
+            </div>
+            <div id="downloadTutorSection" class="form-group hidden">
+                <label for="downloadTutor">Selecciona la Tutora:</label>
+                <select id="downloadTutor">
+                    <option value="">-- Selecciona una tutora --</option>
+                    <option value="LISBETH">Lisbeth</option>
+                    <option value="DIANA">Diana</option>
+                    <option value="HELEN">Helen</option>
+                    <option value="JULIANA">Juliana</option>
+                    <option value="GENERAL">General</option>
+                </select>
+            </div>
+
+            <button id="download-button" class="main-button">⬇️ Descargar Evidencias (ZIP)</button>
+            <p id="download-message" class="info"></p>
+        </div>
+
+        <div id="download-ind" class="tab-content">
+            <h2>🔍 Revisión y Descarga Individual de Evidencias</h2>
+            <p>Utiliza esta sección para filtrar, revisar las miniaturas y descargar una a una las fotos que necesites.
+            </p>
+
+            <div class="card">
+                <div class="form-group">
+                    <label for="reviewMainTypeSelect">Tipo Principal de Evidencia:</label>
+                    <select id="reviewMainTypeSelect">
+                        <option value="">-- Selecciona una opción --</option>
+                        <option value="participantes">Participantes</option>
+                        <option value="actividades">Actividades</option>
+                        <option value="donaciones">Donaciones y Gestión</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reviewSpecificTypeSelect">Tipo Específico de Evidencia:</label>
+                    <select id="reviewSpecificTypeSelect">
+                        <option value="">-- Primero selecciona el tipo principal --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="reviewMonthInput">Selecciona el Mes de las Evidencias:</label>
+                    <input type="month" id="reviewMonthInput">
+                </div>
+
+                <div id="reviewTutorSection" class="form-group hidden">
+                    <label for="reviewTutorInput">Selecciona la Tutora (Opcional):</label>
+                    <select id="reviewTutorInput">
+                        <option value="">-- Selecciona una tutora --</option>
+                        <option value="LISBETH">Lisbeth</option>
+                        <option value="DIANA">Diana</option>
+                        <option value="HELEN">Helen</option>
+                        <option value="JULIANA">Juliana</option>
+                        <option value="GENERAL">General</option>
+                    </select>
+                </div>
+
+                <button id="viewEvidencesButton" class="main-button" type="button" style="margin-top: 20px;">
+                    📸 Buscar y Ver Evidencias
+                </button>
+            </div>
+
+            <p id="reviewMessageElement" class="info" style="margin-top: 10px;"></p>
+
+            <div id="evidenceDisplayModule" class="hidden-module card" style="margin-top: 20px;">
+                <h4>Miniaturas para Revisión</h4>
+                <p id="galleryStatusMessage" class="info-text" style="text-align: center; margin-top: 10px;"></p>
+                <div id="evidenceGallery" class="gallery-container">
+                </div>
+            </div>
+        </div>
+
+        <div id="info-tab" class="tab-content">
+            <h2>ℹ️ Información y Cómo Usar el Sistema</h2>
+            <p>Este sistema ha sido diseñado para simplificar la captura, organización y descarga de todas las
+                evidencias fotográficas de nuestra ONG. Es intuitivo, rápido y mantiene todo ordenado en Google Drive.
+            </p>
+
+            <h3>🚀 Inicio Rápido:</h3>
+            <ol>
+                <li>Configuración Inicial (Solo una vez):
+                    <ul>
+                        <li>Abre tu Google Sheet de participantes y ve a <code>Extensiones > Apps Script</code>.</li>
+                        <li>Pega el código del Apps Script proporcionado.</li>
+                        <li>Reemplaza <code>ID_DE_TU_SHEET</code> y <code>ID_DE_TU_DRIVE</code> con los IDs reales
+                            de tu Google Sheet y tu Carpeta Principal de Google Drive (ver sección "IDs Necesarios").
+                        </li>
+                        <li>Despliega el Script: Haz clic en <code>Desplegar > Nuevo despliegue</code>. Elige
+                            "Aplicación web". Ejecuta como "Yo" y con acceso "Cualquiera" o "Cualquiera, incluso
+                            anónimo". Guarda la URL del script desplegado.</li>
+                        <li>Configura el Frontend: Abre este archivo <code>index.html</code> y reemplaza
+                            <code>URL_DEL_SCRIPT_AQUI</code> con la URL que obtuviste del despliegue del Apps Script.
+                        </li>
+                    </ul>
+                </li>
+                <li>Estructura de Google Sheets:
+                    <ul>
+                        <li>Asegúrate de tener una hoja llamada <code>Participantes</code>.</li>
+                        <li>La columna A debe contener los <strong>códigos únicos</strong> de los participantes.
+                        </li>
+                        <li>La columna B debe contener los <strong>nombres</strong> de los participantes.</li>
+                    </ul>
+                </li>
+                <li>Estructura de Google Drive:
+                    <ul>
+                        <li>El sistema creará automáticamente las carpetas <code>PARTICIPANTES</code>,
+                            <code>ACTIVIDADES</code> y <code>DONACIONES</code> dentro de tu Carpeta Principal (la de
+                            <code>MAIN_FOLDER_ID</code>).
+                        </li>
+                        <li>Dentro de estas, se crearán las subcarpetas específicas como <code>REGALOS_PADRINOS</code>,
+                            <code>ASEO_GENERAL</code>, etc.
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>📸 Cargar Evidencia:</h3>
+            <ol>
+                <li>Ve a la pestaña <strong>"⬆️ Cargar Evidencia"</strong>.</li>
+                <li>Selecciona el <strong>"Tipo Principal de Evidencia"</strong> (Participantes, Actividades,
+                    Donaciones). Esto mostrará los campos relevantes.</li>
+                <li>Completa los detalles. Una vez listos, haz clic en el botón "Abrir Cámara".</li>
+                <li>La interfaz de la cámara se abrirá en pantalla completa. Posiciona lo que deseas fotografiar y haz
+                    clic en <strong>"📸 Tomar Foto"</strong>.</li>
+                <li>Revisa la foto. Si no estás conforme, haz clic en <strong>"🔄 Tomar Otra Foto"</strong>.</li>
+                <li>Si la foto es correcta, haz clic en <strong>"✅ Guardar Evidencia"</strong>. La foto se subirá
+                    automáticamente a Google Drive con un nombre estandarizado y único.</li>
+            </ol>
+
+            <h3>⬇️ Descargar Evidencia:</h3>
+            <ol>
+                <li>Ve a la pestaña <strong>"⬇️ Descargar Evidencia"</strong>.</li>
+                <li>Selecciona el <strong>"Tipo Principal de Evidencia"</strong> y el <strong>"Tipo Específico de
+                        Evidencia"</strong> que deseas descargar.</li>
+                <li>Selecciona el <strong>"Mes de Descarga"</strong>.</li>
+                <li>Haz clic en <strong>"⬇️ Descargar Evidencias (ZIP)"</strong>. Se generará un archivo ZIP con todas
+                    las fotos que coincidan con tus criterios y se iniciará la descarga.</li>
+            </ol>
+
+            <h3>🔑 IDs Necesarios:</h3>
+            <ul>
+                <li><strong>ID_DE_TU_SHEET:</strong> Lo encuentras en la URL de tu Google Sheet. Es la cadena de
+                    caracteres larga entre <code>/d/</code> y <code>/edit</code>.</li>
+                <li><strong>ID_DE_TU_DRIVE:</strong> Lo encuentras en la URL de tu carpeta principal de Google Drive. Es
+                    la cadena de caracteres larga después de <code>folders/</code>.</li>
+            </ul>
+            <p>¡Gracias por usar el sistema! Si tienes dudas o sugerencias, consulta al equipo técnico.</p>
+        </div>
+
+    </div>
+
+    <div id="fullscreen-camera-modal" class="hidden">
+        <div class="modal-content">
+            <div class="camera-header">
+                <span class="camera-title">📸 Tomar Evidencia</span>
+                <button id="close-camera" class="close-button">SALIR</button>
+            </div>
+
+            <div class="camera-container">
+                <div class="video-wrapper">
+                    <video id="webcam-video" autoplay playsinline></video>
+                    <canvas id="photo-canvas"></canvas>
+
+                    <div class="button-overlay">
+                        <button id="retake-button" class="hidden">🔄 Tomar Otra</button>
+                        <button id="save-button" class="hidden">✅ Guardar</button>
+                    </div>
+                </div>
+
+                <div class="capture-button-wrapper">
+                    <button id="capture-button">Tomar</button>
+                    <button id="switch-camera-button" class="hidden">Cambiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            /* sube más el z-index para que siempre esté encima */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80vh;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+
+    <script>
+        function openModal(imgUrl) {
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("modalImg");
+            modal.style.display = "block";
+            modalImg.src = imgUrl;
+        }
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+    </script>
+
+    <!-- 🔹 ANIMACIÓN CREANDO ZIP -->
+    <div id="zipOverlay" class="hidden-module">
+        <div class="zip-box">
+            <div class="zip-icon">
+                <div class="file"></div>
+                <div class="zip-line"></div>
+                <div class="zip-particle"></div>
+            </div>
+            <h3 id="zipTitle">Creando archivo .ZIP</h3>
+            <p id="zipText">Empaquetando evidencias...</p>
+        </div>
+    </div>
+
+    <style>
+        /* === OVERLAY GENERAL === */
+        #zipOverlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(15, 23, 42, 0.92), rgba(2, 6, 23, 0.95));
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        #zipOverlay.hidden-module {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* === CONTENEDOR === */
+        .zip-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            color: #f8fafc;
+            font-family: "Poppins", sans-serif;
+            text-align: center;
+            padding: 55px 75px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+            animation: zipAppear 0.4s ease-out;
+        }
+
+        @keyframes zipAppear {
+            from {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* === EFECTO DE PULSO DE LUZ === */
+        .zip-box::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.06), transparent 70%);
+            animation: lightPulse 3s linear infinite;
+        }
+
+        @keyframes lightPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.6;
+            }
+        }
+
+        /* === ICONO CENTRAL (MAQUINA ZIP) === */
+        .zip-icon {
+            position: relative;
+            width: 90px;
+            height: 110px;
+            margin: 0 auto 25px;
+            perspective: 600px;
+        }
+
+        /* === ARCHIVO PRINCIPAL === */
+        .file {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, #22c55e, #16a34a);
+            border-radius: 10px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            animation: floatFile 3s ease-in-out infinite;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.4);
+        }
+
+        @keyframes floatFile {
+
+            0%,
+            100% {
+                transform: translateY(0) rotateX(0deg);
+            }
+
+            50% {
+                transform: translateY(-6px) rotateX(3deg);
+            }
+        }
+
+        /* === DIENTES DE CIERRE ZIP === */
+        .zip-line {
+            position: absolute;
+            left: 40px;
+            top: 18px;
+            width: 8px;
+            height: 70px;
+            background: #f1f5f9;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .zip-particle {
+            position: absolute;
+            left: 41px;
+            top: 18px;
+            width: 6px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 1px;
+            animation: zipMovePro 1.2s infinite ease-in-out;
+        }
+
+        @keyframes zipMovePro {
+            0% {
+                top: 18px;
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 78px;
+                opacity: 0;
+            }
+        }
+
+        /* === EFECTO DE CONSTRUCCIÓN (PARTÍCULAS) === */
+        .zip-particles {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+        }
+
+        .zip-particles span {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            opacity: 0;
+            animation: buildDots 1.4s ease-in-out infinite;
+        }
+
+        .zip-particles span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .zip-particles span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes buildDots {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.2;
+            }
+
+            50% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        /* === TÍTULOS Y TEXTOS === */
+        #zipTitle {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        #zipText {
+            font-size: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* === ESTADOS DE ÉXITO Y ERROR === */
+        #zipOverlay.success .file {
+            background: linear-gradient(to bottom right, #22c55e, #15803d);
+            box-shadow: 0 0 35px rgba(34, 197, 94, 0.6);
+        }
+
+        #zipOverlay.error .file {
+            background: linear-gradient(to bottom right, #dc2626, #b91c1c);
+            box-shadow: 0 0 35px rgba(220, 38, 38, 0.6);
+        }
+
+        #zipOverlay.error .zip-line,
+        #zipOverlay.error .zip-particle {
+            background: #f1f5f9;
+        }
+
+        #zipOverlay.error #zipTitle {
+            color: #fef2f2;
+        }
+
+        #zipOverlay.error #zipText {
+            color: #fee2e2;
+        }
+    </style>
+
+
+    <!-- 🔹 ANIMACIÓN DE BÚSQUEDA DE EVIDENCIAS INDIVIDUALES -->
+    <div id="searchOverlay" class="hidden-module">
+        <div class="search-overlay-bg"></div>
+        <div class="search-box">
+            <div class="magnifier">
+                <div class="glass"></div>
+                <div class="handle"></div>
+            </div>
+            <h3 id="searchTitle">Buscando evidencias...</h3>
+            <p id="searchText">Explorando registros...</p>
+        </div>
+    </div>
+
+    <style>
+        /* === Overlay general === */
+        #searchOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            transition: opacity 0.3s ease;
+        }
+
+        #searchOverlay.hidden-module {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* === Caja === */
+        .search-box {
+            text-align: center;
+            color: #f1f5f9;
+            font-family: "Poppins", sans-serif;
+            padding: 50px 60px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            animation: appearSearch 0.4s ease-out;
+        }
+
+        @keyframes appearSearch {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === Lupa animada === */
+        .magnifier {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 20px;
+            animation: searchMove 1.8s ease-in-out infinite;
+        }
+
+        .glass {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #22c55e;
+            /* verde institucional */
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-shadow: 0 0 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .handle {
+            width: 10px;
+            height: 40px;
+            background: #22c55e;
+            border-radius: 5px;
+            position: absolute;
+            bottom: -20px;
+            right: 14px;
+            transform: rotate(45deg);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+        }
+
+        @keyframes searchMove {
+
+            0%,
+            100% {
+                transform: rotate(0deg) translateY(0);
+            }
+
+            25% {
+                transform: rotate(10deg) translateY(-4px);
+            }
+
+            50% {
+                transform: rotate(-10deg) translateY(4px);
+            }
+
+            75% {
+                transform: rotate(6deg) translateY(-3px);
+            }
+        }
+    </style>
+
+    <!-- 🔹 ANIMACIÓN SUBIENDO A LA NUBE -->
+    <div id="uploadOverlay" class="hidden-module">
+        <div class="upload-bg"></div>
+        <div class="upload-box">
+            <div class="cloud-upload">
+                <div class="cloud">
+                    <div class="cloud-circle large"></div>
+                    <div class="cloud-circle medium"></div>
+                    <div class="cloud-circle small"></div>
+                    <div class="arrow-up"></div>
+                </div>
+            </div>
+            <h3 id="uploadTitle">Subiendo evidencia...</h3>
+            <p id="uploadText">Conectando con Google Drive</p>
+        </div>
+    </div>
+
+    <style>
+        /* === Overlay === */
+        #uploadOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            transition: opacity 0.3s ease;
+        }
+
+        #uploadOverlay.hidden-module {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* === Caja principal === */
+        .upload-box {
+            text-align: center;
+            color: #f1f5f9;
+            font-family: "Poppins", sans-serif;
+            padding: 50px 60px;
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            animation: popIn 0.4s ease-out;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* === Nube y flecha === */
+        .cloud-upload {
+            width: 120px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .cloud {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #22c55e;
+            border-radius: 40px;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.3);
+            animation: cloudPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes cloudPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .cloud-circle {
+            position: absolute;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        .cloud-circle.large {
+            width: 60px;
+            height: 60px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud-circle.medium {
+            width: 40px;
+            height: 40px;
+            top: -15px;
+            left: 60px;
+        }
+
+        .cloud-circle.small {
+            width: 30px;
+            height: 30px;
+            top: -10px;
+            right: 10px;
+        }
+
+        /* Flecha que sube */
+        .arrow-up {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 18px solid #f8fafc;
+            animation: arrowMove 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrowMove {
+            0% {
+                transform: translate(-50%, 20px);
+                opacity: 0;
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(-50%, -20px);
+                opacity: 0;
+            }
+        }
+    </style>
+
+
+
+    <script src="animaciones.js"></script>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz7pEks_KhWPnNwBU7lyWVvgk4u9VEfJeFN4Z4dkoPn-fF2cAHvBhS7FM3l8XN0L9RycA/exec'; // ⚠️ ¡Reemplaza con tu URL del Apps Script!
+
+        // Selectores y elementos del DOM
+        const tabs = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const evidenceTypeSelect = document.getElementById('evidenceType');
+        const specificTypeSelect = document.getElementById('specificType');
+        const downloadMainTypeSelect = document.getElementById('downloadMainType');
+        const downloadSpecificTypeSelect = document.getElementById('downloadSpecificType');
+        const downloadMonthInput = document.getElementById('downloadMonth');
+        const webcamVideo = document.getElementById('webcam-video');
+        const photoCanvas = document.getElementById('photo-canvas');
+        const messageElement = document.getElementById('message');
+        const downloadMessageElement = document.getElementById('download-message');
+        const startCameraButton = document.getElementById('start-camera-button');
+        const captureButton = document.getElementById('capture-button');
+        const retakeButton = document.getElementById('retake-button');
+        const saveButton = document.getElementById('save-button');
+        const downloadButton = document.getElementById('download-button');
+        const participantsSection = document.getElementById('participants-section');
+        const descriptionSection = document.getElementById('description-section');
+        const tutorSection = document.getElementById('tutor-section');
+        const participantCodeSelect = document.getElementById('participantCode');
+        const descriptionInput = document.getElementById('description');
+        const tutorNameSelect = document.getElementById('tutorName');
+        const fullscreenCameraModal = document.getElementById('fullscreen-camera-modal');
+        const closeCameraButton = document.getElementById('close-camera');
+        const switchCameraButton = document.getElementById('switch-camera-button');
+        const extraTitleWrapper = document.getElementById('extraTitleWrapper');
+        const extraActivityTitle = document.getElementById('extraActivityTitle');
+        const downloadTutorSection = document.getElementById('downloadTutorSection');
+        const downloadTutorSelect = document.getElementById('downloadTutor');
+        const buttonOverlay = document.querySelector('.button-overlay'); // Selector para el overlay de botones
+
+        // --- NUEVAS REFERENCIAS PARA EL MÓDULO DE REVISIÓN INDIVIDUAL (AGREGADO) ---
+        const reviewMainTypeSelect = document.getElementById('reviewMainTypeSelect');
+        const reviewSpecificTypeSelect = document.getElementById('reviewSpecificTypeSelect');
+        const reviewMonthInput = document.getElementById('reviewMonthInput');
+        const reviewTutorSection = document.getElementById('reviewTutorSection');
+        const reviewTutorInput = document.getElementById('reviewTutorInput');
+        const reviewMessageElement = document.getElementById('reviewMessageElement');
+
+        const viewEvidencesButton = document.getElementById('viewEvidencesButton');
+        const evidenceDisplayModule = document.getElementById('evidenceDisplayModule');
+        const evidenceGallery = document.getElementById('evidenceGallery');
+        const galleryStatusMessage = document.getElementById('galleryStatusMessage');
+        // --- FIN NUEVAS REFERENCIAS ---
+
+        downloadMainTypeSelect.addEventListener('change', () => {
+            const mainType = downloadMainTypeSelect.value;
+            const specificSelect = downloadSpecificTypeSelect;
+            specificSelect.innerHTML = '<option value="">-- Selecciona una opción --</option>';
+
+            if (mainType && evidenceOptionsMap[mainType]) {
+                evidenceOptionsMap[mainType].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    specificSelect.appendChild(opt);
+                });
+            } else {
+                specificSelect.innerHTML = '<option value="">-- Primero selecciona el tipo principal --</option>';
+            }
+
+            // Mostrar selector de tutora solo si el tipo principal es ACTIVIDADES
+            if (mainType === 'actividades') {
+                downloadTutorSection.classList.remove('hidden');
+            } else {
+                downloadTutorSection.classList.add('hidden');
+                downloadTutorSelect.value = '';
+            }
+        });
+
+
+
+        let capturedPhotoBlob = null;
+        let stream = null;
+        let participantNameMap = {};
+        let facingMode = 'environment';
+        let cameraDevices = [];
+
+
+        const evidenceOptionsMap = {
+            'participantes': [
+                { value: 'AYUDA ALIMENTARIA', text: 'Ayuda Alimentaria' },
+                { value: 'CUMPLEANOS', text: 'Cumpleaños Especifico' },
+                { value: 'PERSONAL', text: 'Donaciones Personal' },
+                { value: 'MEDICINA', text: 'Medicina' },
+                { value: 'REGALOS PADRINOS', text: 'Regalos Padrinos' },
+                { value: 'TFI', text: 'TFI' }
+            ],
+            'actividades': [
+                { value: 'AMAR', text: 'Actividad Amar es Esperar' },
+                { value: 'ENCUENTRO CON JESUS', text: 'Act Encuentro con Jesus' },
+                { value: 'CUMPLEAÑOS', text: 'Cumpleaños' },
+                { value: 'DEFENSORIA', text: 'Actividad Defensoria' },
+                { value: 'REGALOS SUPERVIVENCIA', text: 'Regalos, Bonos, Ayudas Supervivencia' },
+                { value: 'BONOS NAVIDAD', text: 'Bonos Navideños' },
+                { value: 'GRADOS', text: 'Graduaciones +22' },
+                { value: 'GRADOS', text: 'Graduaciones' },
+                { value: 'ACTIVIDADES EXTRACURRICULARES', text: 'Actividad Extracurriculares' },
+                { value: 'MUSICA', text: 'Actividad Musica' },
+                { value: 'NAVIDAD', text: 'Actividad de Navidad' },
+                { value: 'PEDICULOSIS', text: 'Actividad Pediculosis' },
+                { value: 'QAHVA', text: 'Actividad QAHVA' },
+                { value: 'SALA CONEXION', text: 'Actividad Sala Conexion' },
+                { value: 'DROGAS', text: 'Actividad SPA (Drogas)' },
+                { value: 'JORNADAS DE LIMPIEZA', text: 'Aseo General' },
+                { value: 'PEDIATRIA', text: 'Chequeo Pediatria' },
+                { value: 'MEDICO', text: 'Chequeo Medico' },
+                { value: 'CLASES DE LIDERAZGO', text: 'Clases CEFI' },
+                { value: 'DANZA', text: 'Danza' },
+                { value: 'DEPORTE', text: 'Deporte' },
+                { value: 'DIA BIBLIA', text: 'Día de la Biblia' },
+                { value: 'DIA DEL NIÑO', text: 'Día del Niño' },
+                { value: 'ENCUENTROS CAMINA', text: 'Encuentro Caminadores' },
+                { value: 'ENCUENTROS SUPER', text: 'Encuentro Supervivencia' },
+                { value: 'PELICULAS', text: 'Proyección de Películas' },
+                { value: 'PROYECTO DE VIDA', text: 'Proyecto de Vida' }
+            ],
+            'donaciones': [
+                { value: 'DONACION DINERO', text: 'Donación Dinero' },
+                { value: 'DONACION ELECTRO', text: 'Donación Electrodomésticos' },
+                { value: 'CONSTRUCCION', text: 'Donación Material Cons' },
+                { value: 'MATERIAL', text: 'Donación Material Didac' },
+                { value: 'MERCADO', text: 'Donación Mercado (Alimentos)' },
+                { value: 'DONACION ROPA', text: 'Donación Ropa' },
+                { value: 'GESTION IGLESIA', text: 'Gestión con Iglesia' },
+                { value: 'REGALO ICC', text: 'Regalo Iglesia' }
+            ]
+        };
+
+        // NOTA: Se ha eliminado el 'reviewSpecificTypesMap' obsoleto y ahora 
+        // se utilizará el 'evidenceOptionsMap' para la revisión individual también.
+
+
+        // Lógica de Tabs
+        tabs.forEach(button => {
+            button.addEventListener('click', () => {
+                tabs.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+
+                if (button.dataset.tab !== 'upload-tab') {
+                    closeCameraModal();
+                    messageElement.classList.remove('show', 'success', 'error', 'info');
+                    messageElement.textContent = '';
+                } else {
+                    resetFormState();
+                }
+                downloadMessageElement.classList.remove('show', 'success', 'error', 'info');
+                downloadMessageElement.textContent = '';
+
+                // Limpiar mensaje de revisión individual al cambiar de pestaña
+                reviewMessageElement.classList.remove('show', 'success', 'error', 'info');
+                reviewMessageElement.textContent = '';
+                evidenceDisplayModule.classList.add('hidden-module');
+            });
+        });
+
+        // Cargar la lista de participantes
+        async function loadParticipants() {
+            showMessage('Cargando participantes...', 'info', messageElement);
+            try {
+                const response = await fetch(`${scriptURL}?action=getParticipants`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const participants = await response.json();
+                participantNameMap = {};
+                participantCodeSelect.innerHTML = '<option value="">-- Selecciona un participante --</option>';
+                participants.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.code;
+                    option.textContent = `${p.code} - ${p.name}`;
+                    participantCodeSelect.appendChild(option);
+                    participantNameMap[p.code] = p.name;
+                });
+                showMessage('Participantes cargados.', 'success', messageElement, 2000);
+            } catch (error) {
+                console.error('Error al cargar participantes:', error);
+                showMessage('❌ Error al cargar la lista de participantes. Verifica la conexión o el script.', 'error', messageElement);
+            }
+        }
+
+        // Lógica para mostrar/ocultar secciones y cargar opciones de tipos específicos
+        evidenceTypeSelect.addEventListener('change', () => {
+            // Ocultar secciones por defecto
+            participantsSection.classList.add('hidden');
+            descriptionSection.classList.add('hidden');
+            tutorSection.classList.add('hidden');
+            extraTitleWrapper.style.display = 'none';
+            extraActivityTitle.value = '';
+            startCameraButton.classList.add('hidden');
+            messageElement.classList.remove('show');
+
+            const mainType = evidenceTypeSelect.value;
+            const specificSelect = specificTypeSelect;
+            specificSelect.innerHTML = '<option value="">-- Selecciona una opción --</option>';
+
+            if (mainType && evidenceOptionsMap[mainType]) {
+                evidenceOptionsMap[mainType].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    specificSelect.appendChild(opt);
+                });
+                startCameraButton.classList.remove('hidden');
+            } else {
+                specificSelect.innerHTML = '<option value="">-- Selecciona el tipo principal primero --</option>';
+            }
+
+            // Mostrar siempre el selector de tutora si el principal es ACTIVIDADES
+            if (mainType === 'actividades') {
+                tutorSection.classList.remove('hidden');
+            }
+
+            // Mostrar participantes solo si corresponde
+            if (mainType === 'participantes') {
+                participantsSection.classList.remove('hidden');
+                loadParticipants();
+            }
+        });
+
+        specificTypeSelect.addEventListener('change', () => {
+            // Por defecto ocultar descripción y campo de título
+            descriptionSection.classList.add('hidden');
+            extraTitleWrapper.style.display = 'none';
+            extraActivityTitle.value = '';
+
+            const specificType = specificTypeSelect.value;
+
+            // Mostrar descripción si es necesario
+            if (specificType === 'GESTION IGLESIA' || specificType === 'PERFIL') {
+                descriptionSection.classList.remove('hidden');
+            }
+
+            // Campo de título solo si es Actividades Extracurriculares
+            if (
+                evidenceTypeSelect.value === 'actividades' &&
+                specificType === 'ACTIVIDADES EXTRACURRICULARES'
+            ) {
+                extraTitleWrapper.style.display = 'block';
+            }
+        });
+
+        // Cargar opciones del selector de descarga
+        downloadMainTypeSelect.addEventListener('change', () => {
+            const mainType = downloadMainTypeSelect.value;
+            const specificSelect = downloadSpecificTypeSelect;
+            specificSelect.innerHTML = '<option value="">-- Selecciona una opción --</option>';
+
+            if (mainType && evidenceOptionsMap[mainType]) {
+                evidenceOptionsMap[mainType].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    specificSelect.appendChild(opt);
+                });
+            } else {
+                specificSelect.innerHTML = '<option value="">-- Primero selecciona el tipo principal --</option>';
+            }
+        });
+
+        // Control del modal de la cámara
+        startCameraButton.addEventListener('click', () => {
+            const evidenceType = evidenceTypeSelect.value;
+            const specificType = specificTypeSelect.value;
+            let valid = true;
+
+            if (!evidenceType || !specificType) {
+                valid = false;
+            }
+
+            if (evidenceType === 'participantes' && !participantCodeSelect.value) {
+                valid = false;
+            }
+
+            if (specificType === 'GESTION IGLESIA' || specificType === 'PERFIL') {
+                if (!descriptionInput.value) {
+                    valid = false;
+                }
+            }
+
+            // Si es cualquier ACTIVIDAD exige tutora
+            if (evidenceType === 'actividades' && !tutorNameSelect.value) {
+                valid = false;
+            }
+
+            // Y si es Actividad Extracurricular, exige título
+            if (
+                evidenceType === 'actividades' &&
+                specificType === 'ACTIVIDADES EXTRACURRICULARES' &&
+                !extraActivityTitle.value.trim()
+            ) {
+                valid = false;
+            }
+
+            if (!valid) {
+                showMessage(
+                    '⚠️ Por favor, llena todos los campos del formulario antes de abrir la cámara.',
+                    'error',
+                    messageElement
+                );
+                return;
+            }
+
+            fullscreenCameraModal.classList.remove('hidden');
+            setTimeout(() => {
+                fullscreenCameraModal.classList.add('show');
+                startCamera();
+            }, 10);
+        });
+
+        closeCameraButton.addEventListener('click', closeCameraModal);
+
+        function closeCameraModal() {
+            fullscreenCameraModal.classList.remove('show');
+            setTimeout(() => {
+                fullscreenCameraModal.classList.add('hidden');
+                stopCamera();
+                resetCameraAndButtons();
+            }, 500);
+        }
+
+        // Lógica de la cámara
+        async function startCamera() {
+            if (stream) {
+                stopCamera();
+            }
+            try {
+            const constraints = {
+              video: {
+                width: { ideal: 1200, max: 1920 },
+                height: { ideal: 1600, max: 1080 },
+                facingMode: facingMode || "environment" // o "user"
+              }
+            };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                webcamVideo.srcObject = stream;
+                webcamVideo.play();
+
+                // Asegurar que solo los botones de "Tomar" y "Cambiar" sean visibles al inicio
+                captureButton.classList.remove('hidden');
+                buttonOverlay.classList.remove('show');
+                retakeButton.classList.add('hidden');
+                saveButton.classList.add('hidden');
+
+                // Verificar si hay más de una cámara para mostrar el botón de cambio
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                cameraDevices = devices.filter(device => device.kind === 'videoinput');
+                if (cameraDevices.length > 1) {
+                    switchCameraButton.classList.remove('hidden');
+                } else {
+                    switchCameraButton.classList.add('hidden');
+                }
+
+            } catch (err) {
+                console.error('Error al acceder a la cámara:', err);
+                showMessage(
+                    '🚫 No se pudo acceder a la cámara. Asegúrate de que los permisos estén habilitados o intenta desde otro dispositivo.',
+                    'error',
+                    messageElement
+                );
+                closeCameraModal();
+            }
+        }
+
+        // Nueva función para cambiar de cámara
+        function switchCamera() {
+            facingMode = (facingMode === 'environment') ? 'user' : 'environment';
+            startCamera();
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                webcamVideo.srcObject = null;
+                stream = null;
+            }
+        }
+
+        function resetCameraAndButtons() {
+            webcamVideo.style.display = 'block';
+            photoCanvas.style.display = 'none';
+            captureButton.classList.remove('hidden');
+            retakeButton.classList.add('hidden');
+            saveButton.classList.add('hidden');
+            switchCameraButton.classList.remove('hidden'); // Se mostrará si hay más de 1 cámara en startCamera
+            buttonOverlay.classList.remove('show');
+            capturedPhotoBlob = null;
+        }
+
+        captureButton.addEventListener('click', () => {
+    if (!stream) {
+        showMessage('🚫 La cámara no está activa. Vuelve a intentar o revisa los permisos.', 'error', messageElement);
+        return;
+    }
+
+    const context = photoCanvas.getContext('2d');
+    
+    // 🔧 Forzar tamaño fijo de salida (retrato)
+    const targetWidth = 1200;
+    const targetHeight = 1600;
+    photoCanvas.width = targetWidth;
+    photoCanvas.height = targetHeight;
+
+    // --- Obtener tamaño real del video para calcular recorte centrado ---
+    const videoWidth = webcamVideo.videoWidth;
+    const videoHeight = webcamVideo.videoHeight;
+
+    // Calcular proporciones
+    const videoAspect = videoWidth / videoHeight;
+    const targetAspect = targetWidth / targetHeight;
+
+    let sx, sy, sWidth, sHeight;
+
+    // 📏 Si el video es más ancho que el canvas → recorta los lados
+    if (videoAspect > targetAspect) {
+        sHeight = videoHeight;
+        sWidth = videoHeight * targetAspect;
+        sx = (videoWidth - sWidth) / 2;
+        sy = 0;
+    } 
+    // 📏 Si el video es más alto que el canvas → recorta arriba y abajo
+    else {
+        sWidth = videoWidth;
+        sHeight = videoWidth / targetAspect;
+        sx = 0;
+        sy = (videoHeight - sHeight) / 2;
+    }
+
+    // --- Dibujar al canvas (centrado y ajustado a 1200x1600) ---
+    context.drawImage(webcamVideo, sx, sy, sWidth, sHeight, 0, 0, targetWidth, targetHeight);
+
+    // --- Convertir el canvas a blob (JPEG alta calidad) ---
+    photoCanvas.toBlob(blob => {
+        capturedPhotoBlob = blob;
+
+        webcamVideo.style.display = 'none';
+        photoCanvas.style.display = 'block';
+
+        captureButton.classList.add('hidden'); 
+        switchCameraButton.classList.add('hidden'); 
+
+        retakeButton.classList.remove('hidden');
+        saveButton.classList.remove('hidden');
+        buttonOverlay.classList.add('show'); 
+
+        stopCamera();
+    }, 'image/jpeg', 0.95);
+});
+
+
+        // Event listener para el nuevo botón de cambio de cámara
+        switchCameraButton.addEventListener('click', switchCamera);
+
+        // ======== ANIMACIÓN SUBIENDO A LA NUBE =========
+        function showUploadOverlay() {
+            const overlay = document.getElementById('uploadOverlay');
+            const text = document.getElementById('uploadText');
+            if (!overlay || !text) return null;
+
+            overlay.classList.remove('hidden-module');
+            let dots = 0;
+            const interval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                text.textContent = "Subiendo evidencia" + ".".repeat(dots);
+            }, 400);
+            return { overlay, interval };
+        }
+
+        function hideUploadOverlay(success = true) {
+            const overlay = document.getElementById('uploadOverlay');
+            const text = document.getElementById('uploadText');
+            if (!overlay) return;
+
+            if (success) {
+                text.textContent = "✅ Evidencia subida correctamente";
+            } else {
+                text.textContent = "❌ Error al subir evidencia";
+            }
+            setTimeout(() => overlay.classList.add('hidden-module'), 1000);
+        }
+
+
+        // Enviar la evidencia
+        // Enviar la evidencia
+        saveButton.addEventListener('click', async () => {
+            if (!capturedPhotoBlob) {
+                showMessage('⚠️ Por favor, toma una foto primero antes de guardar.', 'error', messageElement);
+                return;
+            }
+
+            const evidenceType = evidenceTypeSelect.value;
+            const specificType = specificTypeSelect.value;
+            let participantCode = '';
+            let additionalInfo = '';
+
+            if (evidenceType === 'participantes') {
+                participantCode = participantCodeSelect.value;
+                additionalInfo = participantNameMap[participantCode] || '';
+                if (specificType === 'PERFIL') {
+                    additionalInfo = descriptionInput.value || '';
+                }
+
+            } else if (evidenceType === 'actividades') {
+                if (!tutorNameSelect.value) {
+                    showMessage('⚠️ Debes seleccionar una tutora antes de guardar.', 'error', messageElement);
+                    return;
+                }
+
+                if (specificType === 'ACTIVIDADES EXTRACURRICULARES') {
+                    const title = document.getElementById('extraActivityTitle').value.trim();
+                    if (!title) {
+                        showMessage('⚠️ Debes escribir el título de la actividad extracurricular.', 'error', messageElement);
+                        return;
+                    }
+                    additionalInfo = `${tutorNameSelect.value}_${title}`;
+                } else {
+                    additionalInfo = tutorNameSelect.value;
+                }
+
+            } else if (evidenceType === 'donaciones') {
+                if (specificType === 'GESTION IGLESIA') {
+                    additionalInfo = descriptionInput.value || '';
+                }
+            }
+
+            showMessage('⏳ Guardando evidencia en Google Drive...', 'info', messageElement);
+            closeCameraModal();
+
+            // === Mostrar animación de subida ===
+            const uploadAnim = showUploadOverlay();
+
+            const reader = new FileReader();
+            reader.readAsDataURL(capturedPhotoBlob);
+            reader.onloadend = async function () {
+                const base64data = reader.result.split(',')[1];
+                const postData = {
+                    photoData: base64data,
+                    evidenceType,
+                    specificType,
+                    participantCode,
+                    additionalInfo
+                };
+
+                const formBody = new URLSearchParams();
+                formBody.append('payload', JSON.stringify(postData));
+
+                try {
+                    const response = await fetch(scriptURL, {
+                        method: 'POST',
+                        body: formBody
+                    });
+
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                    const result = await response.json();
+
+                    clearInterval(uploadAnim?.interval);
+
+                    if (result.status === 'success') {
+                        hideUploadOverlay(true);
+                        showMessage('🎉 ¡Evidencia guardada correctamente en Drive! 🎉', 'success', messageElement);
+                    } else {
+                        hideUploadOverlay(false);
+                        showMessage(`❌ Error al guardar: ${result.message}`, 'error', messageElement);
+                    }
+
+                } catch (error) {
+                    console.error('Error al guardar:', error);
+                    clearInterval(uploadAnim?.interval);
+                    hideUploadOverlay(false);
+                    showMessage('🚨 Error inesperado al subir. Verifica conexión o Apps Script.', 'error', messageElement);
+                } finally {
+                    setTimeout(() => {
+                        const type = evidenceTypeSelect.value;
+                        if (type === 'participantes') resetAll();
+                        else resetKeepSelection();
+                    }, 3000);
+                }
+            };
+        });
+
+
+        retakeButton.addEventListener('click', () => {
+            resetCameraAndButtons();
+            startCamera();
+        });
+
+        // ======== ANIMACIÓN ZIP =========
+        function showZipOverlay() {
+            const overlay = document.getElementById('zipOverlay');
+            const title = document.getElementById('zipTitle');
+            const text = document.getElementById('zipText');
+            if (!overlay || !text || !title) return null;
+
+            // 🔹 Reinicia la animación (quita X o ✓ si habían quedado)
+            overlay.classList.remove('hidden-module', 'error', 'success');
+            title.textContent = "Creando archivo .ZIP";
+            text.textContent = "Empaquetando evidencias...";
+
+            // 🔹 Animación de puntos
+            let dots = 0;
+            const interval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                text.textContent = "Empaquetando evidencias" + ".".repeat(dots);
+            }, 400);
+
+            return { overlay, interval };
+        }
+
+        function hideZipOverlay(success = true) {
+            const overlay = document.getElementById('zipOverlay');
+            const title = document.getElementById('zipTitle');
+            const text = document.getElementById('zipText');
+            if (!overlay || !title || !text) return;
+
+            // Limpia cualquier clase previa
+            overlay.classList.remove('error', 'success');
+
+            if (success) {
+                overlay.classList.add('success');
+                title.textContent = "✅ Archivo ZIP listo para descargar";
+                text.textContent = "Descarga iniciada automáticamente";
+                setTimeout(() => {
+                    overlay.classList.add('hidden-module');
+                    overlay.classList.remove('success');
+                }, 1200);
+            } else {
+                overlay.classList.add('error');
+                title.textContent = "❌ No se encontraron evidencias";
+                text.textContent = "Intenta con otros criterios";
+                setTimeout(() => {
+                    overlay.classList.add('hidden-module');
+                    overlay.classList.remove('error');
+                }, 2000);
+            }
+        }
+
+        // 🔹 Reinicia visualmente la animación al cambiar cualquier criterio
+        ['downloadMainType', 'downloadSpecificType', 'downloadMonth', 'downloadTutor'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', () => {
+                    const overlay = document.getElementById('zipOverlay');
+                    const title = document.getElementById('zipTitle');
+                    const text = document.getElementById('zipText');
+                    if (overlay && title && text) {
+                        overlay.classList.add('hidden-module');
+                        overlay.classList.remove('error', 'success');
+                        title.textContent = "Creando archivo .ZIP";
+                        text.textContent = "Empaquetando evidencias...";
+                    }
+                });
+            }
+        });
+
+
+        // ======== DESCARGAR EVIDENCIAS (ZIP) =========
+        downloadButton.addEventListener('click', async () => {
+            const downloadMainType = downloadMainTypeSelect.value;
+            const downloadSpecificType = downloadSpecificTypeSelect.value;
+            const downloadMonth = downloadMonthInput.value;
+            const downloadTutor = downloadTutorSelect.value;
+
+            if (!downloadMainType || !downloadSpecificType || !downloadMonth) {
+                showMessage(
+                    '⚠️ Por favor, selecciona el tipo principal, tipo específico y el mes para la descarga.',
+                    'error',
+                    downloadMessageElement
+                );
+                return;
+            }
+
+            if (downloadMainType === 'actividades' && !downloadTutor) {
+                showMessage(
+                    '⚠️ Por favor, selecciona la tutora para filtrar las evidencias de actividades.',
+                    'error',
+                    downloadMessageElement
+                );
+                return;
+            }
+
+            // === Mostrar animación de preparación ZIP ===
+            const zipAnim = showZipOverlay();
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'download',
+                    mainType: downloadMainType,
+                    specificType: downloadSpecificType,
+                    month: downloadMonth
+                });
+
+                if (downloadMainType === 'actividades' && downloadTutor) {
+                    params.append('tutor', downloadTutor);
+                }
+
+                const response = await fetch(`${scriptURL}?${params.toString()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const result = await response.json();
+
+                clearInterval(zipAnim?.interval);
+
+                // ✅ Caso con evidencias (descargar ZIP)
+                if (result.status === 'success' && result.url) {
+                    hideZipOverlay(true);
+                    // Descarga automática del ZIP
+                    const link = document.createElement('a');
+                    link.href = result.url;
+                    link.download = 'Evidencias.zip';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+
+                    showMessage(
+                        '✅ ¡Descarga iniciada! El archivo ZIP se eliminará del Drive temporalmente en un minuto.',
+                        'success',
+                        downloadMessageElement
+                    );
+                }
+                // ❌ Caso sin evidencias
+                else {
+                    hideZipOverlay(false);
+                    showMessage(
+                        '❌ No se encontraron evidencias para los criterios seleccionados en ese mes.',
+                        'error',
+                        downloadMessageElement
+                    );
+                }
+
+            } catch (error) {
+                console.error('Error al descargar:', error);
+                clearInterval(zipAnim?.interval);
+                hideZipOverlay(false);
+                showMessage(
+                    '🚨 Ocurrió un error al intentar descargar. Verifica la conexión o el Apps Script.',
+                    'error',
+                    downloadMessageElement
+                );
+            }
+        });
+
+
+
+
+        // Funciones utilitarias
+        function showMessage(msg, type, element, duration = 5000) {
+            element.textContent = msg;
+            element.className = `message show ${type}`;
+
+            setTimeout(() => {
+                element.classList.remove('show');
+                element.textContent = '';
+            }, duration);
+        }
+
+        function resetFormState() {
+            evidenceTypeSelect.value = '';
+            specificTypeSelect.value = '';
+            participantCodeSelect.innerHTML = '<option value="">-- Selecciona un participante --</option>';
+            descriptionInput.value = '';
+            tutorNameSelect.value = '';
+
+            participantsSection.classList.add('hidden');
+            descriptionSection.classList.add('hidden');
+            tutorSection.classList.add('hidden');
+            extraTitleWrapper.style.display = 'none';
+            extraActivityTitle.value = '';
+            startCameraButton.classList.add('hidden');
+
+            messageElement.classList.remove('show', 'success', 'error', 'info');
+            messageElement.textContent = '';
+            stopCamera();
+
+            downloadMainTypeSelect.value = '';
+            downloadSpecificTypeSelect.innerHTML = '<option value="">-- Primero selecciona el tipo principal --</option>';
+            downloadMonthInput.value = '';
+            downloadMessageElement.classList.remove('show', 'success', 'error', 'info');
+            downloadMessageElement.textContent = '';
+        }
+
+        // Limpia todo (usa tu lógica original de resetFormState)
+        function resetAll() {
+            resetFormState();  // tu función que borra selects, inputs, etc.
+        }
+
+        // Limpia solo la cámara y mensajes, deja los selects tal como están
+        function resetKeepSelection() {
+            capturedPhotoBlob = null;
+            webcamVideo.style.display = 'block';
+            photoCanvas.style.display = 'none';
+            captureButton.classList.remove('hidden');
+            retakeButton.classList.add('hidden');
+            saveButton.classList.add('hidden');
+            switchCameraButton.classList.remove('hidden');
+            buttonOverlay.classList.remove('show');
+            messageElement.textContent = '';
+        }
+
+
+        // ====================================================================================
+        // ========== NUEVA LÓGICA PARA EL MÓDULO DE REVISIÓN Y DESCARGA INDIVIDUAL ==========
+        // ====================================================================================
+        // ======== FUNCIONES ANIMACIÓN DE BÚSQUEDA =========
+        function showSearchOverlay() {
+            const overlay = document.getElementById('searchOverlay');
+            const text = document.getElementById('searchText');
+            if (!overlay || !text) return null;
+
+            overlay.classList.remove('hidden-module');
+            let dots = 0;
+            const interval = setInterval(() => {
+                dots = (dots + 1) % 4;
+                text.textContent = "Explorando registros" + ".".repeat(dots);
+            }, 400);
+            return { overlay, interval };
+        }
+
+        function hideSearchOverlay(success = true) {
+            const overlay = document.getElementById('searchOverlay');
+            const text = document.getElementById('searchText');
+            if (!overlay) return;
+
+            if (success) {
+                text.textContent = "✅ Resultados encontrados";
+            } else {
+                text.textContent = "❌ No se encontraron evidencias";
+            }
+            setTimeout(() => overlay.classList.add('hidden-module'), 1000);
+        }
+
+
+
+        // 1. Lógica para cargar las opciones del select específico en la pestaña de revisión
+        function updateReviewSpecificTypes(mainType, specificSelectElement) {
+            specificSelectElement.innerHTML = '<option value="">-- Selecciona una opción --</option>';
+
+            if (evidenceOptionsMap[mainType]) {
+                evidenceOptionsMap[mainType].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    specificSelectElement.appendChild(opt);
+                });
+            }
+        }
+
+        // 2. Control de Eventos de Filtro para la Revisión
+        reviewMainTypeSelect.addEventListener('change', () => {
+            // Mostrar/Ocultar Tutora solo para 'actividades'
+            if (reviewMainTypeSelect.value === 'actividades') {
+                reviewTutorSection.classList.remove('hidden');
+            } else {
+                reviewTutorSection.classList.add('hidden');
+                reviewTutorInput.value = ''; // Limpiar la tutora al ocultar
+            }
+
+            // Llenar Tipos Específicos usando la misma lista de actividades (evidenceOptionsMap)
+            updateReviewSpecificTypes(reviewMainTypeSelect.value, reviewSpecificTypeSelect);
+
+            // Ocultar resultados anteriores al cambiar filtro
+            evidenceDisplayModule.classList.add('hidden-module');
+            displayReviewMessage('', 'info');
+        });
+
+
+        // 3. Manejador del botón BUSCAR/VER EVIDENCIAS (CORREGIDO PARA USAR FETCH)
+        viewEvidencesButton.addEventListener('click', handleViewEvidences);
+
+        async function handleViewEvidences() {
+            const mainType = reviewMainTypeSelect.value;
+            const specificType = reviewSpecificTypeSelect.value;
+            const month = reviewMonthInput.value;
+
+            const tutor = (!reviewTutorSection.classList.contains('hidden') && reviewTutorInput.value ? reviewTutorInput.value.trim().toUpperCase() : '');
+
+            if (!mainType || !specificType || !month) {
+                displayReviewMessage('🛑 Por favor, selecciona Tipo Principal, Específico y Mes para buscar.', 'error');
+                evidenceDisplayModule.classList.add('hidden-module');
+                return;
+            }
+
+            displayReviewMessage('⏳ Buscando evidencias. Por favor, espera...', 'info');
+            evidenceDisplayModule.classList.add('hidden-module');
+            evidenceGallery.innerHTML = '';
+            galleryStatusMessage.textContent = 'Buscando archivos en Google Drive...';
+
+            // Mostrar animación de búsqueda
+            const searchAnim = showSearchOverlay();
+
+            try {
+                const params = new URLSearchParams({
+                    action: 'getUrls',
+                    mainType: mainType,
+                    specificType: specificType,
+                    month: month,
+                    tutor: tutor
+                });
+
+                const response = await fetch(`${scriptURL}?${params.toString()}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const responseText = await response.text();
+
+                clearInterval(searchAnim?.interval);
+                hideSearchOverlay(true);
+
+                // Muestra resultados como antes
+                showEvidenceGallery(responseText);
+
+            } catch (error) {
+                clearInterval(searchAnim?.interval);
+                hideSearchOverlay(false);
+                console.error('Error en handleViewEvidences (fetch):', error);
+                handleFailure(`Error de red o comunicación: ${error.message}`);
+            }
+        }
+
+
+        // 4. Función que construye la Galería Visual (Success Handler)
+        function showEvidenceGallery(response) {
+            try {
+                const data = JSON.parse(response);
+                evidenceGallery.innerHTML = '';
+
+                if (data.status === 'success' && data.files.length > 0) {
+                    displayReviewMessage(`✅ ${data.message}`, 'success');
+                    evidenceDisplayModule.classList.remove('hidden-module');
+                    galleryStatusMessage.textContent = `${data.files.length} imágenes encontradas.`;
+
+                    data.files.forEach(file => {
+                        const item = document.createElement('div');
+                        item.className = 'evidence-item';
+
+                        // URL optimizada para miniatura de Drive (w150-h100)
+                        const previewUrl = `https://drive.google.com/thumbnail?sz=w200&id=${file.id}`;
+                        const fullViewUrl = `https://drive.google.com/uc?export=view&id=${file.id}`;
+
+                        const card = `
+  <div class="evidence-card">
+    <img src="${previewUrl}" 
+         alt="${file.name}" 
+         class="evidence-preview" 
+         style="cursor:pointer;" 
+         onclick="openModal('${fullViewUrl}')"/>
+    <p>${file.name}</p>
+    <a href="${file.downloadUrl}" target="_blank" class="download-btn">↓ Descargar</a>
+  </div>
+`;
+
+
+
+                        const img = document.createElement('img');
+                        img.src = previewUrl;
+                        img.alt = file.name;
+                        img.title = file.name;
+
+                        // Enlace de descarga individual: usa file.downloadUrl
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = file.downloadUrl;
+                        downloadLink.target = '_blank';
+                        downloadLink.className = 'download-link';
+                        downloadLink.textContent = '↓ Descargar';
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.textContent = file.name;
+
+                        item.appendChild(img);
+                        item.appendChild(nameSpan);
+                        item.appendChild(downloadLink);
+                        evidenceGallery.appendChild(item);
+                    });
+                } else if (data.status === 'success' && data.files.length === 0) {
+                    displayReviewMessage('ℹ️ No se encontraron evidencias con esos criterios.', 'info');
+                    galleryStatusMessage.textContent = '0 imágenes encontradas.';
+                    evidenceDisplayModule.classList.remove('hidden-module'); // Mostrar módulo vacío
+                } else {
+                    displayReviewMessage('❌ Error al obtener la lista: ' + data.message, 'error');
+                    galleryStatusMessage.textContent = 'Error al cargar la galería.';
+                    evidenceDisplayModule.classList.add('hidden-module');
+                }
+            } catch (e) {
+                console.error('Error al procesar la respuesta:', e);
+                displayReviewMessage('❌ Error fatal al procesar la respuesta del servidor.', 'error');
+                evidenceDisplayModule.classList.add('hidden-module');
+            }
+        }
+
+        // 5. Función de Mensaje Específica para esta Sección
+        function displayReviewMessage(message, type) {
+            reviewMessageElement.textContent = message;
+            reviewMessageElement.className = 'info show ' + type;
+        }
+
+        // 6. Manejador de Errores General (Ahora es usado para errores de red/Apps Script)
+        function handleFailure(error) {
+            console.error('Error:', error);
+            displayReviewMessage('❌ Error de comunicación con Google Apps Script: ' + error, 'error');
+        }
+
+    </script>
+</body>
+
+</html>

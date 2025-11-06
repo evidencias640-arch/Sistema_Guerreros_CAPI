@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📂 Carga de Evidencias en Lote Profesional</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ==================== 1. Variables y Reset ==================== */
+        :root {
+            --primary-color: #007bff;
+            /* Azul vibrante */
+            --primary-dark: #0056b3;
+            --secondary-color: #ffc107;
+            /* Amarillo para acción */
+            --accent-color: #28a745;
+            /* Verde para éxito */
+            --background-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+            --border-color: #dee2e6;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --error-color: #dc3545;
+            --warning-color: #ff9800;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== 2. Tipografía y Encabezado ==================== */
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--border-color);
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        /* ==================== 3. Formulario y Grupos ==================== */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+            transition: color 0.3s;
+        }
+
+        select,
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background-color: #fcfcfc;
+        }
+
+        select:focus,
+        input:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+            outline: none;
+            background-color: var(--card-bg);
+        }
+
+        /* Campos opcionales/condicionales */
+        .hidden-module {
+            display: none !important;
+        }
+
+        /* ==================== 4. Botones y Animación ==================== */
+        .main-button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #upload-selected-button {
+            background-color: var(--secondary-color);
+            color: var(--text-dark);
+        }
+
+        #upload-selected-button:hover:not(:disabled) {
+            background-color: #ffaf00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        #upload-selected-button:disabled {
+            background-color: var(--border-color);
+            color: var(--text-light);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Módulo de Carga */
+        #file-upload-module {
+            border: 2px dashed var(--primary-color);
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 30px;
+            background-color: #f1f7ff;
+            transition: all 0.4s ease;
+        }
+
+        /* ==================== 5. Mensajes y Estados ==================== */
+        .info {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 25px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            box-shadow: 0 2px 8px var(--shadow-light);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .info.show {
+            display: block;
+        }
+
+        .success {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .warning {
+            background-color: var(--warning-color);
+            color: var(--text-dark);
+        }
+
+        .error {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== 6. Miniaturas ==================== */
+        #thumbnail-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--card-bg);
+            min-height: 100px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .thumbnail-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px var(--shadow-medium);
+            transition: transform 0.2s ease;
+        }
+
+        .thumbnail-item:hover {
+            transform: scale(1.08);
+        }
+
+        .thumbnail-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-thumbnail-btn {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 0 0 0 8px;
+            cursor: pointer;
+            padding: 5px 8px;
+            font-weight: bold;
+            font-size: 10px;
+            line-height: 1;
+            z-index: 10;
+            transition: background-color 0.2s;
+        }
+
+        /* Ocultar el marcador de cámara */
+        #start-camera-button {
+            display: none !important;
+        }
+
+        /* ==================== 7. Animación de Carga (Profesional: Construcción) ==================== */
+        .spinner-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            height: 40px;
+            font-weight: 600;
+        }
+
+        /* Estilo de la nueva animación (puntos rebotando) */
+        .loader {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 5px;
+            background-color: var(--primary-color);
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loader:nth-child(2) {
+            animation-delay: -0.32s;
+        }
+
+        .loader:nth-child(3) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1.0);
+            }
+        }
+
+        .upload-progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            /* Sombra para profundidad */
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--accent-color);
+            transition: width 0.4s ease, background-color 0.4s ease;
+            border-radius: 5px;
+        }
+
+        /* ==================== 8. Navegación Secundaria (Mejorado) ==================== */
+        .nav-link {
+            text-align: center;
+            margin: 20px 0 35px 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-link a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            /* Quitar el subrayado */
+            font-weight: 700;
+            /* Negrita */
+            font-size: 1.1em;
+            padding: 10px 15px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .nav-link a:hover {
+            background-color: var(--primary-color);
+            color: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+
+        /* Responsividad */
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px;
+            }
+
+            .thumbnail-item {
+                width: 80px;
+                height: 80px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Carga de Evidencias en Lote Profesional 🚀</h1>
+
+        <p id="message" class="info"></p>
+
+        <p class="nav-link">
+            <a href="index.html">📸 Ir a Carga de Evidencia Toma de Foto</a>
+        </p>
+
+        <div id="upload-tab" class="tab-content active">
+            <h3>📝 Detalles de la Evidencia</h3>
+
+            <div class="form-group">
+                <label for="evidenceType">Elige el Tipo Principal de Evidencia:</label>
+                <select id="evidenceType">
+                    <option value="">-- Selecciona una opción --</option>
+                    <option value="participantes">Participantes</option>
+                    <option value="actividades">Actividades</option>
+                    <option value="donaciones">Donaciones, Gestión y Regalos ICC</option>
+                </select>
+            </div>
+
+            <div id="participants-section" class="hidden-module">
+                <div class="form-group">
+                    <label for="participantCode">Selecciona el Participante (Obligatorio):</label>
+                    <select id="participantCode">
+                        <option value="">-- Cargando participantes --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="specificType">Elige el Tipo Específico de Evidencia:</label>
+                <select id="specificType">
+                    <option value="">-- Selecciona el tipo principal primero --</option>
+                </select>
+            </div>
+
+            <div id="tutor-section" class="hidden-module">
+                <div class="form-group">
+                    <label for="tutorName">Selecciona la Tutora (Obligatorio para Actividades):</label>
+                    <select id="tutorName">
+                        <option value="">-- Selecciona una tutora --</option>
+                        <option value="LISBETH">Lisbeth</option>
+                        <option value="DIANA">Diana</option>
+                        <option value="HELEN">Helen</option>
+                        <option value="JULIANA">Juliana</option>
+                        <option value="GENERAL">General</option>
+                    </select>
+                </div>
+
+                <div id="extraTitleWrapper" class="hidden-module">
+                    <label for="extraActivityTitle">Título de la Actividad Extracurricular:</label>
+                    <input type="text" id="extraActivityTitle" placeholder="Ej: Clase de Natación - Grupo A" />
+                </div>
+            </div>
+
+            <div id="description-section" class="hidden-module">
+                <div class="form-group">
+                    <label for="description">Descripción breve (Obligatoria para Gestión con Iglesia):</label>
+                    <input type="text" id="description" placeholder="Ej: Adecuación Parque Techo" />
+                </div>
+            </div>
+
+        </div>
+        <div id="file-upload-module" class="hidden-module">
+
+            <h3>🖼️ Archivos para Subir</h3>
+            <p style="color: var(--text-light); margin-bottom: 15px; font-size: 0.95em;">Selecciona una o varias
+                imágenes.</p>
+
+            <input type="file" id="multi-file-input" accept="image/jpeg, image/png, image/webp" multiple>
+
+            <div id="thumbnail-container">
+                <p style="text-align: center; color: var(--text-light);">No hay archivos seleccionados.</p>
+            </div>
+
+            <div id="upload-animation" class="hidden-module">
+                <div class="spinner-container">
+                    <div class="loader"></div>
+                    <div class="loader"></div>
+                    <div class="loader"></div>
+                    <span id="upload-counter-text">Preparando subida...</span>
+                </div>
+                <div class="upload-progress-bar">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <button id="upload-selected-button" class="main-button" type="button" disabled>
+                <span id="upload-status-icon">⬆️</span> Subir <span id="file-count">0</span> Evidencias Seleccionadas
+            </button>
+        </div>
+
+        <button id="start-camera-button" class="hidden-module"></button>
+
+    </div>
+
+    <script>
+        // ------------------ CONFIGURACIÓN GLOBAL ------------------
+        // ⚠️ ¡REEMPLAZA ESTE URL CON EL URL PUBLICADO DE TU APPS SCRIPT!
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz7pEks_KhWPnNwBU7lyWVvgk4u9VEfJeFN4Z4dkoPn-fF2cAHvBhS7FM3l8XN0L9RycA/exec';
+
+        // =======================================================
+        // === 1. SELECTORES Y VARIABLES DE ESTADO ===
+        // =======================================================
+        const evidenceTypeSelect = document.getElementById('evidenceType');
+        const specificTypeSelect = document.getElementById('specificType');
+        const participantCodeSelect = document.getElementById('participantCode');
+        const descriptionInput = document.getElementById('description');
+        const tutorNameSelect = document.getElementById('tutorName');
+        const extraTitleWrapper = document.getElementById('extraTitleWrapper');
+        const extraActivityTitle = document.getElementById('extraActivityTitle');
+        const participantsSection = document.getElementById('participants-section');
+        const descriptionSection = document.getElementById('description-section');
+        const tutorSection = document.getElementById('tutor-section');
+        const messageElement = document.getElementById('message');
+        const fileUploadModule = document.getElementById('file-upload-module');
+        const multiFileInput = document.getElementById('multi-file-input');
+        const thumbnailContainer = document.getElementById('thumbnail-container');
+        const uploadSelectedButton = document.getElementById('upload-selected-button');
+        const fileCountSpan = document.getElementById('file-count');
+        const uploadStatusIcon = document.getElementById('upload-status-icon');
+        const uploadAnimation = document.getElementById('upload-animation');
+        const uploadCounterText = document.getElementById('upload-counter-text');
+        const progressBarFill = document.getElementById('progress-fill');
+
+        let selectedFiles = [];
+        let fileCounter = 0;
+        let participantNameMap = {};
+
+        // Mapeo de Opciones de Evidencia (Actualizado)
+        const evidenceOptionsMap = {
+            'participantes': [
+                { value: 'AYUDA ALIMENTARIA', text: 'Ayuda Alimentaria' },
+                { value: 'CUMPLEANOS', text: 'Cumpleaños Especifico' },
+                { value: 'PERSONAL', text: 'Donaciones Personal' },
+                { value: 'MEDICINA', text: 'Medicina' },
+                { value: 'REGALOS PADRINOS', text: 'Regalos Padrinos' },
+                { value: 'TFI', text: 'TFI' }
+            ],
+            'actividades': [
+                { value: 'AMAR', text: 'Actividad Amar es Esperar' },
+                { value: 'CRECER CON AMOR', text: 'Actividad Crecer Con Amor' },
+                { value: 'CUMPLEAÑOS', text: 'Cumpleaños' },
+                { value: 'DEFENSORIA', text: 'Actividad Defensoria' },
+                { value: 'REGALOS SUPERVIVENCIA', text: 'Regalos, Bonos, Ayudas Supervivencia' },
+                { value: 'BONOS NAVIDAD', text: 'Bonos Navideños' },
+                { value: 'GRADOS', text: 'Graduaciones +22' },
+                { value: 'ACTIVIDADES EXTRACURRICULARES', text: 'Actividad Extracurriculares' }, // Requiere Título Extra
+                { value: 'MUSICA', text: 'Actividad Musica' },
+                { value: 'NAVIDAD', text: 'Actividad de Navidad' },
+                { value: 'PEDICULOSIS', text: 'Actividad Pediculosis' },
+                { value: 'QAHVA', text: 'Actividad QAHVA' },
+                { value: 'SALA CONEXION', text: 'Actividad Sala Conexion' },
+                { value: 'DROGAS', text: 'Actividad SPA (Drogas)' },
+                { value: 'JORNADAS DE LIMPIEZA', text: 'Aseo General' },
+                { value: 'PEDIATRIA', text: 'Chequeo Pediatria' },
+                { value: 'MEDICO', text: 'Chequeo Medico' },
+                { value: 'CLASES DE LIDERAZGO', text: 'Clases CEFI' },
+                { value: 'DANZA', text: 'Danza' },
+                { value: 'DEPORTE', text: 'Deporte' },
+                { value: 'DIA BIBLIA', text: 'Día de la Biblia' },
+                { value: 'DIA DEL NIÑO', text: 'Día del Niño' },
+                { value: 'ENCUENTROS CAMINA', text: 'Encuentro Caminadores' },
+                { value: 'ENCUENTROS SUPER', text: 'Encuentro Supervivencia' },
+                { value: 'PELICULAS', text: 'Proyección de Películas' },
+                { value: 'PROYECTO DE VIDA', text: 'Proyecto de Vida' }
+            ],
+            'donaciones': [
+                { value: 'DONACION DINERO', text: 'Donación Dinero' },
+                { value: 'DONACION ELECTRO', text: 'Donación Electrodomésticos' },
+                { value: 'CONSTRUCCION', text: 'Donación Material Cons' },
+                { value: 'MATERIAL', text: 'Donación Material Didac' },
+                { value: 'MERCADO', text: 'Donación Mercado (Alimentos)' },
+                { value: 'DONACION ROPA', text: 'Donación Ropa' },
+                { value: 'GESTION IGLESIA', text: 'Gestión con Iglesia' }, // Requiere Descripción
+                { value: 'REGALO ICC', text: 'Regalo Iglesia' }
+            ]
+        };
+
+        // =======================================================
+        // === 2. FUNCIONES DE VALIDACIÓN Y UI ===
+        // =======================================================
+
+        function showMessage(message, type, duration = 5000) {
+            messageElement.textContent = message;
+            messageElement.className = `info show ${type}`;
+            if (type !== 'error') {
+                setTimeout(() => {
+                    messageElement.classList.remove('show');
+                }, duration);
+            }
+        }
+
+        function hideAllModules() {
+            if (fileUploadModule) fileUploadModule.classList.add('hidden-module');
+        }
+
+        function resetFormState() {
+            // Limpiar datos
+            evidenceTypeSelect.value = '';
+            specificTypeSelect.innerHTML = '<option value="">-- Selecciona el tipo principal primero --</option>';
+            // NO limpiamos participantCodeSelect (por si no se vuelven a cargar)
+            descriptionInput.value = '';
+            tutorNameSelect.value = '';
+            extraActivityTitle.value = '';
+
+            // Ocultar secciones
+            participantsSection.classList.add('hidden-module');
+            descriptionSection.classList.add('hidden-module');
+            tutorSection.classList.add('hidden-module');
+            extraTitleWrapper.classList.add('hidden-module');
+
+            // Limpiar archivos y UI
+            selectedFiles = [];
+            renderThumbnails();
+            checkFormAndEnableModules();
+        }
+
+        function validateForm(showError = true) {
+            const mainType = evidenceTypeSelect.value;
+            const specificType = specificTypeSelect.value;
+            const participantCode = participantCodeSelect.value;
+            const description = descriptionInput.value.trim();
+            const tutorName = tutorNameSelect.value;
+            const extraTitle = extraActivityTitle.value.trim();
+
+            if (!mainType || !specificType) {
+                if (showError) showMessage('⚠️ Selecciona el Tipo Principal y el Tipo Específico.', 'warning');
+                return false;
+            }
+            // 1. Validar Participante (si aplica)
+            if (mainType === 'participantes' && !participantCode) {
+                if (showError) showMessage('⚠️ Selecciona el Código del Participante.', 'warning');
+                return false;
+            }
+            // 2. Validar Tutora (solo para Actividades)
+            if (mainType === 'actividades' && !tutorName) {
+                if (showError) showMessage('⚠️ Selecciona el nombre de la Tutora/Encargada.', 'warning');
+                return false;
+            }
+            // 3. Validar Título Extra (solo para Extracurriculares)
+            if (specificType === 'ACTIVIDADES EXTRACURRICULARES' && !extraTitle) {
+                if (showError) showMessage('⚠️ Agrega el Título de la Actividad Extracurricular.', 'warning');
+                return false;
+            }
+            // 4. Validar Descripción (solo para Gestión Iglesia)
+            if (specificType === 'GESTION IGLESIA' && !description) {
+                if (showError) showMessage('⚠️ Agrega una descripción obligatoria para Gestión con Iglesia.', 'warning');
+                return false;
+            }
+            return true;
+        }
+
+        function checkFormAndEnableModules() {
+            const isValid = validateForm(false);
+            if (isValid) {
+                if (fileUploadModule) fileUploadModule.classList.remove('hidden-module');
+            } else {
+                hideAllModules();
+                selectedFiles = [];
+                renderThumbnails();
+            }
+        }
+
+
+        // =======================================================
+        // === 3. COMUNICACIÓN (FETCH) ===
+        // =======================================================
+
+        function handleSuccess() {
+            showMessage('✅ Evidencia(s) guardada(s) con éxito!', 'success');
+            // Ocultar animación
+            uploadAnimation.classList.add('hidden-module');
+            uploadSelectedButton.disabled = false;
+            uploadStatusIcon.textContent = '⬆️';
+            resetFormState();
+        }
+
+        function handleFailure(error) {
+            console.error('Error de comunicación/red:', error);
+            showMessage(`❌ Error de comunicación con el servidor: ${error.message || error}`, 'error');
+            // Ocultar animación
+            uploadAnimation.classList.add('hidden-module');
+            uploadSelectedButton.disabled = false;
+            uploadStatusIcon.textContent = '⬆️';
+        }
+
+        async function loadParticipants() {
+            showMessage('Cargando participantes...', 'info');
+            try {
+                const response = await fetch(`${scriptURL}?action=getParticipants`);
+                if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                const data = await response.json();
+
+                if (data.status === 'error') { throw new Error(data.message); }
+
+                participantNameMap = {};
+                participantCodeSelect.innerHTML = '<option value="">-- Selecciona un participante --</option>';
+                data.participants.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.code;
+                    option.textContent = `${p.code} - ${p.name}`;
+                    participantCodeSelect.appendChild(option);
+                    participantNameMap[p.code] = p.name;
+                });
+                showMessage('Participantes cargados.', 'success', 2000);
+            } catch (error) {
+                console.error('Error al cargar participantes:', error);
+                showMessage('❌ Error al cargar la lista de participantes. Verifica la hoja "Participantes".', 'error');
+            }
+        }
+
+        async function uploadPhoto(file) {
+            const selectedCode = participantCodeSelect.value || '';
+            const additionalInfo = extraActivityTitle.value.trim() || descriptionInput.value.trim() || '';
+
+            // Igual que en el sistema que sube una sola
+            const postData = {
+                photoData: file.base64Data,                   // 👈 el Apps Script espera "photoData"
+                evidenceType: evidenceTypeSelect.value,
+                specificType: specificTypeSelect.value,
+                participantCode: selectedCode,
+                additionalInfo: additionalInfo
+            };
+
+            // Convertir a formato URL-encoded con un campo "payload"
+            const formBody = new URLSearchParams();
+            formBody.append('payload', JSON.stringify(postData));
+
+            try {
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    body: formBody
+                });
+
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                const result = await response.json();
+                return result;
+
+            } catch (error) {
+                console.error('Error en uploadPhoto:', error);
+                throw new Error(`Ocurrió un error al subir la foto: ${error.message}`);
+            }
+        }
+
+
+        // =======================================================
+        // === 4. LÓGICA DE CARGA DE ARCHIVOS MÚLTIPLES ===
+        // =======================================================
+
+        multiFileInput.addEventListener('change', (event) => {
+            const files = event.target.files;
+            for (const file of files) {
+                if (!file.type.startsWith('image/')) {
+                    showMessage(`🚫 El archivo ${file.name} no es una imagen.`, 'error');
+                    continue;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const base64Content = e.target.result.split(',')[1];
+                    fileCounter++;
+                    selectedFiles.push({
+                        id: fileCounter,
+                        name: file.name,
+                        base64Data: base64Content
+                    });
+                    renderThumbnails();
+                };
+                reader.readAsDataURL(file);
+            }
+            multiFileInput.value = '';
+        });
+
+        function renderThumbnails() {
+            thumbnailContainer.innerHTML = '';
+            fileCountSpan.textContent = selectedFiles.length;
+            uploadSelectedButton.disabled = selectedFiles.length === 0;
+
+            if (selectedFiles.length === 0) {
+                thumbnailContainer.innerHTML = '<p style="text-align: center; color: var(--text-light);">No hay archivos seleccionados.</p>';
+                return;
+            }
+
+            selectedFiles.forEach((file) => {
+                const thumbnailDiv = document.createElement('div');
+                thumbnailDiv.className = 'thumbnail-item';
+
+                const img = document.createElement('img');
+                img.src = 'data:image/jpeg;base64,' + file.base64Data;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = 'X';
+                deleteBtn.className = 'delete-thumbnail-btn';
+                deleteBtn.onclick = () => deleteFile(file.id);
+
+                thumbnailDiv.appendChild(img);
+                thumbnailDiv.appendChild(deleteBtn);
+                thumbnailContainer.appendChild(thumbnailDiv);
+            });
+        }
+
+        function deleteFile(fileId) {
+            selectedFiles = selectedFiles.filter(file => file.id !== fileId);
+            renderThumbnails();
+            showMessage('🗑️ Evidencia eliminada de la lista.', 'info', 2000);
+        }
+
+        uploadSelectedButton.addEventListener('click', uploadSelectedFiles);
+
+        async function uploadSelectedFiles() {
+            if (!validateForm()) return;
+
+            const filesToUpload = [...selectedFiles];
+            const initialCount = filesToUpload.length;
+            let successfulUploads = 0;
+            let hadError = false;
+
+            if (initialCount === 0) { showMessage('⚠️ No hay archivos seleccionados para subir.', 'warning'); return; }
+
+            uploadSelectedButton.disabled = true;
+            uploadStatusIcon.textContent = '...';
+
+            // Mostrar animación profesional
+            uploadAnimation.classList.remove('hidden-module');
+            progressBarFill.style.width = '0%';
+            uploadCounterText.textContent = `Preparando subida de ${initialCount} archivos...`;
+
+
+            for (let i = 0; i < filesToUpload.length; i++) {
+                const file = filesToUpload[i];
+
+                // --- Generar sufijo incremental para evitar duplicados ---
+                const fileSuffix = i === 0 ? '' : `${i}`;
+                const fileNameParts = file.name.split('.');
+                const extension = fileNameParts.pop();
+                const baseName = fileNameParts.join('.');
+                const uniqueFileName = `${baseName}${fileSuffix}.${extension}`;
+
+                // Actualizar el nombre del archivo temporalmente
+                const fileWithUniqueName = { ...file, name: uniqueFileName };
+
+                uploadCounterText.textContent = `Subiendo ${i + 1} de ${initialCount} (${uniqueFileName})...`;
+                progressBarFill.style.width = `${((i + 1) / initialCount) * 100}%`;
+
+                try {
+                    const result = await uploadPhoto(fileWithUniqueName);
+                    if (result && result.status === 'success') {
+                        successfulUploads++;
+                    } else {
+                        throw new Error(result ? result.message : 'Error desconocido.');
+                    }
+                } catch (error) {
+                    console.error(`Error al subir ${uniqueFileName}:`, error);
+                    hadError = true;
+                    showMessage(`❌ Error al subir ${uniqueFileName}: ${error.message || error}`, 'error');
+                }
+            }
+
+
+            // Finalizar animación
+            progressBarFill.style.width = '100%';
+
+            if (successfulUploads === initialCount) {
+                handleSuccess();
+            } else if (successfulUploads > 0 && hadError) {
+                showMessage(`⚠️ Subida Parcial: ${successfulUploads} de ${initialCount} evidencias cargadas.`, 'warning');
+                // Si la subida fue parcial, limpiamos la lista
+                selectedFiles = [];
+                renderThumbnails();
+                uploadAnimation.classList.add('hidden-module');
+                uploadSelectedButton.disabled = false;
+                uploadStatusIcon.textContent = '⬆️';
+            } else {
+                showMessage('❌ Subida Fallida: No se pudo cargar ninguna evidencia.', 'error');
+                uploadAnimation.classList.add('hidden-module');
+                uploadSelectedButton.disabled = false;
+                uploadStatusIcon.textContent = '⬆️';
+            }
+        }
+
+
+        // =======================================================
+        // === 5. LISTENERS DE EVENTOS Y LÓGICA DE FORMULARIO ===
+        // =======================================================
+
+        evidenceTypeSelect.addEventListener('change', () => {
+            // Limpiar y ocultar todas las secciones condicionales
+            participantsSection.classList.add('hidden-module');
+            descriptionSection.classList.add('hidden-module');
+            tutorSection.classList.add('hidden-module');
+            extraTitleWrapper.classList.add('hidden-module');
+            extraActivityTitle.value = '';
+            descriptionInput.value = '';
+            tutorNameSelect.value = '';
+            participantCodeSelect.value = '';
+
+            const mainType = evidenceTypeSelect.value;
+            const specificSelect = specificTypeSelect;
+            specificSelect.innerHTML = '<option value="">-- Selecciona una opción --</option>';
+
+            if (mainType && evidenceOptionsMap[mainType]) {
+                evidenceOptionsMap[mainType].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    specificSelect.appendChild(opt);
+                });
+            } else {
+                specificSelect.innerHTML = '<option value="">-- Selecciona el tipo principal primero --</option>';
+            }
+
+            if (mainType === 'actividades') {
+                tutorSection.classList.remove('hidden-module');
+            }
+            if (mainType === 'participantes') {
+                participantsSection.classList.remove('hidden-module');
+                loadParticipants();
+            }
+
+            checkFormAndEnableModules();
+        });
+
+        specificTypeSelect.addEventListener('change', () => {
+            descriptionSection.classList.add('hidden-module');
+            extraTitleWrapper.classList.add('hidden-module');
+            extraActivityTitle.value = '';
+            descriptionInput.value = '';
+
+            const specificType = specificTypeSelect.value;
+            const mainType = evidenceTypeSelect.value;
+
+            if (mainType === 'actividades' && specificType === 'ACTIVIDADES EXTRACURRICULARES') {
+                extraTitleWrapper.classList.remove('hidden-module');
+            }
+            if (mainType === 'donaciones' && specificType === 'GESTION IGLESIA') {
+                descriptionSection.classList.remove('hidden-module');
+            }
+
+            checkFormAndEnableModules();
+        });
+
+        // Listeners adicionales para revalidar
+        participantCodeSelect.addEventListener('change', checkFormAndEnableModules);
+        tutorNameSelect.addEventListener('change', checkFormAndEnableModules);
+        descriptionInput.addEventListener('input', checkFormAndEnableModules);
+        extraActivityTitle.addEventListener('input', checkFormAndEnableModules);
+
+
+        // 6. INICIALIZACIÓN
+        document.addEventListener('DOMContentLoaded', () => {
+            hideAllModules();
+        });
+    </script>
+</body>
+
+</html>
