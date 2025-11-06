@@ -1096,11 +1096,11 @@
     // Definición de usuarios y sus permisos - NO MODIFICADO
     const users = {
       // Rol Administrativo
-      'asegurador': {
+      'Asegurador': {
         password: 'asegurador',
         name: 'Asegurador',
         role: 'Administrador',
-        modules: ['dashboard', 'informacion', 'procesos', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '1192757557',
@@ -1109,11 +1109,11 @@
           dob: '2003-07-20'
         }
       },
-      'directora': {
+      'Directora': {
         password: 'directora',
         name: 'Directora',
         role: 'Administrador',
-        modules: ['dashboard', 'informacion', 'procesos', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '987654321',
@@ -1122,11 +1122,11 @@
           dob: '1975-05-20'
         }
       },
-      'especialista': {
+      'Especialista': {
         password: 'especialista',
         name: 'Especialista',
         role: 'Administrador',
-        modules: ['dashboard', 'informacion', 'procesos', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'cdpr', 'actualizaciones', 'aportes', 'actividades', 'alimentos', 'activos', 'cocina', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'TI',
           docNumber: '1122334455',
@@ -1135,11 +1135,11 @@
           dob: '1990-03-10'
         }
       },
-      'pastor': {
+      'Pastor': {
         password: 'pastor',
         name: 'Pastor',
         role: 'Administrador',
-        modules: ['dashboard', 'informacion', 'actualizaciones', 'aportes', 'actividades', 'activos', 'cocina', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'actualizaciones', 'evidencias', 'aportes', 'actividades', 'activos', 'cocina', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '1020304050',
@@ -1149,11 +1149,11 @@
         }
       },
       // Rol Tutora
-      'lisbeth': {
+      'Lisbeth': {
         password: 'lisbeth',
         name: 'Lisbeth',
         role: 'Tutora',
-        modules: ['dashboard', 'informacion', 'procesos', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '123123123',
@@ -1162,11 +1162,11 @@
           dob: '1992-07-25'
         }
       },
-      'juliana': {
+      'Juliana': {
         password: 'juliana',
         name: 'Juliana',
         role: 'Tutora',
-        modules: ['dashboard', 'informacion', 'procesos', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '456456456',
@@ -1175,11 +1175,11 @@
           dob: '1988-02-14'
         }
       },
-      'diana': {
+      'Diana': {
         password: 'diana',
         name: 'Diana',
         role: 'Tutora',
-        modules: ['dashboard', 'informacion', 'procesos', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '789789789',
@@ -1188,11 +1188,11 @@
           dob: '1995-09-01'
         }
       },
-      'helen': {
+      'Helen': {
         password: 'helen',
         name: 'Helen',
         role: 'Tutora',
-        modules: ['dashboard', 'informacion', 'procesos', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'informacion', 'procesos', 'evidencias', 'actualizaciones', 'aportes', 'cdpr', 'actividades', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '101010101',
@@ -1202,11 +1202,11 @@
         }
       },
       // Rol Ecónoma
-      'zuleima': {
+      'Zuleima': {
         password: 'zuleima',
         name: 'Zuleima',
         role: 'Ecónoma',
-        modules: ['dashboard', 'actividades', 'activos', 'alimentos', 'cocina', 'instrucciones', 'politicas'],
+        modules: ['dashboard', 'actividades', 'activos', 'evidencias', 'alimentos', 'cocina', 'instrucciones', 'politicas'],
         recovery: {
           docType: 'CC',
           docNumber: '202020202',
@@ -1238,6 +1238,11 @@
         icon: 'fas fa-bell',
         name: 'Actualizaciones',
         file: 'modulos/Actualizaciones_Fotos-main/index.html'
+      },
+      'evidencias': {
+        icon: 'fas fa-bell',
+        name: 'Evidencias Ft',
+        file: 'modulos/Evidencias-main/index.html'
       },
       'cdpr': {
         icon: 'fas fa-hands-helping',
@@ -1869,6 +1874,7 @@
 </body>
 
 </html>
+
 
 
 
