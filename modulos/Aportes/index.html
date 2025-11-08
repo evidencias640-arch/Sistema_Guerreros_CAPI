@@ -1574,26 +1574,36 @@
             });
         }
 
-        // --- Lógica del Dashboard (Charts) ---
+// --- Lógica del Dashboard (Charts) ---
+async function loadDashboardData() {
+    try {
+        // Si es tutora, enviamos su nombre al backend para que devuelva SOLO sus datos
+        const params = (userRole === 'TUTORA' && userResponsible) 
+            ? { tutora: userResponsible } 
+            : {};
 
-        async function loadDashboardData() {
-            const result = await fetchData('getDashboardData', {}, 'GET');
+        const result = await fetchData('getDashboardData', params, 'GET');
 
-            if (result.status === 'success') {
-                const data = result.data;
+        if (result.status === 'success') {
+            const data = result.data;
 
-                // 1. Métricas
-                document.getElementById('metricTotalParticipants').textContent = data.totalParticipants || 0;
-                document.getElementById('metricMonthlyContribution').textContent = formatCurrency(data.monthlyContribution || 0);
-                document.getElementById('metricParticipantsPaid').textContent = data.participantsPaid || 0;
-                document.getElementById('metricParticipantsDebt').textContent = data.participantsDebt || 0;
+            // 1️⃣ Métricas principales
+            document.getElementById('metricTotalParticipants').textContent = data.totalParticipants || 0;
+            document.getElementById('metricMonthlyContribution').textContent = formatCurrency(data.monthlyContribution || 0);
+            document.getElementById('metricParticipantsPaid').textContent = data.participantsPaid || 0;
+            document.getElementById('metricParticipantsDebt').textContent = data.participantsDebt || 0;
 
-                // 2. Gráficos
-                renderDashboardCharts(data.contributionsByTutor, data.nationalityDistribution);
-            } else {
-                showToast(result.message, 'error');
-            }
+            // 2️⃣ Gráficos (usa tus funciones existentes)
+            renderDashboardCharts(data.contributionsByTutor, data.nationalityDistribution);
+        } else {
+            showToast(result.message, 'error');
         }
+    } catch (err) {
+        console.error("Error al cargar dashboard:", err);
+        showToast("Error al cargar dashboard.", "error");
+    }
+}
+
 
         function renderDashboardCharts(tutorData, nationalityData) {
             // Destruir instancias previas
@@ -2527,6 +2537,104 @@
                 showToast('Error al eliminar participante: ' + (err.message || err), 'error');
             }
         };
+
+        // ====================================================
+// 🎓 CONTROL DE ACCESO PARA ADMIN Y TUTORA
+// ====================================================
+
+async function loadParticipantsAndRender() {
+    const result = await fetchData('getParticipants', {
+        role: userRole,
+        filterValue: userFilterValue,
+        filterType: userFilterType
+    }, 'GET');
+
+    if (result.status === 'success') {
+        allParticipants = result.data || [];
+        allParticipantsHeaders = result.headers || [];
+        allParticipantsMap = {};
+
+        // Crear mapa rápido (por código)
+        allParticipants.forEach(p => {
+            allParticipantsMap[p[participantCodeName]] = p;
+        });
+
+        // 🔹 Filtrar solo los participantes de la tutora (si aplica)
+        if (userRole === 'TUTORA' && userResponsible) {
+            allParticipants = allParticipants.filter(p =>
+                (p.TUTORA || '').toLowerCase().trim() === userResponsible.toLowerCase().trim()
+            );
+        }
+
+        // --- Renderizar todo normalmente ---
+        renderParticipantsTable(allParticipants, allParticipantsHeaders);
+        renderCrudTable(allParticipants, allParticipantsHeaders);
+        loadDashboardData(); // ✅ Ahora las tutoras también verán el Dashboard completo
+
+        // --- Población de selects ---
+        const selectIds = ['paymentParticipantCode', 'noteParticipantCode', 'deleteCode', 'adminCode'];
+        selectIds.forEach(id => {
+            const selectEl = document.getElementById(id);
+            if (selectEl) {
+                selectEl.innerHTML = '<option value="">-- Seleccionar Participante --</option>';
+                allParticipants.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p[participantCodeName];
+                    opt.textContent = `${p[participantCodeName]} - ${p[participantNameName]}`;
+                    selectEl.appendChild(opt);
+                });
+            }
+        });
+
+        // Si hay participantes y la pestaña de pagos está activa
+        if (allParticipants.length > 0 && document.getElementById('paymentsSection').classList.contains('active')) {
+            document.getElementById('paymentParticipantCode').value = allParticipants[0][participantCodeName];
+            await loadFinancialSummary(allParticipants[0][participantCodeName]);
+        }
+
+        showToast(`Carga de ${allParticipants.length} participantes exitosa.`, 'success');
+    } else {
+        showToast(result.message, 'error');
+    }
+}
+
+// ====================================================
+// 🧩 CONFIGURACIÓN DE TABS UNIVERSAL (ADMIN y TUTORA)
+// ====================================================
+
+function setupApp(role) {
+    const tabs = [
+        { id: 'dashboard', name: 'Dashboard', active: true },
+        { id: 'paymentsSection', name: 'Aportes (Pago)' },
+        { id: 'notesSection', name: 'Notas' },
+        { id: 'participantCrudSection', name: 'Participantes (CRUD)' } // ✅ Ambas lo tienen ahora
+    ];
+
+    const tabButtonsContainer = document.getElementById('tabButtons');
+    const logoutButton = document.getElementById('logoutButton');
+
+    tabButtonsContainer.innerHTML = '';
+
+    tabs.forEach(tab => {
+        const btn = document.createElement('button');
+        btn.className = `tab-button ${tab.active ? 'active' : ''}`;
+        btn.textContent = tab.name;
+        btn.setAttribute('onclick', `showTab('${tab.id}')`);
+        tabButtonsContainer.appendChild(btn);
+    });
+
+    if (logoutButton) {
+        tabButtonsContainer.appendChild(logoutButton);
+    }
+
+    document.getElementById('loginSection').style.display = 'none';
+    document.getElementById('appSection').style.display = 'flex';
+
+    if (tabs.length > 0) {
+        showTab(tabs[0].id);
+    }
+}
+
 
     </script>
 
