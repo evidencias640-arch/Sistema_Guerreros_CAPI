@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel del Participante</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* 🌌 Fondo holográfico azul */
+  body {
+    font-family: "Poppins", sans-serif;
+    background: radial-gradient(circle at 20% 20%, #021025, #000814 80%);
+    margin: 0;
+    color: #e2e8f0;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    width: 200%;
+    height: 200%;
+    background: repeating-radial-gradient(circle, rgba(0, 180, 255, 0.05) 0, transparent 80px);
+    animation: rotate 40s linear infinite;
+    z-index: 0;
+  }
+  @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    width: 95%;
+    max-width: 1000px;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    margin: 30px auto;
+    padding: 25px 30px;
+    border: 1px solid rgba(0, 200, 255, 0.3);
+    box-shadow: 0 0 25px rgba(0, 180, 255, 0.4);
+    animation: fadeIn 1.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1, h2 {
+    color: #7dd3fc;
+    text-shadow: 0 0 12px rgba(0, 180, 255, 0.6);
+  }
+  h2 { border-bottom: 1px solid rgba(0,200,255,0.3); padding-bottom: 5px; }
+
+  .header-info {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 15px;
+    align-items: center;
+  }
+  .avatar {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #38bdf8 10%, #0c4a6e);
+    border-radius: 50%;
+    box-shadow: 0 0 15px #0ea5e9;
+  }
+  .info-text p { margin: 4px 0; font-size: 0.95rem; }
+  .info-text strong { color: #93c5fd; }
+
+  .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 8px #22c55e;
+    margin-left: 5px;
+    vertical-align: middle;
+    animation: pulse 1.5s infinite alternate;
+  }
+  @keyframes pulse {
+    from { opacity: 0.5; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1.2); }
+  }
+
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 8px;
+    margin-top: 15px;
+  }
+  .month-box {
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .paid { background: rgba(56,189,248,0.25); color: #a7f3d0; border: 1px solid #10b981; }
+  .pending { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid #ef4444; }
+
+  .section {
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-top: 25px;
+    box-shadow: inset 0 0 20px rgba(0, 180, 255, 0.1);
+  }
+
+  .card {
+    background: rgba(255,255,255,0.05);
+    border-left: 3px solid #38bdf8;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 8px 0;
+  }
+  .solution {
+    border-left-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+  }
+
+  .months-paid-label {
+    display: inline-block;
+    background: rgba(0,180,255,0.2);
+    border: 1px solid rgba(0,180,255,0.3);
+    border-radius: 6px;
+    color: #93c5fd;
+    padding: 2px 6px;
+    margin-right: 4px;
+    font-size: 0.9rem;
+  }
+
+  .loader {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, #001122, #000814);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    animation: fadeOut 1s ease forwards;
+    animation-delay: 1.8s;
+  }
+  .spinner {
+    width: 60px; height: 60px;
+    border: 6px solid rgba(0,180,255,0.2);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+  @media (max-width: 600px) {
+    .header-info { grid-template-columns: 1fr; text-align: center; }
+    .avatar { margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="loader"><div class="spinner"></div></div>
+  <div class="container" id="content"><p>Cargando participante...</p></div>
+  
+  <script src="animaciones.js"></script>
+  <script>
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTbndAlOOlEx17kTLQPVEAsutMFQo5HoL5mAEsT59SUDlmmLyez6KECK8Lf5Md-8rn/exec";
+
+    async function fetchData(action, params = {}, method = "GET") {
+      try {
+        let url = `${APPS_SCRIPT_URL}?action=${encodeURIComponent(action)}`;
+        let options = { method };
+        if (method === "GET") {
+          const queryParams = new URLSearchParams(params).toString();
+          if (queryParams) url += `&${queryParams}`;
+        } else {
+          options.body = new URLSearchParams(params);
+        }
+        const response = await fetch(url, options);
+        return await response.json();
+      } catch (err) { return { status: "error", message: err.message }; }
+    }
+
+    function formatCurrency(v) {
+      return (parseFloat(v) || 0).toLocaleString("es-CO", { style: "currency", currency: "COP" });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const params = new URLSearchParams(window.location.search);
+      const urlid = params.get("urlid");
+      const content = document.getElementById("content");
+      if (!urlid) { content.innerHTML = "<h2>⚠️ Acceso no autorizado</h2>"; return; }
+
+      const result = await fetchData("getParticipants", {}, "GET");
+      if (result.status !== "success") { content.innerHTML = "<h2>Error al obtener datos.</h2>"; return; }
+
+      const p = result.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
+      if (!p) { content.innerHTML = "<h2>No se encontró el participante.</h2>"; return; }
+
+      const months = Object.keys(p).filter(k => /^\d{6}$/.test(k));
+      const currentYM = new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, "0");
+      const monthsHTML = months.map(m => {
+        const paid = p[m] === "X";
+        const future = Number(m) > Number(currentYM);
+        const cls = paid ? "paid" : (future ? "" : "pending");
+        return `<div class="month-box ${cls}">${m.slice(4)}/${m.slice(0,4)}</div>`;
+      }).join("");
+
+      const pagosRes = await fetchData("getContributionHistory", {}, "GET");
+      let pagosHTML = "<p>No hay pagos registrados.</p>";
+      if (pagosRes.status === "success") {
+        const pagos = pagosRes.data.filter(pg => pg.CODIGO_PARTICIPANTE === p.CODIGO);
+        if (pagos.length) {
+          pagosHTML = pagos.map(pg => {
+            const meses = (() => {
+              try { return JSON.parse(pg.MESES_CUBIERTOS).map(m => `<span class='months-paid-label'>${m.slice(4)}/${m.slice(0,4)}</span>`).join(""); }
+              catch { return `<span>${pg.MESES_CUBIERTOS}</span>`; }
+            })();
+            return `
+              <div class="card">
+                <p>📅 <strong>${new Date(pg.FECHA).toLocaleDateString("es-CO")}</strong></p>
+                <p>💰 ${formatCurrency(pg.MONTO_PAGADO)}</p>
+                <p>🗓️ ${meses}</p>
+                <p>👤 ${pg.RESPONSABLE || "Desconocido"}</p>
+              </div>`;
+          }).join("");
+        }
+      }
+
+      const notasRes = await fetchData("getNotes", { filterValue: p.CODIGO }, "GET");
+      let notasHTML = "<p>No hay notas registradas.</p>";
+      if (notasRes.status === "success") {
+        const notas = notasRes.data.filter(n => n.CODIGO_PARTICIPANTE === p.CODIGO);
+        if (notas.length) {
+          notasHTML = notas.map(n => `
+            <div class="card ${n.SOLUCION ? "solution" : ""}">
+              <p><strong>${n.TIPO}</strong> - ${n.DESCRIPCION}</p>
+              ${n.SOLUCION ? `<p>✅ <em>${n.SOLUCION}</em></p>` : ""}
+              <p><small>👤 ${n.RESPONSABLE_REGISTRO || "Desconocido"}</small></p>
+            </div>`).join("");
+        }
+      }
+
+      const pagados = months.filter(m => p[m] === "X").length;
+      const totalHastaHoy = months.filter(m => Number(m) <= Number(currentYM)).length;
+      const pendientes = totalHastaHoy - pagados;
+      const deuda = pendientes * parseFloat(p.COSTO_MENSUAL || 0);
+
+      const tieneAbono = parseFloat(p.ABONO_ACUMULADO || 0) > 0;
+      const dot = tieneAbono ? `<span class="status-dot" title="Abono activo"></span>` : "";
+
+      content.innerHTML = `
+        <div class="header-info">
+          <div class="avatar"></div>
+          <div class="info-text">
+            <h1>${p.PARTICIPANTE} ${dot}</h1>
+            <p><strong>Código:</strong> ${p.CODIGO}</p>
+            <p><strong>Nacionalidad:</strong> ${p.NACIONALIDAD}</p>
+            <p><strong>Tutora:</strong> ${p.TUTORA}</p>
+            <p><strong>Inscripción:</strong> ${p.FECHA_REGISTRO || "—"} (${p.MES_INSCRIPCION || "—"})</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>📆 Estado de Meses</h2>
+          <div class="months-grid">${monthsHTML}</div>
+        </div>
+
+        <div class="section">
+          <h2>💰 Estado Financiero</h2>
+          <p><strong>Costo Mensual:</strong> ${formatCurrency(p.COSTO_MENSUAL)}</p>
+          <p><strong>Abono Actual:</strong> ${formatCurrency(p.ABONO_ACUMULADO)}</p>
+          <p><strong>Meses Pendientes:</strong> ${pendientes}</p>
+          <p><strong>Deuda:</strong> ${formatCurrency(deuda)}</p>
+        </div>
+
+        <div class="section">
+          <h2>💳 Pagos Realizados</h2>
+          ${pagosHTML}
+        </div>
+
+        <div class="section">
+          <h2>📝 Notas y Soluciones</h2>
+          ${notasHTML}
+        </div>
+      `;
+    });
+  </script>
+</body>
+</html>
