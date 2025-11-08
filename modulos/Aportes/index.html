@@ -458,6 +458,48 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .icon-button {
+            background: linear-gradient(135deg, #00b4ff, #0077ff);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            padding: 6px 10px;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(0, 180, 255, 0.5);
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .icon-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 180, 255, 0.8);
+        }
+
+        /* Toast futurista */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 200, 255, 0.2);
+            color: #aef;
+            border: 1px solid rgba(0, 200, 255, 0.5);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-family: "Poppins", sans-serif;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(0, 180, 255, 0.4);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.4s ease;
+            z-index: 9999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 
@@ -942,6 +984,38 @@
         </main>
     </div>
 
+    <!-- 🚀 Script para copiar y mostrar mensaje -->
+    <script>
+        function copyParticipantURL(urlId) {
+            if (!urlId) {
+                showToast("⚠️ Este participante no tiene un URL_ID registrado.");
+                return;
+            }
+
+            const fullURL = `https://evidencias640-arch.github.io/Sistema_Guerreros_CAPI/modulos/Aportes/participantes.html?urlid=${encodeURIComponent(urlId)}`;
+            navigator.clipboard.writeText(fullURL)
+                .then(() => {
+                    showToast("✅ URL creada y copiada correctamente.");
+                })
+                .catch(() => {
+                    showToast("❌ Error al copiar la URL.");
+                });
+        }
+
+        // 💬 Muestra toast visual
+        function showToast(message) {
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.classList.add("show"), 50);
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+    </script>
+
 
     <div id="toast"></div>
 
@@ -1212,6 +1286,11 @@
         style="margin-left: 5px; padding: 5px 10px; font-size: 12px;" 
         onclick="deleteParticipant('${participant.CODIGO}', '${participant.PARTICIPANTE}')">
         🗑️ Eliminar
+    </button>
+    <button 
+        class="icon-button" 
+        title="Copiar enlace de acceso del participante"
+        onclick="copyParticipantURL('${participant.URL_ID}')">🔗
     </button>
 `;
 
