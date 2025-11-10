@@ -5,16 +5,19 @@
 <title>Panel del Participante</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  /* 🌌 Fondo holográfico azul */
+  /* 🌌 Fondo animado tipo realidad virtual */
   body {
     font-family: "Poppins", sans-serif;
     background: radial-gradient(circle at 20% 20%, #021025, #000814 80%);
+    overflow-x: hidden;
     margin: 0;
     color: #e2e8f0;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     min-height: 100vh;
   }
+
   body::before {
     content: "";
     position: fixed;
@@ -24,21 +27,24 @@
     animation: rotate 40s linear infinite;
     z-index: 0;
   }
-  @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 
   .container {
     position: relative;
     z-index: 2;
     width: 95%;
-    max-width: 1000px;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    margin: 30px auto;
-    padding: 25px 30px;
+    max-width: 1100px;
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
     border: 1px solid rgba(0, 200, 255, 0.3);
-    box-shadow: 0 0 25px rgba(0, 180, 255, 0.4);
-    animation: fadeIn 1.2s ease;
+    border-radius: 16px;
+    margin: 40px auto;
+    padding: 25px;
+    box-shadow: 0 0 20px rgba(0, 180, 255, 0.4);
+    animation: fadeIn 1.5s ease;
   }
 
   @keyframes fadeIn {
@@ -47,59 +53,65 @@
   }
 
   h1, h2 {
+    text-align: center;
     color: #7dd3fc;
     text-shadow: 0 0 12px rgba(0, 180, 255, 0.6);
+    letter-spacing: 1px;
   }
-  h2 { border-bottom: 1px solid rgba(0,200,255,0.3); padding-bottom: 5px; }
 
-  .header-info {
+  h2 {
+    font-size: 1.3rem;
+    margin-top: 25px;
+    border-bottom: 1px solid rgba(0,200,255,0.3);
+    padding-bottom: 6px;
+  }
+
+  .welcome {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    color: #93c5fd;
+    animation: glow 2s infinite alternate;
+  }
+  @keyframes glow {
+    from { text-shadow: 0 0 5px #38bdf8; }
+    to { text-shadow: 0 0 20px #0ea5e9; }
+  }
+
+  .info-box {
     display: grid;
-    grid-template-columns: 80px 1fr;
-    gap: 15px;
-    align-items: center;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
   }
-  .avatar {
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, #38bdf8 10%, #0c4a6e);
-    border-radius: 50%;
-    box-shadow: 0 0 15px #0ea5e9;
-  }
-  .info-text p { margin: 4px 0; font-size: 0.95rem; }
-  .info-text strong { color: #93c5fd; }
 
-  .status-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: #10b981;
-    box-shadow: 0 0 8px #22c55e;
-    margin-left: 5px;
-    vertical-align: middle;
-    animation: pulse 1.5s infinite alternate;
+  .info-item {
+    background: rgba(0, 50, 80, 0.3);
+    border: 1px solid rgba(0, 180, 255, 0.2);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: left;
+    transition: 0.3s;
   }
-  @keyframes pulse {
-    from { opacity: 0.5; transform: scale(0.9); }
-    to { opacity: 1; transform: scale(1.2); }
-  }
+  .info-item:hover { transform: translateY(-3px); background: rgba(0, 80, 140, 0.4); }
 
   .months-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+    gap: 6px;
     margin-top: 15px;
   }
+
   .month-box {
     text-align: center;
     border-radius: 8px;
     padding: 8px;
     font-weight: 600;
-    transition: 0.3s;
     border: 1px solid rgba(255,255,255,0.1);
+    transition: 0.3s;
   }
-  .paid { background: rgba(56,189,248,0.25); color: #a7f3d0; border: 1px solid #10b981; }
-  .pending { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid #ef4444; }
+
+  .paid { background: rgba(56, 189, 248, 0.25); color: #a7f3d0; border: 1px solid #10b981; }
+  .pending { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid #ef4444; }
 
   .section {
     background: rgba(30, 41, 59, 0.6);
@@ -115,57 +127,64 @@
     border-radius: 8px;
     padding: 10px;
     margin: 8px 0;
+    transition: all 0.3s ease;
   }
+  .card:hover { transform: scale(1.02); background: rgba(0, 180, 255, 0.1); }
+
   .solution {
     border-left-color: #10b981;
     background: rgba(16, 185, 129, 0.1);
   }
 
-  .months-paid-label {
-    display: inline-block;
-    background: rgba(0,180,255,0.2);
-    border: 1px solid rgba(0,180,255,0.3);
-    border-radius: 6px;
-    color: #93c5fd;
-    padding: 2px 6px;
-    margin-right: 4px;
-    font-size: 0.9rem;
-  }
-
   .loader {
     position: fixed;
-    inset: 0;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: radial-gradient(circle at center, #001122, #000814);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 10;
-    animation: fadeOut 1s ease forwards;
-    animation-delay: 1.8s;
+    animation: fadeOut 0.8s ease forwards;
+    animation-delay: 1.5s;
   }
+
   .spinner {
-    width: 60px; height: 60px;
+    width: 60px;
+    height: 60px;
     border: 6px solid rgba(0,180,255,0.2);
     border-top-color: #38bdf8;
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
+
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
   @media (max-width: 600px) {
-    .header-info { grid-template-columns: 1fr; text-align: center; }
-    .avatar { margin: 0 auto; }
+    .container { padding: 18px; }
+    h1 { font-size: 1.5rem; }
+    .months-grid { grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); }
   }
 </style>
 </head>
 <body>
   <div class="loader"><div class="spinner"></div></div>
-  <div class="container" id="content"><p>Cargando participante...</p></div>
-  
-  <script src="animaciones.js"></script>
+
+  <div class="container" id="content">
+    <div class="welcome" id="welcomeMsg">Cargando participante...</div>
+  </div>
+
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTbndAlOOlEx17kTLQPVEAsutMFQo5HoL5mAEsT59SUDlmmLyez6KECK8Lf5Md-8rn/exec";
+    const content = document.getElementById("content");
+    const welcomeMsg = document.getElementById("welcomeMsg");
+    const params = new URLSearchParams(window.location.search);
+    const urlid = params.get("urlid");
+
+    function formatCurrency(v) {
+      return (parseFloat(v) || 0).toLocaleString("es-CO", { style: "currency", currency: "COP" });
+    }
 
     async function fetchData(action, params = {}, method = "GET") {
       try {
@@ -178,60 +197,48 @@
           options.body = new URLSearchParams(params);
         }
         const response = await fetch(url, options);
-        return await response.json();
-      } catch (err) { return { status: "error", message: err.message }; }
+        const text = await response.text();
+        return JSON.parse(text);
+      } catch (err) {
+        console.error(`Error fetching data for action ${action}:`, err.message);
+        return { status: "error", message: err.message };
+      }
     }
 
-    function formatCurrency(v) {
-      return (parseFloat(v) || 0).toLocaleString("es-CO", { style: "currency", currency: "COP" });
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      const params = new URLSearchParams(window.location.search);
-      const urlid = params.get("urlid");
-      const content = document.getElementById("content");
-      if (!urlid) { content.innerHTML = "<h2>⚠️ Acceso no autorizado</h2>"; return; }
-
-      const result = await fetchData("getParticipants", {}, "GET");
-      if (result.status !== "success") { content.innerHTML = "<h2>Error al obtener datos.</h2>"; return; }
-
-      const p = result.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
-      if (!p) { content.innerHTML = "<h2>No se encontró el participante.</h2>"; return; }
-
-      const months = Object.keys(p).filter(k => /^\d{6}$/.test(k));
+    // Nueva función para renderizar el panel con los datos de un participante
+    async function renderPanel(participant) {
+      const months = Object.keys(participant).filter(k => /^\d{6}$/.test(k));
       const currentYM = new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, "0");
+      
+      // --- 1. Estado de Meses ---
       const monthsHTML = months.map(m => {
-        const paid = p[m] === "X";
+        const paid = participant[m] === "X";
         const future = Number(m) > Number(currentYM);
         const cls = paid ? "paid" : (future ? "" : "pending");
         return `<div class="month-box ${cls}">${m.slice(4)}/${m.slice(0,4)}</div>`;
       }).join("");
 
+      // --- 2. Historial de Pagos ---
       const pagosRes = await fetchData("getContributionHistory", {}, "GET");
       let pagosHTML = "<p>No hay pagos registrados.</p>";
       if (pagosRes.status === "success") {
-        const pagos = pagosRes.data.filter(pg => pg.CODIGO_PARTICIPANTE === p.CODIGO);
+        const pagos = pagosRes.data.filter(p => p.CODIGO_PARTICIPANTE === participant.CODIGO).sort((a, b) => new Date(b.FECHA) - new Date(a.FECHA)); // Ordenar por fecha
         if (pagos.length) {
-          pagosHTML = pagos.map(pg => {
-            const meses = (() => {
-              try { return JSON.parse(pg.MESES_CUBIERTOS).map(m => `<span class='months-paid-label'>${m.slice(4)}/${m.slice(0,4)}</span>`).join(""); }
-              catch { return `<span>${pg.MESES_CUBIERTOS}</span>`; }
-            })();
-            return `
-              <div class="card">
-                <p>📅 <strong>${new Date(pg.FECHA).toLocaleDateString("es-CO")}</strong></p>
-                <p>💰 ${formatCurrency(pg.MONTO_PAGADO)}</p>
-                <p>🗓️ ${meses}</p>
-                <p>👤 ${pg.RESPONSABLE || "Desconocido"}</p>
-              </div>`;
-          }).join("");
+          pagosHTML = pagos.map(p => `
+            <div class="card">
+              <p>📅 <strong>${new Date(p.FECHA).toLocaleDateString("es-CO")}</strong></p>
+              <p>💰 ${formatCurrency(p.MONTO_PAGADO)}</p>
+              <p>🗓️ ${p.MESES_CUBIERTOS || "-"}</p>
+              <p>👤 ${p.RESPONSABLE || "Desconocido"}</p>
+            </div>`).join("");
         }
       }
 
-      const notasRes = await fetchData("getNotes", { filterValue: p.CODIGO }, "GET");
+      // --- 3. Notas y Soluciones ---
+      const notasRes = await fetchData("getNotes", { filterValue: participant.CODIGO }, "GET");
       let notasHTML = "<p>No hay notas registradas.</p>";
       if (notasRes.status === "success") {
-        const notas = notasRes.data.filter(n => n.CODIGO_PARTICIPANTE === p.CODIGO);
+        const notas = notasRes.data.filter(n => n.CODIGO_PARTICIPANTE === participant.CODIGO);
         if (notas.length) {
           notasHTML = notas.map(n => `
             <div class="card ${n.SOLUCION ? "solution" : ""}">
@@ -242,23 +249,22 @@
         }
       }
 
-      const pagados = months.filter(m => p[m] === "X").length;
+      // --- 4. Estado Financiero Resumido ---
+      const pagados = months.filter(m => participant[m] === "X").length;
       const totalHastaHoy = months.filter(m => Number(m) <= Number(currentYM)).length;
       const pendientes = totalHastaHoy - pagados;
-      const deuda = pendientes * parseFloat(p.COSTO_MENSUAL || 0);
+      const deuda = pendientes * parseFloat(participant.COSTO_MENSUAL || 0);
 
-      const tieneAbono = parseFloat(p.ABONO_ACUMULADO || 0) > 0;
-      const dot = tieneAbono ? `<span class="status-dot" title="Abono activo"></span>` : "";
-
+      // --- 5. Inyección de HTML ---
       content.innerHTML = `
-        <div class="header-info">
-          <div class="avatar"></div>
-          <div class="info-text">
-            <h1>${p.PARTICIPANTE} ${dot}</h1>
-            <p><strong>Código:</strong> ${p.CODIGO}</p>
-            <p><strong>Nacionalidad:</strong> ${p.NACIONALIDAD}</p>
-            <p><strong>Tutora:</strong> ${p.TUTORA}</p>
-            <p><strong>Inscripción:</strong> ${p.FECHA_REGISTRO || "—"} (${p.MES_INSCRIPCION || "—"})</p>
+        <div class="section">
+          <h1>${participant.PARTICIPANTE}</h1>
+          <div class="info-box">
+            <div class="info-item">📛 <strong>Código:</strong> ${participant.CODIGO}</div>
+            <div class="info-item">🌎 <strong>Nacionalidad:</strong> ${participant.NACIONALIDAD}</div>
+            <div class="info-item">👩‍🏫 <strong>Tutora:</strong> ${participant.TUTORA}</div>
+            <div class="info-item">💰 <strong>Costo Mensual:</strong> ${formatCurrency(participant.COSTO_MENSUAL)}</div>
+            <div class="info-item">📅 <strong>Inscripción:</strong> ${participant.FECHA_REGISTRO}</div>
           </div>
         </div>
 
@@ -268,24 +274,68 @@
         </div>
 
         <div class="section">
-          <h2>💰 Estado Financiero</h2>
-          <p><strong>Costo Mensual:</strong> ${formatCurrency(p.COSTO_MENSUAL)}</p>
-          <p><strong>Abono Actual:</strong> ${formatCurrency(p.ABONO_ACUMULADO)}</p>
-          <p><strong>Meses Pendientes:</strong> ${pendientes}</p>
+          <h2>💵 Estado Financiero</h2>
+          <p><strong>Pagados:</strong> ${pagados}</p>
+          <p><strong>Pendientes:</strong> ${pendientes}</p>
           <p><strong>Deuda:</strong> ${formatCurrency(deuda)}</p>
         </div>
 
         <div class="section">
-          <h2>💳 Pagos Realizados</h2>
-          ${pagosHTML}
+          <h2>💳 Pagos Realizados</h2>${pagosHTML}
         </div>
 
         <div class="section">
-          <h2>📝 Notas y Soluciones</h2>
-          ${notasHTML}
+          <h2>📝 Notas y Soluciones</h2>${notasHTML}
         </div>
       `;
-    });
-  </script>
+    }
+
+    // Nueva función principal para obtener los datos del participante y luego iniciar la actualización
+    async function getParticipantAndStartUpdate() {
+        if (!urlid) { 
+            content.innerHTML = "<h2 style='text-align:center'>⚠️ Acceso no autorizado</h2>"; 
+            welcomeMsg.innerHTML = "⚠️ Error de Acceso";
+            return; 
+        }
+
+        const result = await fetchData("getParticipants", {}, "GET");
+        if (result.status !== "success") { 
+            content.innerHTML = "<h2>Error al obtener datos.</h2>"; 
+            welcomeMsg.innerHTML = "❌ Error de Conexión";
+            return; 
+        }
+
+        const participant = result.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
+        if (!participant) { 
+            content.innerHTML = "<h2>No se encontró el participante.</h2>"; 
+            welcomeMsg.innerHTML = "🧐 Participante No Encontrado";
+            return; 
+        }
+
+        welcomeMsg.innerHTML = `👋 Bienvenido, Padre de <strong>${participant.PARTICIPANTE}</strong>`;
+        
+        // Renderiza el panel por primera vez
+        renderPanel(participant);
+        
+        // Llama a la función de auto-actualización cada 5 segundos
+        // Nota: Solo se actualizará la información de Pagos y Notas, y el estado de los meses (si los datos de la fuente cambian)
+        setInterval(async () => {
+             console.log("Actualizando datos...");
+             const refreshResult = await fetchData("getParticipants", {}, "GET");
+             if (refreshResult.status === "success") {
+                const refreshedParticipant = refreshResult.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
+                if (refreshedParticipant) {
+                     renderPanel(refreshedParticipant);
+                } else {
+                     console.warn("Participante no encontrado en la actualización.");
+                }
+             } else {
+                 console.error("Error al obtener datos en la actualización.");
+             }
+        }, 5000); // 5000 milisegundos = 5 segundos
+    }
+
+    document.addEventListener("DOMContentLoaded", getParticipantAndStartUpdate);
+</script>
 </body>
 </html>
