@@ -1574,89 +1574,115 @@
             });
         }
 
-// --- Lógica del Dashboard (Charts) ---
-async function loadDashboardData() {
-    try {
-        // Si es tutora, enviamos su nombre al backend para que devuelva SOLO sus datos
-        const params = (userRole === 'TUTORA' && userResponsible) 
-            ? { tutora: userResponsible } 
-            : {};
+    async function loadDashboardData() {
+    // 1. Preparar parámetros de filtro si el usuario es TUTORA
+    let params = {};
+    
+    // ASUMIMOS que las variables globales userRole y userFilterValue (nombre de la tutora)
+    // se establecieron correctamente durante la autenticación.
+    if (typeof userRole !== 'undefined' && userRole === 'TUTORA' && userFilterValue) {
+        // El backend espera el parámetro 'tutora' con el nombre del usuario (userFilterValue)
+        params = {
+            tutora: userFilterValue 
+        };
+    } 
+    // Si es ADMIN (o cualquier otro rol), params se queda vacío y el backend trae todo.
+    
+    // Llamar al backend con la acción y los parámetros.
+    // El fetchData debe manejar la conversión de params a query string para el GET.
+    const result = await fetchData('getDashboardData', params, 'GET'); 
+    
+    if (result.status === 'success' && result.data) {
+        const data = result.data;
+        // Asignar los valores a los elementos HTML
+        document.getElementById('metricTotalParticipants').textContent = data.totalParticipants;
+        // Asume que formatCurrency existe para formatear el valor
+        document.getElementById('metricMonthlyContribution').textContent = formatCurrency(data.monthlyContribution);
+        document.getElementById('metricParticipantsPaid').textContent = data.participantsPaid;
+        document.getElementById('metricParticipantsDebt').textContent = data.participantsDebt;
 
-        const result = await fetchData('getDashboardData', params, 'GET');
-
-        if (result.status === 'success') {
-            const data = result.data;
-
-            // 1️⃣ Métricas principales
-            document.getElementById('metricTotalParticipants').textContent = data.totalParticipants || 0;
-            document.getElementById('metricMonthlyContribution').textContent = formatCurrency(data.monthlyContribution || 0);
-            document.getElementById('metricParticipantsPaid').textContent = data.participantsPaid || 0;
-            document.getElementById('metricParticipantsDebt').textContent = data.participantsDebt || 0;
-
-            // 2️⃣ Gráficos (usa tus funciones existentes)
-            renderDashboardCharts(data.contributionsByTutor, data.nationalityDistribution);
-        } else {
-            showToast(result.message, 'error');
-        }
-    } catch (err) {
-        console.error("Error al cargar dashboard:", err);
-        showToast("Error al cargar dashboard.", "error");
+        // **LÍNEA CORREGIDA:** Ahora llama a la función con el nombre correcto:
+        renderDashboardCharts(data.contributionsByTutor, data.nationalityDistribution); 
+    } else {
+        showToast('Error al cargar datos del Dashboard: ' + (result.message || 'Error desconocido.'), 'error');
     }
 }
 
+// =========================================================================================
+// === DEFINICIÓN DE LA FUNCIÓN DE GRÁFICOS (NO SE CAMBIA, ESTÁ CORRECTA) ===
+// =========================================================================================
 
-        function renderDashboardCharts(tutorData, nationalityData) {
-            // Destruir instancias previas
-            Object.values(dashboardCharts).forEach(chart => chart.destroy());
-            dashboardCharts = {};
+function renderDashboardCharts(tutorData, nationalityData) {
+    // Nota: Debes asegurarte de que 'dashboardCharts', 'chartContributionsByTutorCtx', y 'chartNationalityDistributionCtx'
+    // estén definidos globalmente o que los canvases sean accesibles por ID.
 
-            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14'];
+    // Destruir instancias previas
+    // Asumiendo que dashboardCharts es un objeto global: window.dashboardCharts = {};
+    if (typeof dashboardCharts !== 'undefined') {
+        Object.values(dashboardCharts).forEach(chart => chart.destroy());
+        dashboardCharts = {};
+    } else {
+        window.dashboardCharts = {};
+    }
 
-            // Chart 1: Aportes por Tutora (Barra)
-            const tutorLabels = Object.keys(tutorData).map(t => t.split(' ')[0]); // Solo el primer nombre
-            const tutorValues = Object.values(tutorData);
 
-            dashboardCharts.tutorChart = new Chart(chartContributionsByTutorCtx, {
-                type: 'bar',
-                data: {
-                    labels: tutorLabels,
-                    datasets: [{
-                        label: 'Aportes ($)',
-                        data: tutorValues,
-                        backgroundColor: colors.slice(0, tutorLabels.length),
-                        borderColor: colors.slice(0, tutorLabels.length),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: { y: { beginAtZero: true } },
-                    plugins: { legend: { display: false } }
-                }
-            });
+    const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8', '#fd7e14'];
 
-            // Chart 2: Distribución por Nacionalidad (Pie)
-            const nationalityLabels = Object.keys(nationalityData);
-            const nationalityValues = Object.values(nationalityData);
+    // Chart 1: Aportes por Tutora (Barra)
+    const tutorLabels = Object.keys(tutorData).map(t => t.split(' ')[0]); // Solo el primer nombre
+    const tutorValues = Object.values(tutorData);
 
-            dashboardCharts.nationalityChart = new Chart(chartNationalityDistributionCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: nationalityLabels,
-                    datasets: [{
-                        label: 'Participantes',
-                        data: nationalityValues,
-                        backgroundColor: colors.slice(0, nationalityLabels.length),
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { position: 'top' } }
-                }
-            });
-        }
+    // Asume que chartContributionsByTutorCtx es el contexto del canvas
+    const chartTutorCtx = document.getElementById('chartContributionsByTutor'); 
 
+    if (chartTutorCtx) {
+        dashboardCharts.tutorChart = new Chart(chartTutorCtx, {
+            type: 'bar',
+            data: {
+                labels: tutorLabels,
+                datasets: [{
+                    label: 'Aportes ($)',
+                    data: tutorValues,
+                    backgroundColor: colors.slice(0, tutorLabels.length),
+                    borderColor: colors.slice(0, tutorLabels.length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+
+    // Chart 2: Distribución por Nacionalidad (Pie)
+    const nationalityLabels = Object.keys(nationalityData);
+    const nationalityValues = Object.values(nationalityData);
+
+    // Asume que chartNationalityDistributionCtx es el contexto del canvas
+    const chartNationalityCtx = document.getElementById('chartNationalityDistribution');
+    
+    if (chartNationalityCtx) {
+        dashboardCharts.nationalityChart = new Chart(chartNationalityCtx, {
+            type: 'doughnut',
+            data: {
+                labels: nationalityLabels,
+                datasets: [{
+                    label: 'Participantes',
+                    data: nationalityValues,
+                    backgroundColor: colors.slice(0, nationalityLabels.length),
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } }
+            }
+        });
+    }
+}
         // --- Lógica del Módulo de Aportes/Pagos Compuestos ---
 
         paymentParticipantCodeInput.addEventListener('change', async (e) => {
@@ -2641,5 +2667,4 @@ function setupApp(role) {
 </body>
 
 </html>
-
 
