@@ -229,7 +229,6 @@
               <p>📅 <strong>${new Date(p.FECHA).toLocaleDateString("es-CO")}</strong></p>
               <p>💰 ${formatCurrency(p.MONTO_PAGADO)}</p>
               <p>🗓️ ${p.MESES_CUBIERTOS || "-"}</p>
-              <p>👤 ${p.RESPONSABLE || "Desconocido"}</p>
             </div>`).join("");
         }
       }
