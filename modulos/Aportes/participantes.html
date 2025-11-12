@@ -1,179 +1,328 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Panel del Participante</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  /* 🌌 Fondo animado tipo realidad virtual */
-  body {
-    font-family: "Poppins", sans-serif;
-    background: radial-gradient(circle at 20% 20%, #021025, #000814 80%);
-    overflow-x: hidden;
-    margin: 0;
-    color: #e2e8f0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-  }
+  <meta charset="UTF-8">
+  <title>Panel del Participante</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* 🌌 Fondo animado tipo realidad virtual */
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at 20% 20%, #021025, #000814 80%);
+      overflow-x: hidden;
+      margin: 0;
+      color: #e2e8f0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
 
-  body::before {
-    content: "";
-    position: fixed;
-    width: 200%;
-    height: 200%;
-    background: repeating-radial-gradient(circle, rgba(0, 180, 255, 0.05) 0, transparent 80px);
-    animation: rotate 40s linear infinite;
-    z-index: 0;
-  }
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
+    body::before {
+      content: "";
+      position: fixed;
+      width: 200%;
+      height: 200%;
+      background: repeating-radial-gradient(circle, rgba(0, 180, 255, 0.05) 0, transparent 80px);
+      animation: rotate 40s linear infinite;
+      z-index: 0;
+    }
 
-  .container {
-    position: relative;
-    z-index: 2;
-    width: 95%;
-    max-width: 1100px;
-    background: rgba(15, 23, 42, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 200, 255, 0.3);
-    border-radius: 16px;
-    margin: 40px auto;
-    padding: 25px;
-    box-shadow: 0 0 20px rgba(0, 180, 255, 0.4);
-    animation: fadeIn 1.5s ease;
-  }
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
-  h1, h2 {
-    text-align: center;
-    color: #7dd3fc;
-    text-shadow: 0 0 12px rgba(0, 180, 255, 0.6);
-    letter-spacing: 1px;
-  }
+    .container {
+      position: relative;
+      z-index: 2;
+      width: 95%;
+      max-width: 1100px;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 200, 255, 0.3);
+      border-radius: 16px;
+      margin: 40px auto;
+      padding: 25px;
+      box-shadow: 0 0 20px rgba(0, 180, 255, 0.4);
+      animation: fadeIn 1.5s ease;
+    }
 
-  h2 {
-    font-size: 1.3rem;
-    margin-top: 25px;
-    border-bottom: 1px solid rgba(0,200,255,0.3);
-    padding-bottom: 6px;
-  }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
 
-  .welcome {
-    text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 25px;
-    color: #93c5fd;
-    animation: glow 2s infinite alternate;
-  }
-  @keyframes glow {
-    from { text-shadow: 0 0 5px #38bdf8; }
-    to { text-shadow: 0 0 20px #0ea5e9; }
-  }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-  .info-box {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 12px;
-  }
+    h1,
+    h2 {
+      text-align: center;
+      color: #7dd3fc;
+      text-shadow: 0 0 12px rgba(0, 180, 255, 0.6);
+      letter-spacing: 1px;
+    }
 
-  .info-item {
-    background: rgba(0, 50, 80, 0.3);
-    border: 1px solid rgba(0, 180, 255, 0.2);
-    border-radius: 10px;
-    padding: 10px;
-    text-align: left;
-    transition: 0.3s;
-  }
-  .info-item:hover { transform: translateY(-3px); background: rgba(0, 80, 140, 0.4); }
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 25px;
+      border-bottom: 1px solid rgba(0, 200, 255, 0.3);
+      padding-bottom: 6px;
+    }
 
-  .months-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
-    gap: 6px;
-    margin-top: 15px;
-  }
+    .welcome {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 25px;
+      color: #93c5fd;
+      animation: glow 2s infinite alternate;
+    }
 
-  .month-box {
-    text-align: center;
-    border-radius: 8px;
-    padding: 8px;
-    font-weight: 600;
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: 0.3s;
-  }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #38bdf8;
+      }
 
-  .paid { background: rgba(56, 189, 248, 0.25); color: #a7f3d0; border: 1px solid #10b981; }
-  .pending { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border: 1px solid #ef4444; }
+      to {
+        text-shadow: 0 0 20px #0ea5e9;
+      }
+    }
 
-  .section {
-    background: rgba(30, 41, 59, 0.6);
-    border-radius: 12px;
-    padding: 15px 20px;
-    margin-top: 25px;
-    box-shadow: inset 0 0 20px rgba(0, 180, 255, 0.1);
-  }
+    .info-box {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+    }
 
-  .card {
-    background: rgba(255,255,255,0.05);
-    border-left: 3px solid #38bdf8;
-    border-radius: 8px;
-    padding: 10px;
-    margin: 8px 0;
-    transition: all 0.3s ease;
-  }
-  .card:hover { transform: scale(1.02); background: rgba(0, 180, 255, 0.1); }
+    .info-item {
+      background: rgba(0, 50, 80, 0.3);
+      border: 1px solid rgba(0, 180, 255, 0.2);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      transition: 0.3s;
+    }
 
-  .solution {
-    border-left-color: #10b981;
-    background: rgba(16, 185, 129, 0.1);
-  }
+    .info-item:hover {
+      transform: translateY(-3px);
+      background: rgba(0, 80, 140, 0.4);
+    }
 
-  .loader {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: radial-gradient(circle at center, #001122, #000814);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    animation: fadeOut 0.8s ease forwards;
-    animation-delay: 1.5s;
-  }
+    .months-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+      gap: 6px;
+      margin-top: 15px;
+    }
 
-  .spinner {
-    width: 60px;
-    height: 60px;
-    border: 6px solid rgba(0,180,255,0.2);
-    border-top-color: #38bdf8;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
+    .month-box {
+      text-align: center;
+      border-radius: 8px;
+      padding: 8px;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: 0.3s;
+    }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+    .paid {
+      background: rgba(56, 189, 248, 0.25);
+      color: #a7f3d0;
+      border: 1px solid #10b981;
+    }
 
-  @media (max-width: 600px) {
-    .container { padding: 18px; }
-    h1 { font-size: 1.5rem; }
-    .months-grid { grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); }
-  }
-</style>
+    .pending {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid #ef4444;
+    }
+
+    .section {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin-top: 25px;
+      box-shadow: inset 0 0 20px rgba(0, 180, 255, 0.1);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border-left: 3px solid #38bdf8;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 8px 0;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+      background: rgba(0, 180, 255, 0.1);
+    }
+
+    .solution {
+      border-left-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #001122, #000814);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      animation: fadeOut 0.8s ease forwards;
+      animation-delay: 1.5s;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid rgba(0, 180, 255, 0.2);
+      border-top-color: #38bdf8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .months-grid {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+      }
+    }
+
+    /* Contenedor principal para organizar las etiquetas */
+    .months-container {
+      display: flex;
+      flex-wrap: wrap;
+      /* Permite que las etiquetas salten de línea */
+      gap: 8px;
+      /* Espacio entre las etiquetas */
+      padding: 10px 0;
+    }
+
+    /* Estilo de la etiqueta/badge de mes */
+    .month-badge {
+      /* Fondo y texto */
+      background-color: #e0f2f1;
+      /* Un color suave (verde menta) */
+      color: #004d40;
+      /* Texto oscuro */
+
+      /* Bordes y esquinas */
+      border: 1px solid #00897b;
+      /* Borde del mismo color */
+      border-radius: 4px;
+      /* Esquinas redondeadas */
+
+      /* Espaciado */
+      padding: 4px 8px;
+      /* Relleno interno */
+      font-size: 0.85rem;
+      /* Letra un poco más pequeña */
+      font-weight: 600;
+      /* Negrita */
+      white-space: nowrap;
+      /* Evita que el texto del mes se rompa */
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      /* Sombra suave */
+    }
+  </style>
 </head>
+
 <body>
-  <div class="loader"><div class="spinner"></div></div>
+  <div class="loader">
+    <div class="spinner"></div>
+  </div>
 
   <div class="container" id="content">
     <div class="welcome" id="welcomeMsg">Cargando participante...</div>
   </div>
+
+  <script>// --- FUNCIONES DE UTILIDAD PARA EL FORMATO DE MESES ---
+
+    /**
+     * Convierte un código YYYYMM (ej: 202501) a formato MMM YYYY (ej: ENE 2025).
+     */
+    function formatMonthCode(ymCode) {
+      if (!/^\d{6}$/.test(ymCode)) return ymCode;
+      const year = ymCode.substring(0, 4);
+      const month = ymCode.substring(4, 6);
+
+      const monthNames = [
+        'ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN',
+        'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'
+      ];
+
+      const monthIndex = parseInt(month, 10) - 1;
+
+      if (monthIndex >= 0 && monthIndex < 12) {
+        return `${monthNames[monthIndex]} ${year}`;
+      }
+      return ymCode;
+    }
+
+    /**
+     * Convierte la cadena JSON de meses en códigos HTML con estilo de etiqueta (badge).
+     */
+    function renderMonthsAsBadges(mesesJsonString) {
+      let mesesArray = [];
+      try {
+        // Intenta parsear la cadena JSON que viene de la hoja de cálculo
+        mesesArray = JSON.parse(mesesJsonString);
+        if (!Array.isArray(mesesArray)) mesesArray = [];
+      } catch (e) {
+        // Si no es JSON válido (ej: está vacío o solo tiene un guion), lo ignoramos
+        mesesArray = [];
+      }
+
+      if (mesesArray.length === 0) return '<span style="color:#6B7280;">-</span>';
+
+      // Mapea cada código de mes a un <span> estilizado (badge)
+      const badgesHtml = mesesArray.map(ymCode => {
+        const formattedMonth = formatMonthCode(ymCode);
+
+        // La clase CSS 'month-badge' debe estar definida en tu archivo de estilos
+        return `<span class="month-badge">${formattedMonth}</span>`;
+      }).join(' ');
+
+      return badgesHtml;
+    }
+    // --- FIN DE FUNCIONES DE UTILIDAD ---</script>
 
   <script>
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzTbndAlOOlEx17kTLQPVEAsutMFQo5HoL5mAEsT59SUDlmmLyez6KECK8Lf5Md-8rn/exec";
@@ -209,13 +358,13 @@
     async function renderPanel(participant) {
       const months = Object.keys(participant).filter(k => /^\d{6}$/.test(k));
       const currentYM = new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, "0");
-      
+
       // --- 1. Estado de Meses ---
       const monthsHTML = months.map(m => {
         const paid = participant[m] === "X";
         const future = Number(m) > Number(currentYM);
         const cls = paid ? "paid" : (future ? "" : "pending");
-        return `<div class="month-box ${cls}">${m.slice(4)}/${m.slice(0,4)}</div>`;
+        return `<div class="month-box ${cls}">${m.slice(4)}/${m.slice(0, 4)}</div>`;
       }).join("");
 
       // --- 2. Historial de Pagos ---
@@ -228,7 +377,7 @@
             <div class="card">
               <p>📅 <strong>${new Date(p.FECHA).toLocaleDateString("es-CO")}</strong></p>
               <p>💰 ${formatCurrency(p.MONTO_PAGADO)}</p>
-              <p>🗓️ ${p.MESES_CUBIERTOS || "-"}</p>
+              <div class="months-container">${renderMonthsAsBadges(p.MESES_CUBIERTOS || "[]")}</div>
             </div>`).join("");
         }
       }
@@ -291,50 +440,51 @@
 
     // Nueva función principal para obtener los datos del participante y luego iniciar la actualización
     async function getParticipantAndStartUpdate() {
-        if (!urlid) { 
-            content.innerHTML = "<h2 style='text-align:center'>⚠️ Acceso no autorizado</h2>"; 
-            welcomeMsg.innerHTML = "⚠️ Error de Acceso";
-            return; 
-        }
+      if (!urlid) {
+        content.innerHTML = "<h2 style='text-align:center'>⚠️ Acceso no autorizado</h2>";
+        welcomeMsg.innerHTML = "⚠️ Error de Acceso";
+        return;
+      }
 
-        const result = await fetchData("getParticipants", {}, "GET");
-        if (result.status !== "success") { 
-            content.innerHTML = "<h2>Error al obtener datos.</h2>"; 
-            welcomeMsg.innerHTML = "❌ Error de Conexión";
-            return; 
-        }
+      const result = await fetchData("getParticipants", {}, "GET");
+      if (result.status !== "success") {
+        content.innerHTML = "<h2>Error al obtener datos.</h2>";
+        welcomeMsg.innerHTML = "❌ Error de Conexión";
+        return;
+      }
 
-        const participant = result.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
-        if (!participant) { 
-            content.innerHTML = "<h2>No se encontró el participante.</h2>"; 
-            welcomeMsg.innerHTML = "🧐 Participante No Encontrado";
-            return; 
-        }
+      const participant = result.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
+      if (!participant) {
+        content.innerHTML = "<h2>No se encontró el participante.</h2>";
+        welcomeMsg.innerHTML = "🧐 Participante No Encontrado";
+        return;
+      }
 
-        welcomeMsg.innerHTML = `👋 Bienvenido, Padre de <strong>${participant.PARTICIPANTE}</strong>`;
-        
-        // Renderiza el panel por primera vez
-        renderPanel(participant);
-        
-        // Llama a la función de auto-actualización cada 5 segundos
-        // Nota: Solo se actualizará la información de Pagos y Notas, y el estado de los meses (si los datos de la fuente cambian)
-        setInterval(async () => {
-             console.log("Actualizando datos...");
-             const refreshResult = await fetchData("getParticipants", {}, "GET");
-             if (refreshResult.status === "success") {
-                const refreshedParticipant = refreshResult.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
-                if (refreshedParticipant) {
-                     renderPanel(refreshedParticipant);
-                } else {
-                     console.warn("Participante no encontrado en la actualización.");
-                }
-             } else {
-                 console.error("Error al obtener datos en la actualización.");
-             }
-        }, 5000); // 5000 milisegundos = 5 segundos
+      welcomeMsg.innerHTML = `👋 Bienvenido, Padre de <strong>${participant.PARTICIPANTE}</strong>`;
+
+      // Renderiza el panel por primera vez
+      renderPanel(participant);
+
+      // Llama a la función de auto-actualización cada 5 segundos
+      // Nota: Solo se actualizará la información de Pagos y Notas, y el estado de los meses (si los datos de la fuente cambian)
+      setInterval(async () => {
+        console.log("Actualizando datos...");
+        const refreshResult = await fetchData("getParticipants", {}, "GET");
+        if (refreshResult.status === "success") {
+          const refreshedParticipant = refreshResult.data.find(p => String(p.URL_ID || "").toLowerCase().trim() === urlid.toLowerCase());
+          if (refreshedParticipant) {
+            renderPanel(refreshedParticipant);
+          } else {
+            console.warn("Participante no encontrado en la actualización.");
+          }
+        } else {
+          console.error("Error al obtener datos en la actualización.");
+        }
+      }, 5000); // 5000 milisegundos = 5 segundos
     }
 
     document.addEventListener("DOMContentLoaded", getParticipantAndStartUpdate);
-</script>
+  </script>
 </body>
+
 </html>
