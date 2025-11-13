@@ -506,6 +506,116 @@
       transform: translateY(30px);
       transition-duration: .3s;
     }
+
+    /* ==================== BOTÓN IR ARRIBA ==================== */
+    .go-top {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      /* 🔥 Aparece al lado derecho cuando se muestra */
+      background: url('arriba.png') no-repeat center center;
+      background-size: contain;
+      background-color: transparent;
+      width: 63px;
+      height: 63px;
+      border-radius: 0;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.8);
+      transition: all 0.4s ease;
+      z-index: 2000;
+    }
+
+    /* Cuando se activa al hacer scroll */
+    .go-top.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    /* Hover */
+    .go-top:hover {
+      transform: scale(1.15);
+      box-shadow: 0 8px 40px rgba(241, 101, 36, 1);
+    }
+
+    /* ===== RESPONSIVO MÓVIL ===== */
+    @media (max-width: 600px) {
+      .go-top {
+        width: 35px;
+        /* 🔥 10px más pequeño */
+        height: 35px;
+        bottom: 15px;
+        right: 15px;
+      }
+    }
+
+    /* === ESTILO PROFESIONAL DE BOTONES DE ACCIÓN === */
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      color: white;
+      min-width: 85px;
+      justify-content: center;
+    }
+
+    /* Colores diferenciados */
+    .btn-action.edit {
+      background: linear-gradient(90deg, #3B82F6, #2563EB);
+    }
+
+    .btn-action.view {
+      background: linear-gradient(90deg, #6B7280, #4B5563);
+    }
+
+    .btn-action.delete {
+      background: linear-gradient(90deg, #EF4444, #B91C1C);
+    }
+
+    .btn-action.link {
+      background: linear-gradient(90deg, #8B5CF6, #7C3AED);
+    }
+
+    /* Hover */
+    .btn-action:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Íconos */
+    .btn-action i {
+      font-size: 1rem;
+    }
+
+    /* Responsivo */
+    @media (max-width: 700px) {
+      .action-buttons {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .btn-action {
+        width: 100%;
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 
@@ -983,6 +1093,9 @@
     </div>
   </div>
 
+  <!-- BOTÓN PARA IR ARRIBA -->
+  <div class="go-top" onclick="scrollToTop()"></div>
+
   <!-- Toast -->
   <div id="globalToast" class="toast info" style="display:none"></div>
 
@@ -1285,27 +1398,59 @@
 
     // CRUD table
     function renderCrudTable(participants, headers = []) {
-      crudParticipantTableHeaders.innerHTML = ''; crudParticipantsTableBody.innerHTML = '';
-      if (!participants || participants.length === 0) { crudParticipantsTableBody.innerHTML = '<tr><td colspan="100">No se encontraron participantes.</td></tr>'; return; }
+      crudParticipantTableHeaders.innerHTML = '';
+      crudParticipantsTableBody.innerHTML = '';
+
+      if (!participants || participants.length === 0) {
+        crudParticipantsTableBody.innerHTML = '<tr><td colspan="100">No se encontraron participantes.</td></tr>';
+        return;
+      }
+
       const baseHeaders = ['CODIGO', 'PARTICIPANTE', 'NACIONALIDAD', 'TUTORA', 'COSTO_MENSUAL', 'MES_INSCRIPCION', 'URL_ID'];
       const visible = [...baseHeaders, 'ACCIONES'];
-      visible.forEach(h => { const th = document.createElement('th'); th.textContent = h.replace('_', ' '); crudParticipantTableHeaders.appendChild(th); });
+
+      // Encabezados
+      visible.forEach(h => {
+        const th = document.createElement('th');
+        th.textContent = h.replace('_', ' ');
+        crudParticipantTableHeaders.appendChild(th);
+      });
+
+      // Filas
       participants.forEach(p => {
         const tr = document.createElement('tr');
         visible.forEach(h => {
           const td = document.createElement('td');
+
           if (h === 'ACCIONES') {
-            td.innerHTML = `<button class="primary-button" style="padding:6px 8px;font-size:.9rem" onclick="openEditModal('${p.CODIGO}')">✏️ Editar</button>
-            <button class="primary-button" style="padding:6px 8px;font-size:.9rem;margin-left:6px" onclick="openDetailModal('${p.CODIGO}')">🔍 Detalle</button>
-            <button class="secondary-button" style="margin-left:6px" onclick="deleteParticipantConfirm('${p.CODIGO}','${escape(p.PARTICIPANTE)}')">🗑️ Eliminar</button>
-            <button class="icon-button" style="margin-left:6px" onclick="copyParticipantURL('${p.URL_ID}')">🔗</button>`;
-          } else if (h === 'COSTO_MENSUAL' || h === 'ABONO_ACUMULADO') td.textContent = formatCurrency(parseFloat(p[h] || 0));
-          else td.textContent = p[h] || '';
+            td.innerHTML = `
+          <div class="action-buttons">
+            <button class="btn-action edit" title="Editar" onclick="openEditModal('${p.CODIGO}')">
+              <i>✏️</i><span>Editar</span>
+            </button>
+            <button class="btn-action view" title="Detalle" onclick="openDetailModal('${p.CODIGO}')">
+              <i>🔍</i><span>Detalle</span>
+            </button>
+            <button class="btn-action delete" title="Eliminar" onclick="deleteParticipantConfirm('${p.CODIGO}','${escape(p.PARTICIPANTE)}')">
+              <i>🗑️</i><span>Eliminar</span>
+            </button>
+            <button class="btn-action link" title="Copiar URL" onclick="copyParticipantURL('${p.URL_ID}')">
+              <i>🔗</i><span>  Link</span>
+            </button>
+          </div>
+        `;
+          } else if (h === 'COSTO_MENSUAL' || h === 'ABONO_ACUMULADO') {
+            td.textContent = formatCurrency(parseFloat(p[h] || 0));
+          } else {
+            td.textContent = p[h] || '';
+          }
+
           tr.appendChild(td);
         });
         crudParticipantsTableBody.appendChild(tr);
       });
     }
+
 
     // --------------------------------
     // Payments: load summary & months
@@ -1357,21 +1502,41 @@
 
     function calculatePaymentSummary() {
       if (!financialSummary || !financialSummary.monthlyCost) return;
+
       const montoEntregado = parseFloat(amountPaidInput.value) || 0;
       const abonoAnterior = parseFloat(financialSummary.abonoBalance || 0);
       const costoMensual = parseFloat(financialSummary.monthlyCost || 0);
-      const monthsToPay = Array.from(monthsToPayList.querySelectorAll('input[type=checkbox]:checked')).map(cb => cb.value).filter(ym => (financialSummary.financialStatus || {})[ym] !== 'X');
+
+      // Meses seleccionados manualmente (para pagar)
+      const monthsToPay = Array.from(monthsToPayList.querySelectorAll('input[type=checkbox]:checked'))
+        .map(cb => cb.value)
+        .filter(ym => (financialSummary.financialStatus || {})[ym] !== 'X');
+
       const totalCostoMeses = monthsToPay.length * costoMensual;
       const totalFondo = abonoAnterior + montoEntregado;
       const nuevoAbono = totalFondo - totalCostoMeses;
+
       totalCostValueEl.textContent = formatCurrency(totalCostoMeses);
       abonoSurplusValueEl.textContent = formatCurrency(nuevoAbono);
-      if (totalCostoMeses > 0 && nuevoAbono < 0) abonoSurplusValueEl.style.color = 'var(--danger)'; else abonoSurplusValueEl.style.color = 'var(--success)';
+      abonoSurplusValueEl.style.color = nuevoAbono < 0 ? 'var(--danger)' : 'var(--success)';
       submitPaymentButton.disabled = (nuevoAbono < 0) || (totalCostoMeses === 0 && montoEntregado === 0 && abonoAnterior === 0);
-      // pending debt
-      totalPendingDebtValueEl.textContent = formatCurrency(totalCostoMeses);
-      pendingMonthsCountEl.textContent = monthsToPay.length;
+
+      // ✅ ACTUALIZAR DEUDA TOTAL (REAL, HASTA EL MES ACTUAL)
+      if (financialSummary && financialSummary.financialStatus) {
+        const estadoFinanciero = financialSummary.financialStatus;
+        const mesesTotales = Object.keys(estadoFinanciero).sort();
+        const hoy = new Date();
+        const mesActualCodigo = `${hoy.getFullYear()}${String(hoy.getMonth() + 1).padStart(2, '0')}`;
+
+        // Tomar solo los meses <= actual y no pagos
+        const mesesAtrasados = mesesTotales.filter(ym => ym <= mesActualCodigo && (estadoFinanciero[ym] || '').toUpperCase() !== 'X');
+        const totalDeuda = mesesAtrasados.length * costoMensual;
+
+        totalPendingDebtValueEl.textContent = formatCurrency(totalDeuda);
+        pendingMonthsCountEl.textContent = mesesAtrasados.length;
+      }
     }
+
 
     // Submit registerComplexPayment (bloquea botón)
     paymentForm.addEventListener('submit', async (e) => {
@@ -1428,6 +1593,7 @@
       if (res.status === 'success' && Array.isArray(res.data)) {
         window.historyData = res.data;
         renderContributionHistory(window.historyData);
+        populateHistoryMonthYearSelects();
 
       } else {
         const errorMessage = res.message || 'Error al cargar historial. Asegúrese de que la App Script esté implementada correctamente y devuelva objetos.';
@@ -1466,14 +1632,11 @@
         // 1. Intentar parsear la cadena JSON
         let mesesArray = [];
         try {
-          // El valor de la celda de la hoja de cálculo es una cadena JSON
           mesesArray = JSON.parse(mes);
           if (!Array.isArray(mesesArray)) {
-            // Si el parseo es exitoso pero no es un array (ej: solo devolvió el valor 'null'), lo inicializamos vacío
             mesesArray = [];
           }
         } catch (e) {
-          // Si falla el parseo (no es JSON, quizás está vacío o tiene otro valor), lo inicializamos vacío
           mesesArray = [];
         }
 
@@ -1499,81 +1662,210 @@
       renderContributionHistory(filtered);
     }
 
+    // =================================================================================
+    // === FILTROS CORREGIDOS PARA HISTORIAL DE APORTES (por nombre, fecha y tutora) ===
+    // =================================================================================
+
+    function applyHistoryFilters() {
+      if (!window.historyData) return;
+
+      const txt = (document.getElementById('historyFilterText')?.value || '').trim().toLowerCase();
+      const mes = document.getElementById('historyFilterMonth')?.value || '';
+      const año = document.getElementById('historyFilterYear')?.value || '';
+      const tutora = (document.getElementById('historyFilterTutora')?.value || '').trim().toLowerCase();
+
+      const filtrados = window.historyData.filter(h => {
+        const codigo = (h.CODIGO_PARTICIPANTE || '').toLowerCase();
+        const participante = (allParticipantsMap[codigo]?.PARTICIPANTE || '').toLowerCase();
+        const tutoraItem = (allParticipantsMap[codigo]?.TUTORA || h.TUTORA || '').toLowerCase();
+
+        // 1️⃣ Filtro por texto: busca por código o nombre
+        if (txt && !codigo.includes(txt) && !participante.includes(txt)) return false;
+
+        // 2️⃣ Filtro por tutora
+        if (tutora && !tutoraItem.includes(tutora)) return false;
+
+        // 3️⃣ Filtro por mes y año, basados en FECHA (fecha de registro del pago)
+        const fechaRegistro = h.FECHA ? new Date(h.FECHA) : null;
+        if (fechaRegistro && (mes || año)) {
+          const añoRegistro = fechaRegistro.getFullYear().toString();
+          const mesRegistro = String(fechaRegistro.getMonth() + 1).padStart(2, '0');
+          const codigoFecha = añoRegistro + mesRegistro;
+
+          if (mes && codigoFecha !== mes) return false;
+          if (año && añoRegistro !== año) return false;
+        }
+
+        return true;
+      });
+
+      renderContributionHistory(filtrados);
+    }
+
+    // =================================================================================
+    // === LISTENERS PARA FILTROS (reactivos) ===
+    // =================================================================================
+    document.getElementById('historyFilterText')?.addEventListener('input', applyHistoryFilters);
+    document.getElementById('historyFilterMonth')?.addEventListener('change', applyHistoryFilters);
+    document.getElementById('historyFilterYear')?.addEventListener('change', applyHistoryFilters);
+    document.getElementById('historyFilterTutora')?.addEventListener('change', applyHistoryFilters);
+
+    // =================================================================================
+    // === LLENAR LOS SELECTS DE MESES Y AÑOS SEGÚN FECHA DE REGISTRO ===
+    // =================================================================================
+    function populateHistoryMonthYearSelects() {
+      const monthSel = document.getElementById('historyFilterMonth');
+      const yearSel = document.getElementById('historyFilterYear');
+      if (!monthSel || !yearSel || !window.historyData) return;
+
+      const mesesSet = new Set();
+      const añosSet = new Set();
+
+      window.historyData.forEach(item => {
+        if (item.FECHA) {
+          const d = new Date(item.FECHA);
+          const año = d.getFullYear().toString();
+          const mes = año + String(d.getMonth() + 1).padStart(2, '0');
+          mesesSet.add(mes);
+          añosSet.add(año);
+        }
+      });
+
+      // Limpiar y poblar selects
+      monthSel.innerHTML = '<option value="">Mes</option>';
+      Array.from(mesesSet).sort().forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = typeof formatYearMonthLong === 'function' ? formatYearMonthLong(m) : m;
+        monthSel.appendChild(opt);
+      });
+
+      yearSel.innerHTML = '<option value="">Año</option>';
+      Array.from(añosSet).sort().forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearSel.appendChild(opt);
+      });
+    }
+
+
+
     // --------------------------------
     // Notes: load/create/update/delete
     // --------------------------------
+
+    // --- ESTILOS GLOBALES (visibles para todas las funciones) ---
+    const CARD_BASE_STYLE = 'padding: 15px; margin-bottom: 15px; border-radius: 8px; transition: background-color 0.3s ease;';
+    const PENDING_CARD_STYLE = 'background-color: #FEF3C7; border: 1px solid #FBBF24; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);'; // Amarillo claro
+    const SOLVED_CARD_STYLE = 'background-color: #D1FAE5; border: 1px solid #34D399; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);'; // Verde claro
+    const SOLUTION_BOX_STYLE = 'margin-top:12px; padding:10px; background-color:rgba(0,128,0,0.08); border-left:4px solid #10B981; border-radius:4px;';
+
+    // --- CARGAR LAS NOTAS ---
     async function loadNotes(filterValue = '') {
       notesListContainer.innerHTML = '<p>Cargando notas...</p>';
       const res = await fetchData('getNotes', { filterValue: filterValue || '' }, 'GET');
 
-      // --- ESTILOS INTEGRADOS EN JS (Para las tarjetas de nota) ---
-      const CARD_BASE_STYLE = 'padding: 15px; margin-bottom: 15px; border-radius: 8px; transition: background-color 0.3s ease;';
-      const PENDING_CARD_STYLE = 'background-color: #FEF3C7; border: 1px solid #FBBF24; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);'; // Amarillo claro
-      const SOLVED_CARD_STYLE = 'background-color: #D1FAE5; border: 1px solid #34D399; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);'; // Verde claro
-      const SOLUTION_BOX_STYLE = 'margin-top:12px; padding:10px; background-color:rgba(0,128,0,0.08); border-left:4px solid #10B981; border-radius:4px;';
-      // --------------------------------
-
       if (res.status === 'success' && Array.isArray(res.data)) {
-        notesListContainer.innerHTML = '';
-        if (res.data.length === 0) { notesListContainer.innerHTML = '<p>No hay notas.</p>'; return; }
-
-        res.data.forEach(n => {
-          // 1. DETERMINAR ESTADO Y ESTILO
-          const isSolved = (n.SOLUCION || '').trim().length > 0;
-          const cardColorStyle = isSolved ? SOLVED_CARD_STYLE : PENDING_CARD_STYLE;
-
-          const card = document.createElement('div');
-          card.style.cssText = CARD_BASE_STYLE + cardColorStyle;
-
-          const fecha = formatDate(n.FECHA) || n.FECHA || '';
-          const participante = (allParticipantsMap[n.CODIGO_PARTICIPANTE] || {}).PARTICIPANTE || n.CODIGO_PARTICIPANTE;
-
-          // 2. CONSTRUIR EL HTML DE LA SOLUCIÓN (Si existe)
-          let solutionHTML = '';
-          if (isSolved) {
-            const solutionDate = formatDate(n.FECHA_SOLUCION) || '';
-            solutionHTML = `
-                    <div style="${SOLUTION_BOX_STYLE}">
-                        <p style="font-weight:600; color:#10B981;">✅ Solución Registrada</p>
-                        <p style="margin-top:4px;">${n.SOLUCION || 'N/A'}</p>
-                        <p style="margin-top:4px; font-size:.85rem; color:#10B981;">Responsable: ${n.RESPONSABLE_SOLUCION || 'N/A'}</p>
-                    </div>
-                `;
-          }
-
-          // 3. RENDERIZAR LA TARJETA COMPLETA
-          card.innerHTML = `
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-                    <div>
-                        <strong>${participante}</strong> 
-                        <small style="color:var(--muted)">(${n.CODIGO_PARTICIPANTE})</small> 
-                        · 
-                        <small style="color:var(--muted)">${fecha}</small>
-                    </div>
-                    <div style="display:flex;gap:8px">
-                        ${!isSolved // Muestra el botón 'Solución' solo si NO está solucionada
-              ? `<button class="primary-button" style="padding:6px 8px;font-size:.9rem" onclick="openNoteSolutionModal('${n.ID}','${escape(n.DESCRIPCION || '')}')">🛠️ Solución</button>`
-              : ''
-            }
-                        <button class="button" onclick="deleteNoteConfirm('${n.ID}')"><svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg></button>
-                    </div>
-                </div>
-                
-                <p style="margin-top:8px; font-weight:500;">📌 Descripción:</p>
-                <p style="margin-top:4px; margin-left:15px; border-left: 2px solid #ccc; padding-left: 10px;">${n.DESCRIPCION || ''}</p>
-                
-                ${solutionHTML}
-                
-                <p style="margin-top:8px;font-size:.9rem;color:var(--muted); border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px;">
-                    Tipo: ${n.TIPO || ''} · Responsable de Registro: ${n.RESPONSABLE_REGISTRO || ''}
-                </p>
-            `;
-          notesListContainer.appendChild(card);
-        });
+        // Guardamos globalmente para filtrado dinámico
+        window.notesData = res.data.slice();
+        renderNotes(res.data, filterValue);
       } else {
         notesListContainer.innerHTML = '<p>Error cargando notas.</p>';
+        window.notesData = [];
       }
     }
+
+    // --- RENDERIZAR Y FILTRAR ---
+    function renderNotes(data = [], filterValue = '') {
+      notesListContainer.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        notesListContainer.innerHTML = '<p>No hay notas.</p>';
+        return;
+      }
+
+      const filter = (filterValue || '').toString().trim().toLowerCase();
+
+      const filtered = data.filter(n => {
+        if (!filter) return true;
+        const codigo = (n.CODIGO_PARTICIPANTE || '').toString().toLowerCase();
+        const participante = (allParticipantsMap[n.CODIGO_PARTICIPANTE]?.PARTICIPANTE || '').toLowerCase();
+        return codigo.includes(filter) || participante.includes(filter);
+      });
+
+      if (filtered.length === 0) {
+        notesListContainer.innerHTML = '<p>No se encontraron notas con ese filtro.</p>';
+        return;
+      }
+
+      filtered.forEach(n => {
+        const solucionStr = (n.SOLUCION !== undefined && n.SOLUCION !== null) ? String(n.SOLUCION).trim() : '';
+        const isSolved = solucionStr.length > 0;
+        const cardColorStyle = isSolved ? SOLVED_CARD_STYLE : PENDING_CARD_STYLE;
+
+        const card = document.createElement('div');
+        card.style.cssText = CARD_BASE_STYLE + cardColorStyle;
+
+        const fecha = formatDate(n.FECHA) || n.FECHA || '';
+        const participante = (allParticipantsMap[n.CODIGO_PARTICIPANTE] || {}).PARTICIPANTE || n.CODIGO_PARTICIPANTE;
+
+        let solutionHTML = '';
+        if (isSolved) {
+          solutionHTML = `
+        <div style="${SOLUTION_BOX_STYLE}">
+          <p style="font-weight:600; color:#10B981;">✅ Solución Registrada</p>
+          <p style="margin-top:4px;">${n.SOLUCION || 'N/A'}</p>
+          <p style="margin-top:4px; font-size:.85rem; color:#10B981;">Responsable: ${n.RESPONSABLE_SOLUCION || 'N/A'}</p>
+        </div>
+      `;
+        }
+
+        card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div>
+          <strong>${participante}</strong>
+          <small style="color:var(--muted)">(${n.CODIGO_PARTICIPANTE})</small> ·
+          <small style="color:var(--muted)">${fecha}</small>
+        </div>
+        <div style="display:flex;gap:8px">
+          ${!isSolved
+            ? `<button class="primary-button" style="padding:6px 8px;font-size:.9rem" onclick="openNoteSolutionModal('${n.ID}','${escape(n.DESCRIPCION || '')}')">🛠️ Solución</button>`
+            : ''}
+          <button class="button" onclick="deleteNoteConfirm('${n.ID}')">
+            <svg viewBox="0 0 448 512" class="svgIcon">
+              <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p style="margin-top:8px; font-weight:500;">📌 Descripción:</p>
+      <p style="margin-top:4px; margin-left:15px; border-left: 2px solid #ccc; padding-left: 10px;">${n.DESCRIPCION || ''}</p>
+
+      ${solutionHTML}
+
+      <p style="margin-top:8px;font-size:.9rem;color:var(--muted); border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px;">
+        Tipo: ${n.TIPO || ''} · Responsable de Registro: ${n.RESPONSABLE_REGISTRO || ''}
+      </p>
+    `;
+        notesListContainer.appendChild(card);
+      });
+    }
+
+    // --- FILTRO DINÁMICO ---
+    const noteFilterInput = document.getElementById('noteFilterCode');
+    if (noteFilterInput) {
+      noteFilterInput.addEventListener('input', e => {
+        const value = e.target.value.trim();
+        if (window.notesData) {
+          renderNotes(window.notesData, value);
+        } else {
+          loadNotes(value);
+        }
+      });
+    }
+
 
     // registerNote (POST -> registerNote)
     noteForm.addEventListener('submit', async (e) => {
@@ -1739,7 +2031,7 @@
       const overlay = document.getElementById('detailOverlay');
 
       // Banderas según nacionalidad
-      const flagMap = { 'COLOMBIA': '🇨🇴', 'VENEZUELA': '🇻🇪' };
+      const flagMap = { 'COLOMBIA': 'co', 'VENEZUELA': '🇻🇪' };
       const nacionalidad = (p.NACIONALIDAD || '').toUpperCase();
       const bandera = flagMap[nacionalidad] || '🌎';
 
@@ -1932,6 +2224,24 @@
         return `${monthNames[monthIndex]} ${year}`;
       }
       return ymCode; // Falla la conversión
+    }
+
+    // Mostrar botón cuando se baja más de 200px
+    window.addEventListener('scroll', () => {
+      const goTop = document.querySelector('.go-top');
+      if (window.scrollY > 200) {
+        goTop.classList.add('active');
+      } else {
+        goTop.classList.remove('active');
+      }
+    });
+
+    // Volver al inicio al hacer clic
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
     }
   </script>
 
