@@ -627,7 +627,7 @@
         <h2>Acceder al Sistema de Gestión</h2>
         <form id="loginForm">
           <div class="form-group">
-            <label for="username">Usuario / Código</label>
+            <label for="username">Usuario</label>
             <input id="username" type="text" required />
           </div>
           <div class="form-group">
@@ -705,6 +705,7 @@
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
               <div class="form-group">
                 <label for="paymentParticipantCode">Código o Nombre del Participante</label>
+
                 <select id="paymentParticipantCode" required>
                   <option value="">-- Seleccionar Participante --</option>
                 </select>
@@ -1027,6 +1028,10 @@
           </style>
 
           <h3 style="margin-top:12px">Listado y Acciones de Participantes</h3>
+          <div style="margin-top:8px; margin-bottom:12px;">
+            <input type="text" id="crudParticipantsSearch" placeholder="Buscar por código o nombre..."
+              style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border);">
+          </div>
           <div class="table-container" style="margin-top:10px">
             <table id="crudParticipantsTable" class="participants-table">
               <thead>
@@ -1396,7 +1401,7 @@
       });
     }
 
-    // CRUD table
+    // CRUD Table
     function renderCrudTable(participants, headers = []) {
       crudParticipantTableHeaders.innerHTML = '';
       crudParticipantsTableBody.innerHTML = '';
@@ -1419,6 +1424,11 @@
       // Filas
       participants.forEach(p => {
         const tr = document.createElement('tr');
+
+        // 🔥🔥🔥 AQUI SE AGREGA EL SOPORTE PARA FILTRAR 🔥🔥🔥
+        tr.setAttribute("data-codigo", p.CODIGO || "");
+        tr.setAttribute("data-nombre", p.PARTICIPANTE || "");
+
         visible.forEach(h => {
           const td = document.createElement('td');
 
@@ -1428,14 +1438,14 @@
             <button class="btn-action edit" title="Editar" onclick="openEditModal('${p.CODIGO}')">
               <i>✏️</i><span>Editar</span>
             </button>
-            <button class="btn-action view" title="Detalle" onclick="openDetailModal('${p.CODIGO}')">
+            <button class="btn-action view" title="Detalle" onclick="openDetailModal('${p.CCODIGO}')">
               <i>🔍</i><span>Detalle</span>
             </button>
             <button class="btn-action delete" title="Eliminar" onclick="deleteParticipantConfirm('${p.CODIGO}','${escape(p.PARTICIPANTE)}')">
               <i>🗑️</i><span>Eliminar</span>
             </button>
             <button class="btn-action link" title="Copiar URL" onclick="copyParticipantURL('${p.URL_ID}')">
-              <i>🔗</i><span>  Link</span>
+              <i>🔗</i><span>Link</span>
             </button>
           </div>
         `;
@@ -1447,7 +1457,27 @@
 
           tr.appendChild(td);
         });
+
         crudParticipantsTableBody.appendChild(tr);
+      });
+    }
+
+    function filterCrudParticipantsTable() {
+      const txt = (document.getElementById("crudParticipantsSearch")?.value || "")
+        .trim()
+        .toLowerCase();
+
+      const rows = document.querySelectorAll("#crudParticipantsTableBody tr");
+
+      rows.forEach(row => {
+        const codigo = row.getAttribute("data-codigo")?.toLowerCase() || "";
+        const nombre = row.getAttribute("data-nombre")?.toLowerCase() || "";
+
+        if (codigo.includes(txt) || nombre.includes(txt)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
       });
     }
 
@@ -1493,7 +1523,7 @@
         calculatePaymentSummary();
         submitPaymentButton.disabled = false;
         // load history for selected if needed
-        await loadContributionHistory(code);
+        await loadContributionHistory({ participantCode: code });
       } else {
         showToast(res.message || 'Error al cargar financiero', 'error');
         monthsToPayList.innerHTML = '<p style="color:var(--danger)">Error al cargar resumen.</p>';
@@ -1670,30 +1700,75 @@
       if (!window.historyData) return;
 
       const txt = (document.getElementById('historyFilterText')?.value || '').trim().toLowerCase();
-      const mes = document.getElementById('historyFilterMonth')?.value || '';
-      const año = document.getElementById('historyFilterYear')?.value || '';
+      const mesSel = document.getElementById('historyFilterMonth')?.value || '';   // <-- YYYYMM
+      const añoSel = document.getElementById('historyFilterYear')?.value || '';    // <-- YYYY
       const tutora = (document.getElementById('historyFilterTutora')?.value || '').trim().toLowerCase();
 
+      // Convertimos lo que viene del select
+      const mesFiltro = mesSel ? mesSel.slice(4, 6) : "";   // extraer solo MM
+      const añoFiltro = añoSel ? añoSel : "";               // solo YYYY
+
+      function parseFlexibleDate(d) {
+        if (!d) return null;
+        const iso = new Date(d);
+        if (!isNaN(iso.getTime())) return iso;
+
+        const p = d.split('/');
+        if (p.length === 3) {
+          const dd = parseInt(p[0]), mm = parseInt(p[1]) - 1, yy = parseInt(p[2]);
+          const dt = new Date(yy, mm, dd);
+          if (!isNaN(dt.getTime())) return dt;
+        }
+
+        const p2 = d.split('-');
+        if (p2.length === 3) {
+          const yy = parseInt(p2[0]), mm = parseInt(p2[1]) - 1, dd = parseInt(p2[2]);
+          const dt = new Date(yy, mm, dd);
+          if (!isNaN(dt.getTime())) return dt;
+        }
+
+        return null;
+      }
+
       const filtrados = window.historyData.filter(h => {
-        const codigo = (h.CODIGO_PARTICIPANTE || '').toLowerCase();
-        const participante = (allParticipantsMap[codigo]?.PARTICIPANTE || '').toLowerCase();
-        const tutoraItem = (allParticipantsMap[codigo]?.TUTORA || h.TUTORA || '').toLowerCase();
+        const codigoRaw = (h.CODIGO_PARTICIPANTE || "").toString();
+        const codigoLower = codigoRaw.toLowerCase();
+        const participante = (allParticipantsMap[codigoRaw]?.PARTICIPANTE || "").toLowerCase();
+        const participanteFallback = (h.PARTICIPANTE || "").toLowerCase();
+        const tutoraItem = (allParticipantsMap[codigoRaw]?.TUTORA || h.TUTORA || "").toLowerCase();
 
-        // 1️⃣ Filtro por texto: busca por código o nombre
-        if (txt && !codigo.includes(txt) && !participante.includes(txt)) return false;
+        // FILTRO TEXTO (código o nombre)
+        if (txt) {
+          if (!(codigoLower.includes(txt) || participante.includes(txt) || participanteFallback.includes(txt))) {
+            return false;
+          }
+        }
 
-        // 2️⃣ Filtro por tutora
-        if (tutora && !tutoraItem.includes(tutora)) return false;
+        // FILTRO TUTORA
+        if (tutora) {
+          if (!tutoraItem.includes(tutora)) return false;
+        }
 
-        // 3️⃣ Filtro por mes y año, basados en FECHA (fecha de registro del pago)
-        const fechaRegistro = h.FECHA ? new Date(h.FECHA) : null;
-        if (fechaRegistro && (mes || año)) {
-          const añoRegistro = fechaRegistro.getFullYear().toString();
-          const mesRegistro = String(fechaRegistro.getMonth() + 1).padStart(2, '0');
-          const codigoFecha = añoRegistro + mesRegistro;
+        // --- FILTRO POR MES / AÑO (fecha de registro) ---
+        const fecha = parseFlexibleDate(h.FECHA);
+        if (!fecha) return false;
 
-          if (mes && codigoFecha !== mes) return false;
-          if (año && añoRegistro !== año) return false;
+        const mesRegistro = String(fecha.getMonth() + 1).padStart(2, '0'); // MM
+        const añoRegistro = String(fecha.getFullYear());                  // YYYY
+
+        // SOLO MES (sin año)
+        if (mesFiltro && !añoFiltro) {
+          if (mesRegistro !== mesFiltro) return false;
+        }
+
+        // SOLO AÑO (sin mes)
+        if (!mesFiltro && añoFiltro) {
+          if (añoRegistro !== añoFiltro) return false;
+        }
+
+        // MES + AÑO juntos
+        if (mesFiltro && añoFiltro) {
+          if (!(mesRegistro === mesFiltro && añoRegistro === añoFiltro)) return false;
         }
 
         return true;
@@ -1701,6 +1776,8 @@
 
       renderContributionHistory(filtrados);
     }
+
+
 
     // =================================================================================
     // === LISTENERS PARA FILTROS (reactivos) ===
@@ -1721,9 +1798,32 @@
       const mesesSet = new Set();
       const añosSet = new Set();
 
+      function parseFlexibleDate(d) {
+        if (!d) return null;
+        const asDate = new Date(d);
+        if (!isNaN(asDate.getTime())) return asDate;
+        const parts = String(d).split('/');
+        if (parts.length === 3) {
+          const day = parseInt(parts[0], 10);
+          const month = parseInt(parts[1], 10) - 1;
+          const year = parseInt(parts[2], 10);
+          const dt = new Date(year, month, day);
+          if (!isNaN(dt.getTime())) return dt;
+        }
+        const parts2 = String(d).split('-');
+        if (parts2.length === 3) {
+          const year = parseInt(parts2[0], 10);
+          const month = parseInt(parts2[1], 10) - 1;
+          const day = parseInt(parts2[2], 10);
+          const dt = new Date(year, month, day);
+          if (!isNaN(dt.getTime())) return dt;
+        }
+        return null;
+      }
+
       window.historyData.forEach(item => {
-        if (item.FECHA) {
-          const d = new Date(item.FECHA);
+        const d = parseFlexibleDate(item.FECHA);
+        if (d) {
           const año = d.getFullYear().toString();
           const mes = año + String(d.getMonth() + 1).padStart(2, '0');
           mesesSet.add(mes);
@@ -1748,6 +1848,7 @@
         yearSel.appendChild(opt);
       });
     }
+
 
 
 
@@ -2243,6 +2344,10 @@
         behavior: 'smooth'
       });
     }
+
+    document.getElementById("crudParticipantsSearch")?.addEventListener("input", filterCrudParticipantsTable);
+
+
   </script>
 
 </body>
